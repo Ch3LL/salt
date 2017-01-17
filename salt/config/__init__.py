@@ -1757,7 +1757,7 @@ def prepend_root_dir(opts, path_options):
                 opts[path_option] = salt.utils.path_join(root_dir, path)
             elif path.startswith(def_root_dir) and (root_dir != def_root_dir):
                 # Strip out the default root_dir and add the updated root_dir
-                path = path[len(def_root_dir):]
+                path = path[len(root_dir):]
                 opts[path_option] = salt.utils.path_join(root_dir, path)
 
 
