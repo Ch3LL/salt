@@ -698,7 +698,8 @@ class ModuleCase(TestCase, SaltClientTestCaseMixin):
         '''
         return self.run_function(_function, args, **kw)
 
-    def run_function(self, function, arg=(), minion_tgt='minion', timeout=90, **kwargs):
+    def run_function(self, function, arg=(), minion_tgt='minion', timeout=90,
+                     async=False, **kwargs):
         '''
         Run a single salt function and condition the return down to match the
         behavior of the raw function call
@@ -710,6 +711,14 @@ class ModuleCase(TestCase, SaltClientTestCaseMixin):
             kwargs['arg'] = kwargs.pop('f_arg')
         if 'f_timeout' in kwargs:
             kwargs['timeout'] = kwargs.pop('f_timeout')
+        if async:
+            orig = self.client.cmd_async(minion_tgt,
+                                   function,
+                                   arg,
+                                   timeout=timeout,
+                                   kwarg=kwargs)
+            return orig
+
         orig = self.client.cmd(minion_tgt,
                                function,
                                arg,

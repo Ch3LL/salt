@@ -1283,6 +1283,18 @@ class StateModuleTest(ModuleCase, SaltReturnAssertsMixin):
         self.assertTrue(state_run['file_|-test_file_|-/tmp/nonbase_env_|-managed']['result'])
         self.assertTrue(os.path.isfile('/tmp/nonbase_env'))
 
+    def test_state_running(self):
+        '''
+        test state.running
+        '''
+        state = self.run_function('state.sls', ['running'], async=True)
+        get_state = self.run_function('state.running')
+        exp_ret = ['A running state.single was found causing a state lock',
+                   'The function "state.sls" is running as']
+
+        for ret in exp_ret:
+            self.assertIn(ret, ' '.join(get_state))
+
     def tearDown(self):
         nonbase_file = '/tmp/nonbase_env'
         if os.path.isfile(nonbase_file):
