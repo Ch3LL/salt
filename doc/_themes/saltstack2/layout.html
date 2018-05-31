@@ -184,8 +184,27 @@
 
                     <div class="row">
                         <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            {% if "topics/releases" in pagename %}
 
-                            {% if "topics/releases" in pagename and "0" in pagename and not release in pagename and not "In Progress" in title %}
+                                {% set page_branch = pagename.split('/')[-1].split('.')[:2] |join('.') %}
+                                {% set page_minor_version = pagename.split('/')[-1].split('.')[-1] %}
+                                {% set minor_version = '' %}
+                                {% set latest_branch = latest_release.split('.')[:2] |join('.') %}
+                                {% set previous_branch = previous_release.split('.')[:2] |join('.') %}
+
+                                {% if page_branch == latest_branch %}
+                                    {% set minor_version = latest_release.split('.')[-1] %}
+                                {% elif page_branch == previous_branch %}
+                                    {% set minor_version = previous_release.split('.')[-1] %}
+                                {% endif %}
+
+                                {% if page_minor_version > minor_version %}
+
+                                <div class="alert alert-warning dev-notification-text" role="alert"><i class="glyphicon glyphicon-warning-sign"></i> These release notes are for an in progress release of Salt. It is not currently released and the salt team is currently working on the release </div>
+
+                                {% endif %}
+
+                            {% elif "topics/releases" in pagename and "0" in pagename and not release in pagename and not "In Progress" in title %}
 
                                 <div class="alert alert-warning dev-notification-text" role="alert"><i class="glyphicon glyphicon-warning-sign"></i> These release notes are for an old release of Salt. This release might contain known security and other issues that are fixed in the <a data-container="body" data-toggle="tooltip" data-placement="bottom" title="Release notes for the latest release" href="{{ release }}.html">latest release</a>.</div>
 
