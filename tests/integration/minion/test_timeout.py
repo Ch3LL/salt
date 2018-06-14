@@ -8,12 +8,14 @@ from __future__ import absolute_import
 
 # Import Salt Testing libs
 from tests.support.case import ShellCase
+from tests.support.helpers import flaky
 
 
 class MinionTimeoutTestCase(ShellCase):
     '''
     Test minion timing functions
     '''
+    @flaky
     def test_long_running_job(self):
         '''
         Test that we will wait longer than the job timeout for a minion to
@@ -25,4 +27,4 @@ class MinionTimeoutTestCase(ShellCase):
         self.assertTrue(isinstance(ret, list), 'Return is not a list. Minion'
                 ' may have returned error: {0}'.format(ret))
         self.assertTrue('True' in ret[1], 'Minion did not return True after '
-                '{0} seconds.'.format(sleep_length))
+                '{0} seconds. Actual return from minion: {1}'.format(sleep_length, ret))
