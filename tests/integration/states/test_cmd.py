@@ -69,6 +69,7 @@ class CMDRunRedirectTest(ModuleCase, SaltReturnAssertsMixin):
         super(CMDRunRedirectTest, self).setUp()
 
     def tearDown(self):
+        self.run_function('saltutil.clear_cache')
         for path in (self.state_file, self.test_tmp_path, self.test_file):
             try:
                 os.remove(path)
