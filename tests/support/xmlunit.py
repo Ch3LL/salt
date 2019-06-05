@@ -91,6 +91,13 @@ try:
                 print(test)
                 print(salt.utils.stringutils.to_unicode(test))
                 print('========================================')
+
+                log.info('========================================')
+                log.info(self)
+                log.info(test)
+                log.info(salt.utils.stringutils.to_unicode(test))
+                log.info('========================================')
+
             self.stream.writeln('Finished generating XML reports')
             return result
 
