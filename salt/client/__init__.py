@@ -763,7 +763,7 @@ class LocalClient(object):
                 timeout,
                 listen=True,
                 **kwargs)
-	    log.debug('==== here self.pub_data %s =====', self.pub_data)
+            log.debug('==== here self.pub_data %s =====', self.pub_data)
 
             if not self.pub_data:
                 yield self.pub_data
@@ -1180,7 +1180,7 @@ class LocalClient(object):
                 if self.opts['order_masters']:
                     timeout_at += self.opts.get('syndic_wait', 1)
 
-	    log.debug('=== jinfo_iter %s ===', jinfo_iter)
+            log.debug('=== jinfo_iter %s ===', jinfo_iter)
             # check for minions that are running the job still
             for raw in jinfo_iter:
                 # if there are no more events, lets stop waiting for the jinfo
@@ -1272,11 +1272,11 @@ class LocalClient(object):
         # If there are any remaining open events, clean them up.
         if open_jids:
             for jid in open_jids:
-		log.debug('==== unsubscribing from jid %s ====', jid)
+                log.debug('==== unsubscribing from jid %s ====', jid)
                 self.event.unsubscribe(jid)
 
         if expect_minions:
-	    log.debug('==== expect_minions %s ====', expect_minions)
+            log.debug('==== expect_minions %s ====', expect_minions)
             for minion in list((minions - found)):
                 yield {minion: {'failed': True}}
 
@@ -1287,7 +1287,7 @@ class LocalClient(object):
 
         # Report on missing minions
         if missing:
-	    log.debug('==== missing %s ====', missing)
+            log.debug('==== missing %s ====', missing)
             for minion in missing:
                 yield {minion: {'failed': True}}
 
