@@ -19,6 +19,7 @@ import sys
 import logging
 
 # Import 3rd-party libs
+import salt.utils.stringutils
 from salt.ext import six
 
 log = logging.getLogger(__name__)
@@ -82,7 +83,14 @@ try:
             )
 
         def run(self, test):
-            result = xmlrunner.runner.XMLTestRunner.run(self, test)
+            try:
+                result = xmlrunner.runner.XMLTestRunner.run(self, test)
+            except Exception as e:
+                print('========================================')
+                print(self)
+                print(test)
+                print(salt.utils.stringutils.to_unicode(test))
+                print('========================================')
             self.stream.writeln('Finished generating XML reports')
             return result
 
