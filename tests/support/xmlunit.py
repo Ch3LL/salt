@@ -83,14 +83,18 @@ try:
             )
 
         def run(self, test):
-            result = xmlrunner.runner.XMLTestRunner.run(self, test)
-            print('+++++++++++++++++++++++++++++')
-            print(test)
-            print('+++++++++++++++++++++++++++++')
+            try:
+                result = xmlrunner.runner.XMLTestRunner.run(self, test)
+                print('+++++++++++++++++++++++++++++')
+                print(test)
+                print('+++++++++++++++++++++++++++++')
 
-            log.info('+++++++++++++++++++++++++++++')
-            log.info(test)
-            log.info('+++++++++++++++++++++++++++++')
+                log.info('+++++++++++++++++++++++++++++')
+                log.info(test)
+                log.info('+++++++++++++++++++++++++++++')
+            except Exception as e:
+                from pudb.remote import set_trace; set_trace(term_size=(80,
+                                                                        24))
 
             self.stream.writeln('Finished generating XML reports')
             return result
