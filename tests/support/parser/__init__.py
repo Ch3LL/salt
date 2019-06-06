@@ -692,6 +692,8 @@ class SaltTestingParser(optparse.OptionParser):
                      width=self.options.output_columns)
 
         print('+=+=+=+=+=+=')
+        import locale
+        print(locale.getdefaultlocale())
         print(tests)
         print('+=+=+=+=+=+=')
         if self.options.xml_out:
