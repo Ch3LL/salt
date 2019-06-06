@@ -85,17 +85,22 @@ try:
         def run(self, test):
             try:
                 result = xmlrunner.runner.XMLTestRunner.run(self, test)
+                print('+++++++++++++++++++++++++++++')
+                print(test)
+                print('+++++++++++++++++++++++++++++')
+
+                log.info('+++++++++++++++++++++++++++++')
+                log.info(test)
+                log.info('+++++++++++++++++++++++++++++')
             except Exception as e:
                 print('========================================')
                 print(self)
                 print(test)
-                print(salt.utils.stringutils.to_unicode(test))
                 print('========================================')
 
                 log.info('========================================')
                 log.info(self)
                 log.info(test)
-                log.info(salt.utils.stringutils.to_unicode(test))
                 log.info('========================================')
 
             self.stream.writeln('Finished generating XML reports')
