@@ -178,9 +178,7 @@ LOGGING_STORE_HANDLER = __StoreLoggingHandler()
 
 
 class SaltLogQueueHandler(QueueHandler):
-    '''
-    Subclassed just to differentiate when debugging
-    '''
+    pass
 
 
 class SaltLogRecord(logging.LogRecord):
