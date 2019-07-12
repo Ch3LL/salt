@@ -9,7 +9,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 from tests.support.jinja_filters import JinjaFiltersTest
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class StateModuleJinjaFiltersTest(ModuleCase, JinjaFiltersTest):
     '''
     testing Jinja filters are available via state system

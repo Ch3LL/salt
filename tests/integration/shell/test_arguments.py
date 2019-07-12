@@ -16,7 +16,6 @@ import salt.utils.args
 
 
 @requires_salt_modules('test.ping', 'test.arg')
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class ArgumentTestCase(ModuleCase):
     def test_unsupported_kwarg(self):
         '''

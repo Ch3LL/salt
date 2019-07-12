@@ -156,7 +156,6 @@ class BotoCloudTrailStateTestCaseBase(TestCase, LoaderModuleMockMixin):
         session_instance.client.return_value = self.conn
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class BotoCloudTrailTestCase(BotoCloudTrailStateTestCaseBase, BotoCloudTrailTestCaseMixin):
     '''
     TestCase for salt.modules.boto_cloudtrail state.module

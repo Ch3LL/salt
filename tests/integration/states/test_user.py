@@ -47,7 +47,6 @@ else:
 
 @destructiveTest
 @skip_if_not_root
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class UserTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     test for user absent

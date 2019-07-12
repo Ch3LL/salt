@@ -13,7 +13,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 import salt.utils.platform
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class StdTest(ModuleCase):
     '''
     Test standard client calls

@@ -20,7 +20,6 @@ from tests.support.unit import skipIf
 TIMEOUT = 500
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @expensiveTest
 class GCETest(ShellCase):
     '''

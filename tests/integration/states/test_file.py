@@ -131,7 +131,6 @@ def _test_managed_file_mode_keep_helper(testcase, local=False):
         os.chmod(grail_fs_path, grail_fs_mode)
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 class FileTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the file state
@@ -1243,7 +1242,6 @@ class FileTest(ModuleCase, SaltReturnAssertsMixin):
         self.assertTrue(os.path.exists(good_file))
         self.assertFalse(os.path.exists(wrong_file))
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     def test_directory_broken_symlink(self):
         '''
         Ensure that file.directory works even if a directory
@@ -2814,7 +2812,6 @@ class FileTest(ModuleCase, SaltReturnAssertsMixin):
 
         self.assertSaltTrueReturn(ret)
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @with_tempfile()
     def test_issue_50221(self, name):
         expected = 'abc{0}{0}{0}'.format(os.linesep)
@@ -4161,7 +4158,6 @@ class RemoteFileTest(ModuleCase, SaltReturnAssertsMixin):
         assert result == '', 'File is still cached at {0}'.format(result)
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(not salt.utils.path.which('patch'), 'patch is not installed')
 class PatchTest(ModuleCase, SaltReturnAssertsMixin):
     def _check_patch_version(self, min_version):

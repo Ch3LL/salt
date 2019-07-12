@@ -31,7 +31,6 @@ from salt.utils.odict import OrderedDict
 
 
 @skipIf(NO_MOCK, NO_MOCK_REASON)
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class ZfsTestCase(TestCase, LoaderModuleMockMixin):
     '''
     Test cases for salt.states.zfs

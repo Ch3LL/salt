@@ -22,7 +22,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 import salt.utils.stringutils
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class StateMatchTest(ModuleCase):
     '''
     Validate the file state

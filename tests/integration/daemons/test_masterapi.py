@@ -18,7 +18,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 import salt.utils.stringutils
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class AutosignGrainsTest(ShellCase):
     '''
     Test autosigning minions based on grain values.

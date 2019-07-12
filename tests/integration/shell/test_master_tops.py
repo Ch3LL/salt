@@ -12,7 +12,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 from tests.support.case import ShellCase
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class MasterTopsTest(ShellCase):
 
     _call_binary_ = 'salt'

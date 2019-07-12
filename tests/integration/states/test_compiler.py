@@ -21,7 +21,6 @@ except ImportError:
     HAS_LSB_RELEASE = False
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class CompileTest(ModuleCase):
     '''
     Validate the state compiler

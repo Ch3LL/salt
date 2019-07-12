@@ -271,7 +271,6 @@ class FileModuleTest(ModuleCase):
             content = fp.read()
         self.assertEqual(content, 'Hello' + os.linesep + 'Goodbye' + os.linesep)
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     def test_file_tail(self):
         """
         Test file.tail.

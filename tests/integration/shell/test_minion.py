@@ -38,7 +38,6 @@ log = logging.getLogger(__name__)
 DEBUG = True
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class MinionTest(ShellCase, testprogram.TestProgramCase, ShellCaseCommonTestsMixin):
     '''
     Various integration tests for the salt-minion executable.

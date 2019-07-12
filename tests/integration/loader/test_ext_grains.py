@@ -21,7 +21,6 @@ import salt.config
 import salt.loader
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class LoaderGrainsTest(ModuleCase):
     '''
     Test the loader standard behavior with external grains

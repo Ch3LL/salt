@@ -15,7 +15,6 @@ import salt.utils.platform
 import salt.utils.files
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class EnabledTest(ModuleCase):
     '''
     validate the use of shell processing for cmd.run on the salt command line
@@ -25,7 +24,6 @@ class EnabledTest(ModuleCase):
            "export SALTY_VARIABLE='saltines' && echo $SALTY_VARIABLE ; "
            "echo duh &> /dev/null")
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(salt.utils.platform.is_windows(), 'Skip on Windows OS')
     def test_shell_default_enabled(self):
         '''
@@ -35,7 +33,6 @@ class EnabledTest(ModuleCase):
         ret = self.run_function('cmd.run', [self.cmd])
         self.assertEqual(ret.strip(), enabled_ret)
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(salt.utils.platform.is_windows(), 'Skip on Windows OS')
     def test_shell_disabled(self):
         '''

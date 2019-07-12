@@ -113,7 +113,6 @@ class WinServiceTestCase(TestCase, LoaderModuleMockMixin):
             self.assertDictEqual(win_service.get_service_name('patrick'),
                                  {'Patrick the Starfish': 'patrick'})
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(not WINAPI, 'win32serviceutil not available')
     def test_start(self):
         '''
@@ -138,7 +137,6 @@ class WinServiceTestCase(TestCase, LoaderModuleMockMixin):
                 patch.object(win_service, 'status', mock_true):
             self.assertTrue(win_service.start('spongebob'))
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(not WINAPI, 'pywintypes not available')
     def test_start_already_running(self):
         '''
@@ -155,7 +153,6 @@ class WinServiceTestCase(TestCase, LoaderModuleMockMixin):
                  patch.object(win_service, '_status_wait', mock_info):
             self.assertTrue(win_service.start('spongebob'))
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(not WINAPI, 'win32serviceutil not available')
     def test_stop(self):
         '''
@@ -178,7 +175,6 @@ class WinServiceTestCase(TestCase, LoaderModuleMockMixin):
                 patch.object(win_service, 'status', mock_false):
             self.assertTrue(win_service.stop('spongebob'))
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(not WINAPI, 'pywintypes not available')
     def test_stop_not_running(self):
         '''

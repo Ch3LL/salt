@@ -110,7 +110,6 @@ class MapConfTest(TestCase):
     Validate evaluation of salt-cloud map configuration
     '''
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     def test_cloud_map_merge_conf(self):
         '''
         Ensure that nested values can be selectivly overridden in a map file

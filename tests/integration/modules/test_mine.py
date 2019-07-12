@@ -12,7 +12,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 from tests.support.case import ModuleCase
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class MineTest(ModuleCase):
     '''
     Test the mine system

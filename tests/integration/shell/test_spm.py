@@ -9,7 +9,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 from tests.support.case import ShellCase, SPMCase
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class SPMTest(ShellCase, SPMCase):
     '''
     Test spm script

@@ -16,7 +16,6 @@ from tests.support.unit import skipIf
 
 
 @destructiveTest
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class NetworkTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate network state module
@@ -26,7 +25,6 @@ class NetworkTest(ModuleCase, SaltReturnAssertsMixin):
         if os_family not in ('RedHat', 'Debian'):
             self.skipTest('Network state only supported on RedHat and Debian based systems')
 
-    @skipIf(True, 'WAR ROOM TEMPORARY SKIP')
     def test_managed(self):
         '''
         network.managed

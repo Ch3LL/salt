@@ -25,7 +25,6 @@ from tests.support.unit import skipIf  # WAR ROOM temp import
 from tests.support.mixins import LoaderModuleMockMixin
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class StatusBeaconTestCase(TestCase, LoaderModuleMockMixin):
     '''
     Test case for salt.beacons.status

@@ -33,7 +33,6 @@ ARCHIVE_TAR_BAD_HASH = 'md5=d41d8cd98f00b204e9800998ecf8427e'
 ARCHIVE_TAR_HASH_UPPER = 'md5=7643861AC07C30FE7D2310E9F25CA514'
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class ArchiveTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the archive state

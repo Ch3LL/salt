@@ -15,7 +15,6 @@ import salt.utils.systemd
 
 
 @destructiveTest
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class ServiceModuleTest(ModuleCase):
     '''
     Module testing the service module

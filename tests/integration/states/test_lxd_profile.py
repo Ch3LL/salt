@@ -10,7 +10,6 @@ import tests.integration.states.test_lxd
 from tests.support.unit import skipIf  # War Room
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 class LxdProfileTestCase(tests.integration.states.test_lxd.LxdTestCase):
 
     def tearDown(self):

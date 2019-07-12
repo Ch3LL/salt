@@ -21,7 +21,6 @@ from tests.support.case import ShellCase
 log = logging.getLogger(__name__)
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class ProxyCallerSimpleTestCase(ShellCase):
     '''
     Test salt-call --proxyid <proxyid> commands

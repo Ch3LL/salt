@@ -14,7 +14,6 @@ from tests.support.unit import skipIf
 import salt.utils.platform
 
 
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class FileserverTest(ShellCase):
     '''
     Test the fileserver runner

@@ -39,7 +39,6 @@ from salt.ext.six.moves import queue
 log = logging.getLogger(__name__)
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @flaky
 class StateRunnerTest(ShellCase):
     '''
@@ -381,7 +380,6 @@ class StateRunnerTest(ShellCase):
         )
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(salt.utils.platform.is_windows(), '*NIX-only test')
 @flaky
 class OrchEventTest(ShellCase):

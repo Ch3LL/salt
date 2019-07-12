@@ -21,7 +21,6 @@ INSTANCE_NAME = generate_random_name('CLOUD-TEST-')
 PROVIDER_NAME = 'joyent'
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @expensiveTest
 class JoyentTest(ShellCase):
     '''

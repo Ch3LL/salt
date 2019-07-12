@@ -50,7 +50,6 @@ def gen_password():
 @skip_if_not_root
 @skipIf(pwd is None, 'Skip if no pwd module exists')
 @destructiveTest
-@skipIf(True, "WAR ROOM TEMPORARY SKIP")
 class AuthTest(ShellCase):
     '''
     Test auth mechanisms

@@ -24,7 +24,6 @@ PROVIDER_NAME = 'vmware'
 TIMEOUT = 500
 
 
-@skipIf(True, 'WAR ROOM TEMPORARY SKIP')
 @expensiveTest
 class VMWareTest(ShellCase):
     '''
