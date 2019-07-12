@@ -380,9 +380,9 @@ class SaltEvent(object):
             with salt.utils.asynchronous.current_ioloop(self.io_loop):
                 if self.subscriber is None:
                     self.subscriber = salt.transport.ipc.IPCMessageSubscriber(
-                    self.puburi,
-                    io_loop=self.io_loop
-                )
+                        self.puburi,
+                        io_loop=self.io_loop
+                    )
                 try:
                     self.io_loop.run_sync(
                         lambda: self.subscriber.connect(timeout=timeout))
@@ -392,9 +392,9 @@ class SaltEvent(object):
         else:
             if self.subscriber is None:
                 self.subscriber = salt.transport.ipc.IPCMessageSubscriber(
-                self.puburi,
-                io_loop=self.io_loop
-            )
+                    self.puburi,
+                    io_loop=self.io_loop
+                )
 
             # For the asynchronous case, the connect will be defered to when
             # set_event_handler() is invoked.
@@ -1013,8 +1013,10 @@ class AsyncEventPublisher(object):
             epub_uri = epub_sock_path
             epull_uri = epull_sock_path
 
-        log.debug('%s PUB socket URI: %s', self.__class__.__name__, epub_uri)
-        log.debug('%s PULL socket URI: %s', self.__class__.__name__, epull_uri)
+        log.debug('%s PUB socket URI: %s',
+                  self.__class__.__name__, epub_uri)
+        log.debug('%s PULL socket URI: %s',
+                  self.__class__.__name__, epull_uri)
 
         minion_sock_dir = self.opts['sock_dir']
 
@@ -1258,8 +1260,8 @@ class EventReturn(salt.utils.process.SignalHandlingMultiprocessingProcess):
                 self._flush_event_single(event_return)
         else:
             # Only a single event returner
-            log.debug('Calling event returner %s, only one configured.',
-                      self.opts['event_return'])
+            log.debug('Calling event returner %s, only one '
+                      'configured.', self.opts['event_return'])
             event_return = '{0}.event_return'.format(
                 self.opts['event_return']
                 )
@@ -1277,7 +1279,7 @@ class EventReturn(salt.utils.process.SignalHandlingMultiprocessingProcess):
                 # potentially huge dataset to a string
                 if log.level <= logging.DEBUG:
                     log.debug('Event data that caused an exception: %s',
-                              self.event_queue)
+                        self.event_queue)
         else:
             log.error('Could not store return for event(s) - returner '
                       '\'%s\' not found.', event_return)
