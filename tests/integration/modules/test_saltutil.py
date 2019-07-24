@@ -72,7 +72,6 @@ class SaltUtilModuleTest(ModuleCase):
         self.assertIn('priv', ret['return'])
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class SaltUtilSyncModuleTest(ModuleCase):
     '''
     Testcase for the saltutil sync execution module

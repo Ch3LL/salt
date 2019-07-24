@@ -25,7 +25,6 @@ from salt.ext import six
 
 @destructiveTest
 @skipIf(salt.utils.platform.is_windows(), 'minion is windows')
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class PkgrepoTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     pkgrepo state tests

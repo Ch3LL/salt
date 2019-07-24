@@ -16,7 +16,6 @@ from tests.support.mock import (
 )
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class ClearFuncsTestCase(TestCase):
     '''
     TestCase for salt.master.ClearFuncs class

@@ -27,7 +27,6 @@ except:
 
 
 @skipIf(NO_MOCK, NO_MOCK_REASON)
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class LinuxSysctlTestCase(TestCase, LoaderModuleMockMixin):
     '''
     TestCase for salt.modules.saltcheck module

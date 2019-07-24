@@ -319,7 +319,6 @@ class TestGetTemplate(TestCase):
             )
         self.assertEqual(out, 'world' + os.linesep)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_fallback_noloader(self):
         '''
         A Template with a filesystem loader is returned as fallback

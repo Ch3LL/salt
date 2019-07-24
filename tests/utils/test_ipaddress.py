@@ -287,7 +287,6 @@ class AddressTestCase_v4(BaseTestCase, CommonTestMixin_v4):
         assertBadOctet("192.168.0.999", 999)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(sys.version_info > (3,), 'These are tested by the python test suite under Py3')
 class AddressTestCase_v6(BaseTestCase, CommonTestMixin_v6):
     factory = ipaddress.IPv6Address
@@ -546,13 +545,11 @@ class NetmaskTestMixin_v6(CommonTestMixin_v6):
         assertBadNetmask("::", "::")
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(sys.version_info > (3,), 'These are tested by the python test suite under Py3')
 class InterfaceTestCase_v6(BaseTestCase, NetmaskTestMixin_v6):
     factory = ipaddress.IPv6Interface
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(sys.version_info > (3,), 'These are tested by the python test suite under Py3')
 class NetworkTestCase_v6(BaseTestCase, NetmaskTestMixin_v6):
     factory = ipaddress.IPv6Network
@@ -665,7 +662,6 @@ class ComparisonTests(TestCase):
         self.assertRaises(TypeError, v6net.__gt__, v4net)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(sys.version_info > (3,), 'These are tested by the python test suite under Py3')
 class IpaddrUnitTest(TestCase):
 

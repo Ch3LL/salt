@@ -189,7 +189,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
             self.run_function('pkg.refresh_db')
             self.ctx['refresh'] = True
 
-    @skipIf(ON_SUSE and WAR_ROOM_SKIP, 'WAR ROOM SKIP FRIDAY')
     @requires_system_grains
     def test_pkg_001_installed(self, grains):
         '''
@@ -291,7 +290,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
             ret = self.run_state('pkg.removed', name=None, pkgs=pkg_targets)
             self.assertSaltTrueReturn(ret)
 
-    @skipIf(ON_SUSE and WAR_ROOM_SKIP, 'WAR ROOM SKIP FRIDAY')
     @requires_system_grains
     def test_pkg_004_installed_multipkg_with_version(self, grains):
         '''
@@ -468,7 +466,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
         ret = self.run_state('pkg.removed', name=target)
         self.assertSaltTrueReturn(ret)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(salt.utils.platform.is_windows(), 'minion is windows')
     def test_pkg_009_latest_with_epoch(self):
         '''
@@ -482,7 +479,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
                              refresh=False)
         self.assertSaltTrueReturn(ret)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     @requires_salt_modules('pkg.info_installed')
     def test_pkg_010_latest_with_epoch_and_info_installed(self):
         '''
@@ -652,7 +648,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
         ret = self.run_state('pkg.removed', name=target)
         self.assertSaltTrueReturn(ret)
 
-    @pytest.mark.skip('WAR ROOM TEMPORARY SKIP - 2019/07/17')
     @requires_system_grains
     def test_pkg_014_installed_with_comparison_operator(self, grains):
         '''
@@ -935,7 +930,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
             ret = self.run_state('pkg.removed', name=realpkg)
             self.assertSaltTrueReturn(ret)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(salt.utils.platform.is_windows(), 'minion is windows')
     @requires_system_grains
     def test_pkg_cap_005_downloaded(self, grains):
@@ -1002,7 +996,6 @@ class PkgTest(ModuleCase, SaltReturnAssertsMixin):
             ret = self.run_state('pkg.removed', name=realpkg)
             self.assertSaltTrueReturn(ret)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')            # needs to be rewritten to allow for dnf on Fedora 30 and RHEL 8
     @requires_salt_modules('pkg.hold', 'pkg.unhold')
     @requires_system_grains
     def test_pkg_015_installed_held(self, grains):

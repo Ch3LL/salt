@@ -79,7 +79,6 @@ class SaltTest(testprogram.TestProgramCase):
         )
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class RetcodeTestCase(ShellCase):
     '''
     Tests to ensure that we set non-zero retcodes when execution fails

@@ -330,7 +330,6 @@ class SaltMessageClientCleanupTest(TestCase, AdaptedConfigurationTestCaseMixin):
         self.sock.close()
         del self.sock
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_message_client(self):
         '''
         test message client cleanup on close

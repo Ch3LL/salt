@@ -22,7 +22,6 @@ INSTANCE_NAME = generate_random_name('CLOUD-TEST-')
 PROVIDER_NAME = 'linode'
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @expensiveTest
 class LinodeTest(ShellCase):
     '''

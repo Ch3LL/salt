@@ -29,7 +29,6 @@ class TimeoutException(Exception):
     pass
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class ReactorTest(SaltMinionEventAssertsMixin, ShellTestCase):
     '''
     Test Salt's reactor system

@@ -85,7 +85,6 @@ class CommonTestCaseBoilerplate(TestCase):
             HIGHSTATE.pop_active()
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class PyDSLRendererTestCase(CommonTestCaseBoilerplate):
     '''
     WARNING: If tests in here are flaky, they may need

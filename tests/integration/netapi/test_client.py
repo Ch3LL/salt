@@ -31,7 +31,6 @@ class NetapiClientTest(TestCase):
     def tearDown(self):
         del self.netapi
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_local(self):
         low = {'client': 'local', 'tgt': '*', 'fun': 'test.ping'}
         low.update(self.eauth_creds)
@@ -44,7 +43,6 @@ class NetapiClientTest(TestCase):
         ret.pop('proxytest', None)
         self.assertEqual(ret, {'minion': True, 'sub_minion': True})
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_local_batch(self):
         low = {'client': 'local_batch', 'tgt': '*', 'fun': 'test.ping'}
         low.update(self.eauth_creds)

@@ -20,7 +20,6 @@ INIT_DELAY = 5
 
 
 @destructiveTest
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class ServiceTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the service state

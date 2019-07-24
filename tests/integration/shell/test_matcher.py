@@ -22,7 +22,6 @@ def minion_in_returns(minion, lines):
     return bool([True for line in lines if line == '{0}:'.format(minion)])
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class MatchTest(ShellCase, ShellCaseCommonTestsMixin):
     '''
     Test salt matchers

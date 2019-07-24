@@ -17,7 +17,6 @@ import salt.states.zcbuildout as buildout
 import salt.modules.cmdmod as cmd
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(salt.utils.path.which_bin(KNOWN_VIRTUALENV_BINARY_NAMES) is None,
         "The 'virtualenv' packaged needs to be installed")
 class BuildoutTestCase(Base):

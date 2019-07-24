@@ -128,7 +128,6 @@ class Base(TestCase, LoaderModuleMockMixin):
             shutil.rmtree(self.tdir)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(salt.utils.path.which_bin(KNOWN_VIRTUALENV_BINARY_NAMES) is None,
         "The 'virtualenv' packaged needs to be installed")
 @skip_if_binaries_missing(['tar'])
@@ -321,7 +320,6 @@ class BuildoutTestCase(Base):
         self.assertEqual(time2, time3)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(salt.utils.path.which_bin(KNOWN_VIRTUALENV_BINARY_NAMES) is None,
         'The \'virtualenv\' packaged needs to be installed')
 class BuildoutOnlineTestCase(Base):

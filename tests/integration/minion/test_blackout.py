@@ -21,7 +21,6 @@ import salt.utils.files
 log = logging.getLogger(__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP - 2019/07/23')
 class MinionBlackoutTestCase(ModuleCase):
     '''
     Test minion blackout functionality

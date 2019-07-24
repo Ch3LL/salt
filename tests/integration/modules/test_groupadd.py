@@ -23,7 +23,6 @@ if not salt.utils.platform.is_windows():
 
 @skip_if_not_root
 @destructiveTest
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class GroupModuleTest(ModuleCase):
     '''
     Validate the linux group system module

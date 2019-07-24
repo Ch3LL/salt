@@ -355,7 +355,6 @@ class CMDMODTestCase(TestCase, LoaderModuleMockMixin):
         else:
             raise RuntimeError
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM SKIP FRIDAY')
     @skipIf(salt.utils.platform.is_windows(), 'Do not run on Windows')
     @skipIf(salt.utils.platform.is_darwin(), 'Do not run on MacOS')
     def test_run_cwd_in_combination_with_runas(self):

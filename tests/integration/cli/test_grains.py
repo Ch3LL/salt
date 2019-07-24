@@ -28,7 +28,6 @@ from tests.support.helpers import flaky
 log = logging.getLogger(__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class GrainsTargetingTest(ShellCase):
     '''
     Integration tests for targeting with grains.

@@ -33,7 +33,6 @@ def skip_class(classname):
             f.write(''.join(lines))
 
         if 'WAR ROOM' not in lines[class_line_idx-1]:
-            lines.insert(class_line_idx, '@skipIf(True, "WAR ROOM TEMPORARY SKIP")\n')
             f.seek(0)
             f.truncate()
             f.write(''.join(lines))
@@ -59,13 +58,11 @@ def skip_file(filename):
                 has_skip = True
 
         if not has_import:
-            lines.insert(last_import_line, 'from tests.support.unit import skipIf; skipIf(True, "WAR ROOM TEMPORARY SKIP")  # pylint: disable=C0321,E8702\n')
 
             f.seek(0)
             f.truncate()
             f.write(''.join(lines))
         elif not has_skip:
-            lines.insert(last_import_line, 'skipIf(True, "WAR ROOM TEMPORARY SKIP")')
 
 
 if __name__ == '__main__':

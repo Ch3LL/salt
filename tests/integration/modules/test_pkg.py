@@ -21,7 +21,6 @@ import salt.utils.pkg
 import salt.utils.platform
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @flaky
 class PkgModuleTest(ModuleCase, SaltReturnAssertsMixin):
     '''
@@ -178,7 +177,6 @@ class PkgModuleTest(ModuleCase, SaltReturnAssertsMixin):
             test_install()
             test_remove()
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')            # needs to be rewritten to allow for dnf on Fedora 30 and RHEL 8
     @skipIf(salt.utils.platform.is_windows(), "Skip on windows")
     @requires_salt_modules('pkg.hold', 'pkg.unhold')
     @requires_network()

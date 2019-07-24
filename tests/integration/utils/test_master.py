@@ -21,7 +21,6 @@ DEFAULT_CONFIG = salt.config.master_config(None)
 DEFAULT_CONFIG['cachedir'] = os.path.join(TMP_ROOT_DIR, 'cache')
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class MasterUtilJobsTestCase(ShellTestCase):
 
     def setUp(self):

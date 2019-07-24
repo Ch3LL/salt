@@ -46,7 +46,6 @@ DEFAULT_CONFIG['cachedir'] = os.path.join(ROOT_DIR, 'cache')
 JOB_FUNCTION = 'test.ping'
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class SchedulerEvalTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the scheduler

@@ -34,7 +34,6 @@ from salt.ext import six
 log = logging.getLogger(__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class CopyTest(ShellCase, ShellCaseCommonTestsMixin):
 
     _call_binary_ = 'salt-cp'

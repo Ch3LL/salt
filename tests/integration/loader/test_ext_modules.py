@@ -20,7 +20,6 @@ from tests.support.unit import skipIf, WAR_ROOM_SKIP  # WAR ROOM temp import
 from tests.support.case import ModuleCase
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class LoaderOverridesTest(ModuleCase):
 
     def setUp(self):

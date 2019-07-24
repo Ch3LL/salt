@@ -25,7 +25,6 @@ GITHUB_IP = '192.30.253.113'
 
 
 @skip_if_binaries_missing(['ssh', 'ssh-keygen'], check_all=True)
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class SSHKnownHostsStateTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the ssh state

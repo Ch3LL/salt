@@ -58,7 +58,6 @@ class MasterUtilsReadProcTestCase(TestCase):
 @skipIf(not HAS_PSUTIL, "psutil needed to run test")
 class MasterUtilsIsPidHealthyPsUtil(TestCase):
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def tests_pid_not_running(self):
         assert master.is_pid_healthy(99999999) is False
 
@@ -69,7 +68,6 @@ class MasterUtilsIsPidHealthyPsUtil(TestCase):
             # so that it doesn't enter the except block
             self.assertTrue(master.is_pid_healthy(os.getpid()))
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_is_pid_healthy_not_running_salt(self):
         with patch('psutil.Process.cmdline', return_value=['tacos']):
             assert master.is_pid_healthy(1) is False
@@ -96,7 +94,6 @@ class MasterUtilsIsPidHealthy(TestCase):
     def test_pid_not_running(self):
         assert master.is_pid_healthy(99999999) is False
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_is_pid_healthy_running_salt(self):
         m_fopen = mock_open(read_data=b'salt')
         with patch('salt.utils.process.os_is_running', return_value=True):

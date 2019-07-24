@@ -15,7 +15,6 @@ from tests.support.unit import skipIf, WAR_ROOM_SKIP
 log = logging.getLogger(__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class BeaconStateTestCase(ModuleCase, SaltReturnAssertsMixin):
     '''
     Test beacon states

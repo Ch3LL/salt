@@ -13,7 +13,6 @@ from tests.support.helpers import requires_salt_modules
 
 
 @requires_salt_modules('virt.get_profiles')
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class VirtTest(ModuleCase):
     '''
     Test virt routines

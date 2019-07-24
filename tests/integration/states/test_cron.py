@@ -19,7 +19,6 @@ import salt.utils.platform
 
 
 @skipIf(salt.utils.platform.is_windows(), 'minion is windows')
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class CronTest(ModuleCase):
     '''
     Validate the file state

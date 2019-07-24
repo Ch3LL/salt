@@ -35,7 +35,6 @@ from salt.utils.dateutils import strftime
 
 # Skip this test case if we don't have access to mock!
 @skipIf(NO_MOCK, NO_MOCK_REASON)
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class ZfsTestCase(TestCase, LoaderModuleMockMixin):
     '''
     This class contains a set of functions that test salt.modules.zfs module

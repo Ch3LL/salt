@@ -14,7 +14,6 @@ class ManageTest(ShellCase):
     '''
     Test the manage runner
     '''
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_active(self):
         '''
         jobs.active

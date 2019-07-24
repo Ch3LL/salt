@@ -380,7 +380,6 @@ c9bcgp7D7xD+TxWWNj4CSXEccJgGr91StV+gFg4ARQ==
                               CN='Redacted Root CA')
         self.assertIn(b'BEGIN CERTIFICATE REQUEST', ret)
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     @skipIf(not HAS_M2CRYPTO, 'Skipping, M2Crypto is unavailble')
     def test_create_csr_ext_mapping(self):
         '''

@@ -67,7 +67,6 @@ def which_smbd():
     return smbd
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @skipIf(not which_smbd(), 'Skip when no smbd binary found')
 class TestSmb(TestCase):
 

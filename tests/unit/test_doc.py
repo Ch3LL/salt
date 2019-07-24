@@ -23,7 +23,6 @@ import salt.utils.platform
 log = logging.getLogger(__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class DocTestCase(TestCase):
     '''
     Unit test case for testing doc files and strings.

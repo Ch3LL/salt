@@ -63,7 +63,6 @@ def reline(source, dest, force=False, ending=DEFAULT_ENDING):
     os.rename(tmp, dest)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class StateModuleTest(ModuleCase, SaltReturnAssertsMixin):
     '''
     Validate the state module

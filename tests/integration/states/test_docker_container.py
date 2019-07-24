@@ -54,7 +54,6 @@ def container_name(func):
     return wrapper
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 @destructiveTest
 @skipIf(not salt.utils.path.which('busybox'), 'Busybox not installed')
 @skipIf(not salt.utils.path.which('dockerd'), 'Docker not installed')

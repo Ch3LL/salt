@@ -316,7 +316,6 @@ class BotoS3BucketStateTestCaseBase(TestCase, LoaderModuleMockMixin):
         session_instance.client.return_value = self.conn
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class BotoS3BucketTestCase(BotoS3BucketStateTestCaseBase, BotoS3BucketTestCaseMixin):
     '''
     TestCase for salt.modules.boto_s3_bucket state.module

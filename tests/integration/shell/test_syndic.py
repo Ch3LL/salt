@@ -53,7 +53,6 @@ def session_salt_syndic(request, session_salt_master_of_masters, session_salt_sy
             log.warning('Failed to terminate daemon: %s', daemon.__class__.__name__)
 
 
-@skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
 class SyndicTest(ShellCase, testprogram.TestProgramCase, ShellCaseCommonTestsMixin):
     '''
     Test the salt-syndic command
@@ -61,7 +60,6 @@ class SyndicTest(ShellCase, testprogram.TestProgramCase, ShellCaseCommonTestsMix
 
     _call_binary_ = 'salt-syndic'
 
-    @skipIf(WAR_ROOM_SKIP, 'WAR ROOM TEMPORARY SKIP')
     def test_issue_7754(self):
         old_cwd = os.getcwd()
         config_dir = os.path.join(RUNTIME_VARS.TMP, 'issue-7754')
