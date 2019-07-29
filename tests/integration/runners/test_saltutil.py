@@ -7,9 +7,15 @@ Tests for the state runner
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import os
+import shutil
+import textwrap
 
 # Import Salt Testing Libs
+from tests.support.runtests import RUNTIME_VARS
 from tests.support.case import ShellCase
+
+# Import Salt Libs
+import salt.utils.files
 
 log = logging.getLogger(__name__)
 
@@ -18,6 +24,25 @@ class SyncRunnerTest(ShellCase):
     '''
     Test the sync runner.
     '''
+    def setUp(self):
+        self.auth_dir = os.path.join(RUNTIME_VARS.TMP_STATE_TREE, '_auth')
+        if os.path.exists(self.auth_dir):
+            shutil.rmtree(self.auth_dir)
+        os.mkdir(self.auth_dir)
+
+        content = textwrap.dedent('''\
+            # -*- coding: utf-8 -*-
+            #
+            # This file exists just to test auth module sync for masters.
+            ''')
+
+        with salt.utils.files.fopen(os.path.join(self.auth_dir, 'nullauth.py'), 'w') as fp_:
+            fp_.write(content)
+
+    def tearDown(self):
+        if os.path.exists(self.auth_dir):
+            shutil.rmtree(self.auth_dir)
+
     def test_sync_auth_includes_auth(self):
         '''
         '''
