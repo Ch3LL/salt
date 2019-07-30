@@ -40,8 +40,12 @@ class SyncRunnerTest(ShellCase):
             fp_.write(content)
 
     def tearDown(self):
+        cache_auth = os.path.join(RUNTIME_VARS.TMP_ROOT_DIR, 'cache')
         if os.path.exists(self.auth_dir):
             shutil.rmtree(self.auth_dir)
+        for root, dirs, files in os.walk(cache_auth):
+            if '_auth' in root:
+                shutil.rmtree(root)
 
     def test_sync_auth_includes_auth(self):
         '''
