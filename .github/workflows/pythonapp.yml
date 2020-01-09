@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - continue-on-error: True
     - uses: actions/checkout@v1
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
@@ -21,6 +20,7 @@ jobs:
       run: |
         pip install pre-commit
     - name: Run Pre-Commit
+      continue-on-error: True
       run: |
         echo "testing pre-commit"
         pre-commit run -av
