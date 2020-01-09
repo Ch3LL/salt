@@ -22,3 +22,4 @@ jobs:
     - name: Run Pre-Commit
       run: |
         pre-commit run -av
+        git diff
