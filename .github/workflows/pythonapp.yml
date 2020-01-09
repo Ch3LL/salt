@@ -21,5 +21,7 @@ jobs:
         pip install pre-commit
     - name: Run Pre-Commit
       run: |
+        echo "testing pre-commit"
         pre-commit run -av
+        echo "git diff the changes"
         git diff
