@@ -24,5 +24,8 @@ jobs:
       run: |
         echo "testing pre-commit"
         pre-commit run -av
+    - name: Run Git Diff
+      continue-on-error: True
+      run: |
         echo "git diff the changes"
         git diff
