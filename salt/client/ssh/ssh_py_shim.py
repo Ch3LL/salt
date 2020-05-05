@@ -316,6 +316,11 @@ def main(argv):  # pylint: disable=W0613
         # Salt thin exists and is up-to-date - fall through and use it
 
     salt_call_path = os.path.join(OPTIONS.saltdir, "salt-call")
+    if OPTIONS.binary:
+        salt_call_path = os.path.join(OPTIONS.saltdir, "salt")
+        sts = os.stat(salt_call_path)
+        os.chmod(os.path.join(OPTIONS.saltdir, "salt"), sts.st_mode | stat.S_IXUSR)
+
     if not os.path.isfile(salt_call_path):
         sys.stderr.write('ERROR: thin is missing "{0}"\n'.format(salt_call_path))
         need_deployment()
@@ -340,9 +345,11 @@ def main(argv):  # pylint: disable=W0613
     else:
         argv_prepared = ARGS
 
-    salt_argv = [
-        get_executable(),
-        salt_call_path,
+    if OPTIONS.binary:
+        salt_call = [salt_call_path, "call"]
+    else:
+        salt_call = [get_executable(), salt_call_path]
+    salt_argv = salt_call + [
         "--retcode-passthrough",
         "--local",
         "--metadata",

@@ -170,6 +170,9 @@ def _check_release_cmp(name):
         log.info("Release code name {} was not found.".format(name))
         return None
 
+    import pudb
+
+    pu.db
     current_version = six.text_type(
         salt.version.SaltStackVersion(*salt.version.__version_info__)
     )

@@ -29,6 +29,7 @@ import salt.utils.files
 import salt.utils.hashutils
 import salt.utils.json
 import salt.utils.path
+import salt.utils.salt_binary
 import salt.utils.stringutils
 import salt.version
 import yaml
@@ -373,6 +374,8 @@ def gen_thin(
     absonly=True,
     compress="gzip",
     extended_cfg=None,
+    binary=None,
+    binary_version=None,
 ):
     """
     Generate the salt-thin tarball and print the location of the tarball
@@ -410,8 +413,23 @@ def gen_thin(
     code_checksum = os.path.join(thindir, "code-checksum")
     digest_collector = salt.utils.hashutils.DigestCollector()
 
-    with salt.utils.files.fopen(salt_call, "wb") as fp_:
-        fp_.write(_get_salt_call("pyall", **_get_ext_namespaces(extended_cfg)))
+    if binary:
+        if binary_version:
+            salt.utils.salt_binary.prep_binary(bin_dir=binary, version=binary_version)
+            bin_path = salt.utils.salt_binary.get_binary_path(
+                bin_dir=binary, latest=False, version=binary_version
+            )
+        #            bin_path = os.path.join(binary, binary_version, "salt")
+        else:
+            salt.utils.salt_binary.prep_binary(bin_dir=binary)
+            import pudb
+
+            pu.db
+            bin_path = salt.utils.salt_binary.get_binary_path(binary)
+        shutil.copyfile(bin_path, os.path.join(thindir, "salt"))
+    else:
+        with salt.utils.files.fopen(salt_call, "wb") as fp_:
+            fp_.write(_get_salt_call("pyall", **_get_ext_namespaces(extended_cfg)))
 
     if os.path.isfile(thintar):
         if not overwrite:
@@ -440,99 +458,110 @@ def gen_thin(
                     )
         else:
             return thintar
-    if _six.PY3:
-        # Let's check for the minimum python 2 version requirement, 2.6
-        if not salt.utils.path.which(python2_bin):
-            log.debug(
-                "%s binary does not exist. Will not detect Python 2 version",
-                python2_bin,
-            )
-        else:
-            py_shell_cmd = "{} -c 'import sys;sys.stdout.write(\"%s.%s\\n\" % sys.version_info[:2]);'".format(
-                python2_bin
-            )
-            cmd = subprocess.Popen(py_shell_cmd, stdout=subprocess.PIPE, shell=True)
-            stdout, _ = cmd.communicate()
-            if cmd.returncode == 0:
-                py2_version = tuple(
-                    int(n) for n in stdout.decode("utf-8").strip().split(".")
+    if not binary:
+        if _six.PY3:
+            # Let's check for the minimum python 2 version requirement, 2.6
+            if not salt.utils.path.which(python2_bin):
+                log.debug(
+                    "%s binary does not exist. Will not detect Python 2 version",
+                    python2_bin,
                 )
-                if py2_version < (2, 6):
-                    raise salt.exceptions.SaltSystemExit(
-                        'The minimum required python version to run salt-ssh is "2.6".'
-                        'The version reported by "{0}" is "{1}". Please try "salt-ssh '
-                        '--python2-bin=<path-to-python-2.6-binary-or-higher>".'.format(
-                            python2_bin, stdout.strip()
-                        )
+            else:
+                py_shell_cmd = "{} -c 'import sys;sys.stdout.write(\"%s.%s\\n\" % sys.version_info[:2]);'".format(
+                    python2_bin
+                )
+                cmd = subprocess.Popen(py_shell_cmd, stdout=subprocess.PIPE, shell=True)
+                stdout, _ = cmd.communicate()
+                if cmd.returncode == 0:
+                    py2_version = tuple(
+                        int(n) for n in stdout.decode("utf-8").strip().split(".")
                     )
-            else:
-                log.debug("Unable to detect %s version", python2_bin)
-                log.debug(stdout)
+                    if py2_version < (2, 6):
+                        raise salt.exceptions.SaltSystemExit(
+                            'The minimum required python version to run salt-ssh is "2.6".'
+                            'The version reported by "{0}" is "{1}". Please try "salt-ssh '
+                            '--python2-bin=<path-to-python-2.6-binary-or-higher>".'.format(
+                                python2_bin, stdout.strip()
+                            )
+                        )
+                else:
+                    log.debug("Unable to detect %s version", python2_bin)
+                    log.debug(stdout)
 
-    tops_failure_msg = "Failed %s tops for Python binary %s."
-    python_check_msg = (
-        "%s binary does not exist. Will not attempt to generate tops for Python %s"
-    )
-    tops_py_version_mapping = {}
-    tops = get_tops(extra_mods=extra_mods, so_mods=so_mods)
-    tops_py_version_mapping[sys.version_info.major] = tops
-
-    # Collect tops, alternative to 2.x version
-    if _six.PY2 and sys.version_info.major == 2:
-        # Get python 3 tops
-        if not salt.utils.path.which(python3_bin):
-            log.debug(python_check_msg, python3_bin, "3")
-        else:
-            py_shell_cmd = "{0} -c 'import salt.utils.thin as t;print(t.gte())' '{1}'".format(
-                python3_bin,
-                salt.utils.json.dumps({"extra_mods": extra_mods, "so_mods": so_mods}),
-            )
-            cmd = subprocess.Popen(
-                py_shell_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
-            )
-            stdout, stderr = cmd.communicate()
-            if cmd.returncode == 0:
-                try:
-                    tops = salt.utils.json.loads(stdout)
-                    tops_py_version_mapping["3"] = tops
-                except ValueError as err:
-                    log.error(tops_failure_msg, "parsing", python3_bin)
-                    log.exception(err)
-            else:
-                log.debug(tops_failure_msg, "collecting", python3_bin)
-                log.debug(stderr)
-
-    # Collect tops, alternative to 3.x version
-    if _six.PY3 and sys.version_info.major == 3:
-        # Get python 2 tops
-        if not salt.utils.path.which(python2_bin):
-            log.debug(python_check_msg, python2_bin, "2")
-        else:
-            py_shell_cmd = "{0} -c 'import salt.utils.thin as t;print(t.gte())' '{1}'".format(
-                python2_bin,
-                salt.utils.json.dumps({"extra_mods": extra_mods, "so_mods": so_mods}),
-            )
-            cmd = subprocess.Popen(
-                py_shell_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
-            )
-            stdout, stderr = cmd.communicate()
-            if cmd.returncode == 0:
-                try:
-                    tops = salt.utils.json.loads(stdout.decode("utf-8"))
-                    tops_py_version_mapping["2"] = tops
-                except ValueError as err:
-                    log.error(tops_failure_msg, "parsing", python2_bin)
-                    log.exception(err)
-            else:
-                log.debug(tops_failure_msg, "collecting", python2_bin)
-                log.debug(stderr)
-
-    with salt.utils.files.fopen(pymap_cfg, "wb") as fp_:
-        fp_.write(
-            _get_supported_py_config(
-                tops=tops_py_version_mapping, extended_cfg=extended_cfg
-            )
+        tops_failure_msg = "Failed %s tops for Python binary %s."
+        python_check_msg = (
+            "%s binary does not exist. Will not attempt to generate tops for Python %s"
         )
+        tops_py_version_mapping = {}
+        tops = get_tops(extra_mods=extra_mods, so_mods=so_mods)
+        tops_py_version_mapping[sys.version_info.major] = tops
+
+        # Collect tops, alternative to 2.x version
+        if _six.PY2 and sys.version_info.major == 2:
+            # Get python 3 tops
+            if not salt.utils.path.which(python3_bin):
+                log.debug(python_check_msg, python3_bin, "3")
+            else:
+                py_shell_cmd = "{0} -c 'import salt.utils.thin as t;print(t.gte())' '{1}'".format(
+                    python3_bin,
+                    salt.utils.json.dumps(
+                        {"extra_mods": extra_mods, "so_mods": so_mods}
+                    ),
+                )
+                cmd = subprocess.Popen(
+                    py_shell_cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    shell=True,
+                )
+                stdout, stderr = cmd.communicate()
+                if cmd.returncode == 0:
+                    try:
+                        tops = salt.utils.json.loads(stdout)
+                        tops_py_version_mapping["3"] = tops
+                    except ValueError as err:
+                        log.error(tops_failure_msg, "parsing", python3_bin)
+                        log.exception(err)
+                else:
+                    log.debug(tops_failure_msg, "collecting", python3_bin)
+                    log.debug(stderr)
+
+        # Collect tops, alternative to 3.x version
+        if _six.PY3 and sys.version_info.major == 3:
+            # Get python 2 tops
+            if not salt.utils.path.which(python2_bin):
+                log.debug(python_check_msg, python2_bin, "2")
+            else:
+                py_shell_cmd = "{0} -c 'import salt.utils.thin as t;print(t.gte())' '{1}'".format(
+                    python2_bin,
+                    salt.utils.json.dumps(
+                        {"extra_mods": extra_mods, "so_mods": so_mods}
+                    ),
+                )
+                cmd = subprocess.Popen(
+                    py_shell_cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    shell=True,
+                )
+                stdout, stderr = cmd.communicate()
+                if cmd.returncode == 0:
+                    try:
+                        tops = salt.utils.json.loads(stdout.decode("utf-8"))
+                        tops_py_version_mapping["2"] = tops
+                    except ValueError as err:
+                        log.error(tops_failure_msg, "parsing", python2_bin)
+                        log.exception(err)
+                else:
+                    log.debug(tops_failure_msg, "collecting", python2_bin)
+                    log.debug(stderr)
+
+        with salt.utils.files.fopen(pymap_cfg, "wb") as fp_:
+            fp_.write(
+                _get_supported_py_config(
+                    tops=tops_py_version_mapping, extended_cfg=extended_cfg
+                )
+            )
 
     tmp_thintar = _get_thintar_prefix(thintar)
     if compress == "gzip":
@@ -552,89 +581,96 @@ def gen_thin(
 
     # Pack default data
     log.debug("Packing default libraries based on current Salt version")
-    for py_ver, tops in _six.iteritems(tops_py_version_mapping):
-        for top in tops:
-            if absonly and not os.path.isabs(top):
-                continue
-            base = os.path.basename(top)
-            top_dirname = os.path.dirname(top)
-            if os.path.isdir(top_dirname):
+    if not binary:
+        for py_ver, tops in _six.iteritems(tops_py_version_mapping):
+            for top in tops:
+                if absonly and not os.path.isabs(top):
+                    continue
+                base = os.path.basename(top)
+                top_dirname = os.path.dirname(top)
+                if os.path.isdir(top_dirname):
+                    os.chdir(top_dirname)
+                else:
+                    # This is likely a compressed python .egg
+                    tempdir = tempfile.mkdtemp()
+                    egg = zipfile.ZipFile(top_dirname)
+                    egg.extractall(tempdir)
+                    top = os.path.join(tempdir, base)
+                    os.chdir(tempdir)
+
+                site_pkg_dir = _is_shareable(base) and "pyall" or "py{}".format(py_ver)
+
+                log.debug('Packing "%s" to "%s" destination', base, site_pkg_dir)
+                if not os.path.isdir(top):
+                    # top is a single file module
+                    if os.path.exists(os.path.join(top_dirname, base)):
+                        tfp.add(base, arcname=os.path.join(site_pkg_dir, base))
+                    continue
+                for root, dirs, files in salt.utils.path.os_walk(
+                    base, followlinks=True
+                ):
+                    for name in files:
+                        if not name.endswith((".pyc", ".pyo")):
+                            digest_collector.add(os.path.join(root, name))
+                            arcname = os.path.join(site_pkg_dir, root, name)
+                            if hasattr(tfp, "getinfo"):
+                                try:
+                                    # This is a little slow but there's no clear way to detect duplicates
+                                    tfp.getinfo(os.path.join(site_pkg_dir, root, name))
+                                    arcname = None
+                                except KeyError:
+                                    log.debug(
+                                        'ZIP: Unable to add "%s" with "getinfo"',
+                                        arcname,
+                                    )
+                            if arcname:
+                                tfp.add(os.path.join(root, name), arcname=arcname)
+
+                if tempdir is not None:
+                    shutil.rmtree(tempdir)
+                    tempdir = None
+
+        # Pack alternative data
+        if extended_cfg:
+            log.debug("Packing libraries based on alternative Salt versions")
+        for ns, cfg in _six.iteritems(get_ext_tops(extended_cfg)):
+            tops = [cfg.get("path")] + cfg.get("dependencies")
+            py_ver_major, py_ver_minor = cfg.get("py-version")
+            for top in tops:
+                base, top_dirname = os.path.basename(top), os.path.dirname(top)
                 os.chdir(top_dirname)
-            else:
-                # This is likely a compressed python .egg
-                tempdir = tempfile.mkdtemp()
-                egg = zipfile.ZipFile(top_dirname)
-                egg.extractall(tempdir)
-                top = os.path.join(tempdir, base)
-                os.chdir(tempdir)
-
-            site_pkg_dir = _is_shareable(base) and "pyall" or "py{}".format(py_ver)
-
-            log.debug('Packing "%s" to "%s" destination', base, site_pkg_dir)
-            if not os.path.isdir(top):
-                # top is a single file module
-                if os.path.exists(os.path.join(top_dirname, base)):
-                    tfp.add(base, arcname=os.path.join(site_pkg_dir, base))
-                continue
-            for root, dirs, files in salt.utils.path.os_walk(base, followlinks=True):
-                for name in files:
-                    if not name.endswith((".pyc", ".pyo")):
-                        digest_collector.add(os.path.join(root, name))
-                        arcname = os.path.join(site_pkg_dir, root, name)
-                        if hasattr(tfp, "getinfo"):
-                            try:
-                                # This is a little slow but there's no clear way to detect duplicates
-                                tfp.getinfo(os.path.join(site_pkg_dir, root, name))
-                                arcname = None
-                            except KeyError:
-                                log.debug(
-                                    'ZIP: Unable to add "%s" with "getinfo"', arcname
-                                )
-                        if arcname:
-                            tfp.add(os.path.join(root, name), arcname=arcname)
-
-            if tempdir is not None:
-                shutil.rmtree(tempdir)
-                tempdir = None
-
-    # Pack alternative data
-    if extended_cfg:
-        log.debug("Packing libraries based on alternative Salt versions")
-    for ns, cfg in _six.iteritems(get_ext_tops(extended_cfg)):
-        tops = [cfg.get("path")] + cfg.get("dependencies")
-        py_ver_major, py_ver_minor = cfg.get("py-version")
-        for top in tops:
-            base, top_dirname = os.path.basename(top), os.path.dirname(top)
-            os.chdir(top_dirname)
-            site_pkg_dir = (
-                _is_shareable(base) and "pyall" or "py{0}".format(py_ver_major)
-            )
-            log.debug(
-                'Packing alternative "%s" to "%s/%s" destination',
-                base,
-                ns,
-                site_pkg_dir,
-            )
-            if not os.path.isdir(top):
-                # top is a single file module
-                if os.path.exists(os.path.join(top_dirname, base)):
-                    tfp.add(base, arcname=os.path.join(ns, site_pkg_dir, base))
-                continue
-            for root, dirs, files in salt.utils.path.os_walk(base, followlinks=True):
-                for name in files:
-                    if not name.endswith((".pyc", ".pyo")):
-                        digest_collector.add(os.path.join(root, name))
-                        arcname = os.path.join(ns, site_pkg_dir, root, name)
-                        if hasattr(tfp, "getinfo"):
-                            try:
-                                tfp.getinfo(os.path.join(site_pkg_dir, root, name))
-                                arcname = None
-                            except KeyError:
-                                log.debug(
-                                    'ZIP: Unable to add "%s" with "getinfo"', arcname
-                                )
-                        if arcname:
-                            tfp.add(os.path.join(root, name), arcname=arcname)
+                site_pkg_dir = (
+                    _is_shareable(base) and "pyall" or "py{0}".format(py_ver_major)
+                )
+                log.debug(
+                    'Packing alternative "%s" to "%s/%s" destination',
+                    base,
+                    ns,
+                    site_pkg_dir,
+                )
+                if not os.path.isdir(top):
+                    # top is a single file module
+                    if os.path.exists(os.path.join(top_dirname, base)):
+                        tfp.add(base, arcname=os.path.join(ns, site_pkg_dir, base))
+                    continue
+                for root, dirs, files in salt.utils.path.os_walk(
+                    base, followlinks=True
+                ):
+                    for name in files:
+                        if not name.endswith((".pyc", ".pyo")):
+                            digest_collector.add(os.path.join(root, name))
+                            arcname = os.path.join(ns, site_pkg_dir, root, name)
+                            if hasattr(tfp, "getinfo"):
+                                try:
+                                    tfp.getinfo(os.path.join(site_pkg_dir, root, name))
+                                    arcname = None
+                                except KeyError:
+                                    log.debug(
+                                        'ZIP: Unable to add "%s" with "getinfo"',
+                                        arcname,
+                                    )
+                            if arcname:
+                                tfp.add(os.path.join(root, name), arcname=arcname)
 
     os.chdir(thindir)
     with salt.utils.files.fopen(thinver, "w+") as fp_:
@@ -647,13 +683,19 @@ def gen_thin(
         fp_.write(digest_collector.digest())
     os.chdir(os.path.dirname(thinver))
 
-    for fname in [
+    files = [
         "version",
         ".thin-gen-py-version",
         "salt-call",
         "supported-versions",
         "code-checksum",
-    ]:
+    ]
+    if binary:
+        files.append("salt")
+        files.remove("supported-versions")
+        files.remove("salt-call")
+
+    for fname in files:
         tfp.add(fname)
 
     if start_dir:

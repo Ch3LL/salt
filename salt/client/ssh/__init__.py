@@ -319,6 +319,7 @@ class SSH(object):
             python2_bin=self.opts["python2_bin"],
             python3_bin=self.opts["python3_bin"],
             extended_cfg=self.opts.get("ssh_ext_alternatives"),
+            binary=self.opts.get("ssh_binary"),
         )
         self.mods = mod_data(self.fsclient)
 
@@ -899,6 +900,8 @@ class Single(object):
         self.fsclient = fsclient
         self.context = {"master_opts": self.opts, "fileclient": self.fsclient}
 
+        self.binary = self.opts.get("ssh_binary", "")
+
         self.ssh_pre_flight = kwargs.get("ssh_pre_flight", None)
 
         if self.ssh_pre_flight:
@@ -1290,6 +1293,7 @@ OPTIONS.wipe = {wipe}
 OPTIONS.tty = {tty}
 OPTIONS.cmd_umask = {cmd_umask}
 OPTIONS.code_checksum = {code_checksum}
+OPTIONS.binary = '{binary}'
 ARGS = {arguments}\n'''.format(
             config=self.minion_config,
             delimeter=RSTR,
@@ -1302,6 +1306,7 @@ ARGS = {arguments}\n'''.format(
             tty=self.tty,
             cmd_umask=self.cmd_umask,
             code_checksum=thin_code_digest,
+            binary=self.binary,
             arguments=self.argv,
         )
         py_code = SSH_PY_SHIM.replace("#%%OPTS", arg_str)
