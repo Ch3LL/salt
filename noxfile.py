@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 noxfile
 ~~~~~~~
@@ -7,7 +6,6 @@ Nox configuration script
 """
 # pylint: disable=resource-leakage,3rd-party-module-not-gated
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import glob
@@ -65,7 +63,7 @@ RUNTESTS_LOGFILE = os.path.join(
 )
 
 # Prevent Python from writing bytecode
-os.environ[str("PYTHONDONTWRITEBYTECODE")] = str("1")
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
 
 
 def find_session_runner(session, name, **kwargs):
@@ -1120,7 +1118,8 @@ def lint_tests_pre_commit(session):
 @nox.session(python="3")
 @nox.parametrize("update", [False, True])
 @nox.parametrize("compress", [False, True])
-def docs(session, compress, update):
+@nox.parametrize("clean", [False, True])
+def docs(session, compress, update, clean):
     """
     Build Salt's Documentation
     """
@@ -1131,13 +1130,15 @@ def docs(session, compress, update):
             "docs-man-{}".format(session.python),
             compress=compress,
             update=update,
+            clean=clean,
         )
     )
 
 
 @nox.session(name="docs-html", python="3")
 @nox.parametrize("compress", [False, True])
-def docs_html(session, compress):
+@nox.parametrize("clean", [False, True])
+def docs_html(session, compress, clean):
     """
     Build Salt's HTML Documentation
     """
@@ -1148,7 +1149,8 @@ def docs_html(session, compress):
     install_command = ["--progress-bar=off", "-r", requirements_file]
     session.install(*install_command, silent=PIP_INSTALL_SILENT)
     os.chdir("doc/")
-    session.run("make", "clean", external=True)
+    if clean:
+        session.run("make", "clean", external=True)
     session.run("make", "html", "SPHINXOPTS=-W", external=True)
     if compress:
         session.run("tar", "-cJvf", "html-archive.tar.xz", "_build/html", external=True)
@@ -1158,7 +1160,8 @@ def docs_html(session, compress):
 @nox.session(name="docs-man", python="3")
 @nox.parametrize("update", [False, True])
 @nox.parametrize("compress", [False, True])
-def docs_man(session, compress, update):
+@nox.parametrize("clean", [False, True])
+def docs_man(session, compress, update, clean):
     """
     Build Salt's Manpages Documentation
     """
@@ -1169,7 +1172,8 @@ def docs_man(session, compress, update):
     install_command = ["--progress-bar=off", "-r", requirements_file]
     session.install(*install_command, silent=PIP_INSTALL_SILENT)
     os.chdir("doc/")
-    session.run("make", "clean", external=True)
+    if clean:
+        session.run("make", "clean", external=True)
     session.run("make", "man", "SPHINXOPTS=-W", external=True)
     if update:
         session.run("rm", "-rf", "man/", external=True)
