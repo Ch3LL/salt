@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 """
     :codeauthor: :email:`Daniel Wallace <dwallace@saltstack.com`
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import re
@@ -322,8 +320,8 @@ class SSHSingleTests(TestCase):
             assert ret == exp_ret
             assert mock_cmd.call_count == 2
             assert [
-                call("/bin/sh '{0}'".format(script)),
-                call("rm '{0}'".format(script)),
+                call("/bin/sh '{}'".format(script)),
+                call("rm '{}'".format(script)),
             ] == mock_cmd.call_args_list
 
     def test_shim_cmd(self):
@@ -388,8 +386,8 @@ class SSHSingleTests(TestCase):
             ret = single.run_ssh_pre_flight()
             assert ret == exp_ret
             assert [
-                call("/bin/sh '{0}'".format(exp_tmp)),
-                call("rm '{0}'".format(exp_tmp)),
+                call("/bin/sh '{}'".format(exp_tmp)),
+                call("rm '{}'".format(exp_tmp)),
             ] == mock_cmd.call_args_list
 
     @skipIf(salt.utils.platform.is_windows(), "SSH_PY_SHIM not set on windows")
@@ -432,3 +430,97 @@ class SSHSingleTests(TestCase):
 
         ret = single._cmd_str()
         assert re.search('SET_PATH=""', ret)
+
+
+class SSHTests(ShellCase):
+    def setUp(self):
+        self.opts = salt.config.client_config(self.get_config_file_path("master"))
+
+    def test_expand_target_ip_address(self):
+        """
+        test expand_target when target is root@<ip address>
+        """
+        host = "127.0.0.1"
+        user = "root@"
+        opts = self.opts
+        opts["selected_target_option"] = "glob"
+        opts["tgt"] = user + host
+
+        with patch(
+            "salt.utils.network.is_reachable_host", MagicMock(return_value=False)
+        ):
+            client = ssh.SSH(opts)
+        assert opts["tgt"] == user + host
+        client._expand_target()
+        assert opts["tgt"] == host
+
+    def test_expand_target_dns(self):
+        """
+        test expand_target when target is root@<dns>
+        """
+        host = "localhost"
+        user = "root@"
+        opts = self.opts
+        opts["selected_target_option"] = "glob"
+        opts["tgt"] = user + host
+
+        with patch(
+            "salt.utils.network.is_reachable_host", MagicMock(return_value=False)
+        ):
+            client = ssh.SSH(opts)
+        assert opts["tgt"] == user + host
+        client._expand_target()
+        assert opts["tgt"] == host
+
+    def test_update_targets_ip_address(self):
+        """
+        test update_targets when host is ip address
+        """
+        host = "127.0.0.1"
+        user = "root@"
+        opts = self.opts
+        opts["selected_target_option"] = "glob"
+        opts["tgt"] = user + host
+
+        with patch(
+            "salt.utils.network.is_reachable_host", MagicMock(return_value=False)
+        ):
+            client = ssh.SSH(opts)
+        assert opts["tgt"] == user + host
+        client._update_targets()
+        assert opts["tgt"] == host
+
+    def test_update_targets_dns(self):
+        """
+        test update_targets when host is dns
+        """
+        host = "localhost"
+        user = "root@"
+        opts = self.opts
+        opts["selected_target_option"] = "glob"
+        opts["tgt"] = user + host
+
+        with patch(
+            "salt.utils.network.is_reachable_host", MagicMock(return_value=False)
+        ):
+            client = ssh.SSH(opts)
+        assert opts["tgt"] == user + host
+        client._update_targets()
+        assert opts["tgt"] == host
+
+    def test_update_targets_no_user(self):
+        """
+        test update_targets when no user defined
+        """
+        host = "127.0.0.1"
+        opts = self.opts
+        opts["selected_target_option"] = "glob"
+        opts["tgt"] = host
+
+        with patch(
+            "salt.utils.network.is_reachable_host", MagicMock(return_value=False)
+        ):
+            client = ssh.SSH(opts)
+        assert opts["tgt"] == host
+        client._update_targets()
+        assert opts["tgt"] == host
