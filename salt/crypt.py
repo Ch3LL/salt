@@ -61,20 +61,6 @@ if not HAS_M2:
     except ImportError:
         HAS_CRYPTO = False
 
-if not HAS_M2 and not HAS_CRYPTO:
-    try:
-        from Crypto.Cipher import AES, PKCS1_OAEP, PKCS1_v1_5 as PKCS1_v1_5_CIPHER
-        from Crypto.Hash import SHA
-        from Crypto.PublicKey import RSA
-        from Crypto.Signature import PKCS1_v1_5
-
-        # let this be imported, if possible
-        from Crypto import Random
-
-        HAS_CRYPTO = True
-    except ImportError:
-        HAS_CRYPTO = False
-
 
 log = logging.getLogger(__name__)
 
@@ -255,6 +241,7 @@ def verify_signature(pubkey_path, message, signature):
         return pubkey.verify(digest, signature)
     else:
         verifier = PKCS1_v1_5.new(pubkey)
+        # pylint: disable=E1102
         return verifier.verify(
             SHA.new(salt.utils.stringutils.to_bytes(message)), signature
         )

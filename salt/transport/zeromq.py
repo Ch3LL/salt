@@ -61,10 +61,7 @@ try:
     HAS_M2 = True
 except ImportError:
     HAS_M2 = False
-    try:
-        from Cryptodome.Cipher import PKCS1_OAEP
-    except ImportError:
-        from Crypto.Cipher import PKCS1_OAEP
+    from Cryptodome.Cipher import PKCS1_OAEP
 
 log = logging.getLogger(__name__)
 

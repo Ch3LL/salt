@@ -21,13 +21,6 @@ try:
     HAS_PYCRYPTO_RSA = True
 except ImportError:
     HAS_PYCRYPTO_RSA = False
-if not HAS_PYCRYPTO_RSA:
-    try:
-        from Crypto.PublicKey import RSA
-
-        HAS_PYCRYPTO_RSA = True
-    except ImportError:
-        HAS_PYCRYPTO_RSA = False
 
 
 PRIVKEY_DATA = (

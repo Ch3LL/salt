@@ -190,13 +190,13 @@ EOF'''.format(
     ]
 )
 
-if not is_windows():
-    shim_file = os.path.join(os.path.dirname(__file__), "ssh_py_shim.py")
-    if not os.path.exists(shim_file):
-        # On esky builds we only have the .pyc file
-        shim_file += "c"
-    with salt.utils.files.fopen(shim_file) as ssh_py_shim:
-        SSH_PY_SHIM = ssh_py_shim.read()
+# if not is_windows():
+#    shim_file = os.path.join(os.path.dirname(__file__), "ssh_py_shim.py")
+#    if not os.path.exists(shim_file):
+#        # On esky builds we only have the .pyc file
+#        shim_file += "c"
+#    with salt.utils.files.fopen(shim_file) as ssh_py_shim:
+#        SSH_PY_SHIM = ssh_py_shim.read()
 
 log = logging.getLogger(__name__)
 
@@ -1312,6 +1312,7 @@ ARGS = {arguments}\n'''.format(
             code_checksum=thin_code_digest,
             arguments=self.argv,
         )
+        SSH_PY_SHIM = "test"
         py_code = SSH_PY_SHIM.replace("#%%OPTS", arg_str)
         py_code_enc = base64.encodebytes(py_code.encode("utf-8")).decode("utf-8")
         if not self.winrm:
