@@ -619,7 +619,6 @@ def dependency_information(include_salt_cloud=False):
         ("M2Crypto", "M2Crypto", "version"),
         ("msgpack-python", "msgpack", "version"),
         ("msgpack-pure", "msgpack_pure", "version"),
-        ("pycrypto", "Crypto", "__version__"),
         ("pycryptodome", "Cryptodome", "version_info"),
         ("PyYAML", "yaml", "__version__"),
         ("PyZMQ", "zmq", "__version__"),

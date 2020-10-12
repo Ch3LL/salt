@@ -212,7 +212,7 @@ def get_rsa_pub_key(path):
 
 def sign_message(privkey_path, message, passphrase=None):
     """
-    Use Crypto.Signature.PKCS1_v1_5 to sign a message. Returns the signature.
+    Use Cryptodome.Signature.PKCS1_v1_5 to sign a message. Returns the signature.
     """
     key = get_rsa_key(privkey_path, passphrase)
     log.debug("salt.crypt.sign_message: Signing message.")
@@ -228,7 +228,7 @@ def sign_message(privkey_path, message, passphrase=None):
 
 def verify_signature(pubkey_path, message, signature):
     """
-    Use Crypto.Signature.PKCS1_v1_5 to verify the signature on a message.
+    Use Cryptodome.Signature.PKCS1_v1_5 to verify the signature on a message.
     Returns True for valid signature.
     """
     log.debug("salt.crypt.verify_signature: Loading public key")
@@ -282,7 +282,7 @@ def private_encrypt(key, message):
     """
     Generate an M2Crypto-compatible signature
 
-    :param Crypto.PublicKey.RSA._RSAobj key: The RSA key object
+    :param Cryptodome.PublicKey.RSA._RSAobj key: The RSA key object
     :param str message: The message to sign
     :rtype: str
     :return: The signature, or an empty string if the signature operation failed
@@ -298,7 +298,7 @@ def public_decrypt(pub, message):
     """
     Verify an M2Crypto-compatible signature
 
-    :param Crypto.PublicKey.RSA._RSAobj key: The RSA public key object
+    :param Cryptodome.PublicKey.RSA._RSAobj key: The RSA public key object
     :param str message: The signed message to verify
     :rtype: str
     :return: The message (or digest) recovered from the signature, or an
@@ -827,7 +827,7 @@ class AsyncAuth:
         """
         Return keypair object for the minion.
 
-        :rtype: Crypto.PublicKey.RSA._RSAobj
+        :rtype: Cryptodome.PublicKey.RSA._RSAobj
         :return: The RSA keypair
         """
         # Make sure all key parent directories are accessible
