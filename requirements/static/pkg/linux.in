@@ -3,6 +3,7 @@
 cherrypy
 psutil
 backports.ssl_match_hostname>=3.7.0.1; python_version < '3.7'
+pycparser==2.19
 pyopenssl>=19.0.0
 python-dateutil>=2.8.0
 python-gnupg>=0.4.4
