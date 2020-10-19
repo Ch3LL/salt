@@ -1306,6 +1306,11 @@ class Minion(MinionBase):
         # kill any remaining processes
         self.process_manager.kill_children()
         time.sleep(1)
+        log.debug(
+            "=======================EXITING: SIGNUM: {}, SIGRAME: {}".format(
+                signum, sigframe
+            )
+        )
         sys.exit(0)
 
     def sync_connect_master(self, timeout=None, failed=False):

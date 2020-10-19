@@ -624,6 +624,7 @@ class ProcessManager:
 
         for pid in self._process_map.copy().keys():
             try:
+                log.debug("killing pid: {}, with signal: {}".format(pid, signal_))
                 os.kill(pid, signal_)
             except OSError as exc:
                 if exc.errno not in (errno.ESRCH, errno.EACCES):
