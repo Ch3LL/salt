@@ -134,6 +134,7 @@ def minion_process():
             try:
                 # check pid alive (Unix only trick!)
                 if os.getuid() == 0 and not salt.utils.platform.is_windows():
+                    log.error("killing parent_pid: {}".format(parent_pid))
                     os.kill(parent_pid, 0)
             except OSError as exc:
                 # forcibly exit, regular sys.exit raises an exception-- which
@@ -147,6 +148,7 @@ def minion_process():
                 target=suicide_when_without_parent, args=(os.getppid(),)
             )
             thread.start()
+            log.error("Starting thread {} with pid: {}".format(thread, os.getppid()))
 
         minion = salt.cli.daemons.Minion()
         signal.signal(signal.SIGHUP, functools.partial(handle_hup, minion))
@@ -199,6 +201,7 @@ def salt_minion():
 
     if "--disable-keepalive" in sys.argv:
         sys.argv.remove("--disable-keepalive")
+        log.error("DISABLE KEEPALIVE")
         minion = salt.cli.daemons.Minion()
         minion.start()
         return
@@ -211,6 +214,9 @@ def salt_minion():
         is actually running the minion
         """
         # escalate signal
+        log.error(
+            "Escalate signal to process for pid: {} and signum: {}".format(pid, signum)
+        )
         os.kill(pid, signum)
 
     # keep one minion subprocess running
@@ -219,6 +225,7 @@ def salt_minion():
     while True:
         try:
             process = multiprocessing.Process(target=minion_process)
+            log.error("starting process: {}".format(process))
             process.start()
             signal.signal(
                 signal.SIGTERM,
@@ -246,6 +253,11 @@ def salt_minion():
         signal.signal(signal.SIGTERM, prev_sigterm_handler)
 
         if not process.exitcode == salt.defaults.exitcodes.SALT_KEEPALIVE:
+            log.error(
+                "process.exitcode: {}, salt.defaults: {}".format(
+                    process.exitcode, salt.defaults.exitcodes.SALT_KEEPALIVE
+                )
+            )
             sys.exit(process.exitcode)
         # ontop of the random_reauth_delay already preformed
         # delay extra to reduce flooding and free resources
