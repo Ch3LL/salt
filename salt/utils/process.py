@@ -83,9 +83,16 @@ def daemonize(redirect_out=True):
 
     # do second fork
     try:
+        from pudb.remote import set_trace
+
+        set_trace(term_size=(80, 24))
         pid = os.fork()
         if pid > 0:
+            log.error("==============={} pid is > 0".format(pid))
             salt.utils.crypt.reinit_crypto()
+            log.error(
+                "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
+            )
             sys.exit(salt.defaults.exitcodes.EX_OK)
     except OSError as exc:
         log.error("fork #2 failed: %s (%s)", exc.errno, exc)
