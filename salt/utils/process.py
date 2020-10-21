@@ -83,9 +83,10 @@ def daemonize(redirect_out=True):
 
     # do second fork
     try:
-        from pudb.remote import set_trace
-
-        set_trace(term_size=(80, 24))
+        log.error("-------------------BEFORE FORK")
+        for root, dirs, files in os.walk("."):
+            for filename in files:
+                log.error(filename)
         pid = os.fork()
         if pid > 0:
             log.error("==============={} pid is > 0".format(pid))
@@ -94,6 +95,12 @@ def daemonize(redirect_out=True):
                 "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
             )
             sys.exit(salt.defaults.exitcodes.EX_OK)
+
+        log.error("-------------------AFTER FORK")
+        for root, dirs, files in os.walk("."):
+            for filename in files:
+                log.error(filename)
+
     except OSError as exc:
         log.error("fork #2 failed: %s (%s)", exc.errno, exc)
         sys.exit(salt.defaults.exitcodes.EX_GENERIC)
