@@ -197,6 +197,9 @@ def salt_minion():
         minion.start()
         return
 
+    from pudb.remote import set_trace
+
+    set_trace(term_size=(80, 24))
     if "--disable-keepalive" in sys.argv:
         sys.argv.remove("--disable-keepalive")
         minion = salt.cli.daemons.Minion()
