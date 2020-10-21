@@ -143,6 +143,10 @@ def daemonize(redirect_out=True):
             dup2(dev_null, 1)
             dup2(dev_null, 2)
 
+    log.error("after redirect")
+    _check_mei("after_redirect")
+    log.error("after redirect")
+
 
 def dup2(file1, file2):
     """
