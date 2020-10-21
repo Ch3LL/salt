@@ -84,9 +84,12 @@ def daemonize(redirect_out=True):
     # do second fork
     try:
         log.error("-------------------BEFORE FORK")
-        for root, dirs, files in os.walk("/tmp"):
-            for filename in dirs:
-                log.error(dirs)
+        import re
+
+        for root, dirs, files in os.walk("/tmp/"):
+            print(str(root))
+            if re.match("^/tmp/_MEI", str(root)):
+                log.error("FOUND DIRECTORY BEFORE: {}".format(root))
         pid = os.fork()
         if pid > 0:
             log.error("==============={} pid is > 0".format(pid))
@@ -97,9 +100,10 @@ def daemonize(redirect_out=True):
             sys.exit(salt.defaults.exitcodes.EX_OK)
 
         log.error("-------------------AFTER FORK")
-        for root, dirs, files in os.walk("/tmp"):
-            for filename in dirs:
-                log.error(dirs)
+        for root, dirs, files in os.walk("/tmp/"):
+            print(str(root))
+            if re.match("^/tmp/_MEI", str(root)):
+                log.error("FOUND DIRECTORY AFTER: {}".format(root))
 
     except OSError as exc:
         log.error("fork #2 failed: %s (%s)", exc.errno, exc)
