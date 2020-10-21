@@ -88,12 +88,18 @@ def daemonize(redirect_out=True):
 
         for root, dirs, files in os.walk("/tmp/"):
             print(str(root))
-            if re.match("^/tmp/_MEI", str(root)):
+            if re.match(r"/tmp/_MEI\w*", str(root)):
                 log.error("FOUND DIRECTORY BEFORE: {}".format(root))
         pid = os.fork()
         if pid > 0:
             log.error("==============={} pid is > 0".format(pid))
             salt.utils.crypt.reinit_crypto()
+            log.error("-------------------AFTER pid is 0")
+            for root, dirs, files in os.walk("/tmp/"):
+                print(str(root))
+                if re.match(r"/tmp/_MEI\w*", str(root)):
+                    log.error("FOUND DIRECTORY AFTER pid is 0: {}".format(root))
+
             log.error(
                 "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
             )
@@ -102,7 +108,7 @@ def daemonize(redirect_out=True):
         log.error("-------------------AFTER FORK")
         for root, dirs, files in os.walk("/tmp/"):
             print(str(root))
-            if re.match("^/tmp/_MEI", str(root)):
+            if re.match(r"/tmp/_MEI\w*", str(root)):
                 log.error("FOUND DIRECTORY AFTER: {}".format(root))
 
     except OSError as exc:
