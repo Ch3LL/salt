@@ -29,10 +29,12 @@ more-itertools==8.2.0     # via cheroot, cherrypy, jaraco.functools
 msgpack==1.0.0
 portend==2.6              # via cherrypy
 psutil==5.6.7
+pudb==2019.2
 pyasn1==0.4.5
 pycparser==2.19
 pycryptodomex==3.9.8
 pycurl==7.43.0.5
+pygments==2.7.1           # via pudb
 pymssql==2.1.4 ; python_version < "3.8"
 pymysql==0.9.3
 pyopenssl==19.0.0
@@ -50,6 +52,7 @@ smmap2==2.0.5             # via gitdb2
 tempora==1.14.1           # via portend
 timelib==0.2.5
 urllib3==1.24.3           # via requests
+urwid==2.1.2              # via pudb
 wheel==0.33.4
 wmi==1.4.9
 zc.lockfile==2.0          # via cherrypy

@@ -66,6 +66,7 @@ pathtools==0.1.2          # via watchdog
 pluggy==0.13.0            # via pytest
 portend==2.6
 psutil==5.6.7
+pudb==2019.2
 py==1.9.0                 # via pytest
 pyaml==19.4.1             # via moto
 pyasn1-modules==0.2.4     # via google-auth
@@ -75,6 +76,7 @@ pycryptodome==3.8.1       # via python-jose
 pycryptodomex==3.9.8
 pycurl==7.43.0.5
 pygit2==0.28.2 ; python_version < "3.8"
+pygments==2.7.1
 pymssql==2.1.4 ; python_version < "3.8"
 pymysql==0.9.3
 pyopenssl==19.0.0
@@ -108,6 +110,7 @@ tempora==1.14.1
 timelib==0.2.5
 toml==0.10.0
 urllib3==1.24.3
+urwid==2.1.2
 virtualenv==20.0.20
 watchdog==0.10.3
 websocket-client==0.40.0  # via docker, kubernetes

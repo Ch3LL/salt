@@ -168,6 +168,7 @@ pathtools==0.1.2          # via watchdog
 pluggy==0.13.0            # via pytest
 portend==2.4
 psutil==5.6.7
+pudb==2019.2
 py==1.9.0                 # via pytest
 pyaml==19.4.1             # via moto
 pyasn1-modules==0.2.4     # via google-auth
@@ -177,6 +178,7 @@ pycryptodome==3.8.1       # via python-jose
 pycryptodomex==3.9.8
 pyeapi==0.8.3             # via napalm
 pygit2==1.2.0 ; python_version >= "3.8"
+pygments==2.7.1
 pyiface==0.0.11
 pyinotify==0.9.6
 pyjwt==1.7.1              # via adal
@@ -216,6 +218,7 @@ timelib==0.2.5
 toml==0.10.0
 transitions==0.8.1        # via junos-eznc
 urllib3==1.24.2
+urwid==2.1.2
 vcert==0.7.3
 virtualenv==20.0.20
 watchdog==0.9.0
