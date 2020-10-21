@@ -61,9 +61,15 @@ def appendproctitle(name):
 def _check_mei(stage):
     import re
 
+    yay = []
     for root, dirs, files in os.walk("/tmp/"):
         if re.match(r"\/tmp\/_MEI\w*$", str(root)):
-            log.error("FOUND DIRECTORY {}: {}".format(stage, root))
+            yay.append(str(root))
+
+    if yay:
+        log.error("FOUND DIRECTORY {}: {}".format(stage, yay))
+    else:
+        log.error("DIRECTORY NOT FOUND DURING {}".format(stage))
 
 
 def daemonize(redirect_out=True):
@@ -105,6 +111,9 @@ def daemonize(redirect_out=True):
                 "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
             )
             sys.exit(salt.defaults.exitcodes.EX_OK)
+            log.error("nope")
+            _check_mei("nope")
+            log.error("nope")
 
         log.error("-------------------AFTER FORK")
         _check_mei("after_fork")
