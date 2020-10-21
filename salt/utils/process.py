@@ -58,6 +58,14 @@ def appendproctitle(name):
         setproctitle.setproctitle(setproctitle.getproctitle() + " " + name)
 
 
+def _check_mei(stage):
+    import re
+
+    for root, dirs, files in os.walk("/tmp/"):
+        if re.match(r"\/tmp\/_MEI\w*$", str(root)):
+            log.error("FOUND DIRECTORY {}: {}".format(stage, root))
+
+
 def daemonize(redirect_out=True):
     """
     Daemonize a process
@@ -84,38 +92,32 @@ def daemonize(redirect_out=True):
     # do second fork
     try:
         log.error("-------------------BEFORE FORK")
-        import re
-
-        for root, dirs, files in os.walk("/tmp/"):
-            print(str(root))
-            if re.match(r"/tmp/_MEI\w*", str(root)):
-                log.error("FOUND DIRECTORY BEFORE: {}".format(root))
+        _check_mei("before_fork")
+        log.error("-------------------BEFORE FORK")
         pid = os.fork()
         if pid > 0:
             log.error("==============={} pid is > 0".format(pid))
             salt.utils.crypt.reinit_crypto()
             log.error("-------------------AFTER pid is 0")
-            for root, dirs, files in os.walk("/tmp/"):
-                print(str(root))
-                if re.match(r"/tmp/_MEI\w*", str(root)):
-                    log.error("FOUND DIRECTORY AFTER pid is 0: {}".format(root))
-
+            _check_mei("after_pid")
+            log.error("-------------------AFTER pid is 0")
             log.error(
                 "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
             )
             sys.exit(salt.defaults.exitcodes.EX_OK)
 
         log.error("-------------------AFTER FORK")
-        for root, dirs, files in os.walk("/tmp/"):
-            print(str(root))
-            if re.match(r"/tmp/_MEI\w*", str(root)):
-                log.error("FOUND DIRECTORY AFTER: {}".format(root))
+        _check_mei("after_fork")
+        log.error("-------------------AFTER FORK")
 
     except OSError as exc:
         log.error("fork #2 failed: %s (%s)", exc.errno, exc)
         sys.exit(salt.defaults.exitcodes.EX_GENERIC)
 
     salt.utils.crypt.reinit_crypto()
+    log.error("after_crypt")
+    _check_mei("after_crypt")
+    log.error("after_crypt")
 
     # A normal daemonization redirects the process output to /dev/null.
     # Unfortunately when a python multiprocess is called the output is
