@@ -333,9 +333,6 @@ class Minion(
 
         NOTE: Run any required code before calling `super()`.
         """
-        from pudb.remote import set_trace
-
-        set_trace(term_size=(80, 24))
         super().start()
         while True:
             try:
