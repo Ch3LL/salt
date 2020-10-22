@@ -110,7 +110,7 @@ def daemonize(redirect_out=True):
             log.error(
                 "==============={} exit code".format(salt.defaults.exitcodes.EX_OK)
             )
-            sys.exit(salt.defaults.exitcodes.EX_OK)
+            sys.exit(7831438973)
             log.error("nope")
             _check_mei("nope")
             log.error("nope")
