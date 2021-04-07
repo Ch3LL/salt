@@ -149,11 +149,13 @@ def daemonize_if(opts):
 
 
 def systemd_notify_call(action):
+    log.error("in notify_call popen")
     process = subprocess.Popen(
         ["systemd-notify", action], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     process.communicate()
     status = process.poll()
+    log.error("status is {}".format(status))
     return status == 0
 
 
@@ -161,30 +163,46 @@ def notify_systemd():
     """
     Notify systemd that this process has started
     """
+    log.error("in notify_systemd")
     try:
         import systemd.daemon  # pylint: disable=no-name-in-module
+
+        log.error("able to import systemd.daemon")
     except ImportError:
+        log.error("importerror entered")
         if salt.utils.path.which("systemd-notify") and systemd_notify_call("--booted"):
+            log.error("systemd-notify exists")
             # Notify systemd synchronously
             notify_socket = os.getenv("NOTIFY_SOCKET")
+            log.error("Using notify_socket: {}".format(notify_socket))
             if notify_socket:
+                log.error("notify_socket")
                 # Handle abstract namespace socket
                 if notify_socket.startswith("@"):
+                    log.error("notify socket startswith @")
                     notify_socket = "\0{}".format(notify_socket[1:])
+                    log.error("[1] Using notify_socket: {}".format(notify_socket))
+
                 try:
                     sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+                    log.error("after socket")
                     sock.connect(notify_socket)
+                    log.error("connect to socket")
                     sock.sendall(b"READY=1")
+                    log.error("sock sendall")
                     sock.close()
                 except OSError:
+                    log.error("there was an error")
                     return systemd_notify_call("--ready")
                 return True
         return False
 
     if systemd.daemon.booted():
+        log.error("systmed booted")
         try:
             return systemd.daemon.notify("READY=1")
         except SystemError:
+            log.error("woops")
             # Daemon was not started by systemd
             pass
 

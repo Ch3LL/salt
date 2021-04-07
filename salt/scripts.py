@@ -178,7 +178,9 @@ def salt_minion():
     import salt.utils.platform
     import salt.utils.process
 
+    log.error("Before systemd call")
     salt.utils.process.notify_systemd()
+    log.error("After systemd call")
 
     import salt.cli.daemons
     import multiprocessing
