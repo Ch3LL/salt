@@ -155,6 +155,12 @@ def systemd_notify_call(action):
     )
     process.communicate()
     status = process.poll()
+    process = subprocess.Popen(
+        ["which", "systemd-notify"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    log.error(process.communicate())
+    log.error("path is: {}".format(os.environ.get("PATH")))
+
     log.error("systemd notify stdout: {}".format(process.stdout))
     log.error("systemd notify stderr: {}".format(process.stderr))
     log.error("status is {}".format(status))
