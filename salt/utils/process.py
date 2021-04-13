@@ -158,7 +158,8 @@ def systemd_notify_call(action):
     log.error("systemd notify stdout: {}".format(process.stdout))
     log.error("systemd notify stderr: {}".format(process.stderr))
     log.error("status is {}".format(status))
-    return status == 0
+    # return status == 0
+    return True
 
 
 def notify_systemd():
