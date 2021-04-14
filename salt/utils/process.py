@@ -151,7 +151,7 @@ def daemonize_if(opts):
 def systemd_notify_call(action):
     log.error("in notify_call popen")
     process = subprocess.Popen(
-        ["/usr/bin/systemd-notify", action],
+        ["/bin/systemd-notify", action],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
