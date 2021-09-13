@@ -149,7 +149,9 @@ def _check_apt():
     Abort if python-apt is not installed
     """
     if not HAS_APT:
-        raise CommandExecutionError("Error: 'python-apt' package not installed")
+        log.debug("'python-apt' package not installed, using shell commands")
+        return False
+    return True
 
 
 def _call_apt(args, scope=True, **kwargs):
@@ -1524,12 +1526,77 @@ def version_cmp(pkg1, pkg2, ignore_epoch=False, **kwargs):
     return None
 
 
+def _get_repo_apt():
+    """
+    Get repo information using apt
+    """
+    repos = {}
+    out = _call_apt(["apt-cache", "policy"])
+    sources = __salt__["file.grep"]("/etc/apt/sources*", "-r", "http")
+    source = [x.split(":", 1) for x in sources["stdout"].split("\n")]
+    for line in re.split("500|100", out["stdout"]):
+        if not line.strip().startswith("http"):
+            continue
+        repo_info = line.split()
+        other_info = repo_info[5].split(",")
+        repo = {}
+        repo["comps"] = [x for x in other_info if x.startswith("c=")][0].strip("c=")
+        repo["dist"] = repo_info[1].split("/")[0]
+        repo["uri"] = repo_info[0]
+        repo["architectures"] = [x for x in other_info if x.startswith("b=")][0].strip(
+            "b="
+        )
+        for line in source:
+            if line[1].startswith("#"):
+                continue
+            if (
+                repo["uri"] in line[1]
+                and repo["dist"] in line[1]
+                and repo["comps"] in line[1]
+            ):
+                # check if multiple comps exist
+                # apt-cache does not return all comps
+                comps = line[1].split()[3:]
+                if [repo["comps"]] != comps:
+                    repo["comps"] = comps
+                repo["file"] = line[0]
+                repo["type"] = line[1].split()[0]
+                repo["line"] = line[1]
+                break
+        repos.setdefault(repo["uri"], []).append(repo)
+    return repos
+
+
 def _split_repo_str(repo):
     """
     Return APT source entry as a tuple.
     """
-    split = sourceslist.SourceEntry(repo)
-    return split.type, split.architectures, split.uri, split.dist, split.comps
+    if not _check_apt():
+        user_repo = repo.split()
+        ret = _get_repo_apt()
+        split = None
+        if len(user_repo) < 4:
+            return ("", [], "", "", [])
+        for _repo in ret[user_repo[1].rsplit("/", 1)[0]]:
+            if (
+                user_repo[0] == _repo["type"]
+                and user_repo[2] == _repo["dist"]
+                and user_repo[3] in _repo["comps"]
+            ):
+                split = _repo
+                break
+        if not split:
+            return ("", [], "", "", [])
+        return (
+            split["type"],
+            split["architectures"],
+            split["uri"],
+            split["dist"],
+            split["comps"],
+        )
+    else:
+        split = sourceslist.SourceEntry(repo)
+        return split.type, split.architectures, split.uri, split.dist, split.comps
 
 
 def _consolidate_repo_sources(sources):
@@ -1677,22 +1744,24 @@ def list_repos(**kwargs):
        salt '*' pkg.list_repos
        salt '*' pkg.list_repos disabled=True
     """
-    _check_apt()
     repos = {}
-    sources = sourceslist.SourcesList()
-    for source in sources.list:
-        if _skip_source(source):
-            continue
-        repo = {}
-        repo["file"] = source.file
-        repo["comps"] = getattr(source, "comps", [])
-        repo["disabled"] = source.disabled
-        repo["dist"] = source.dist
-        repo["type"] = source.type
-        repo["uri"] = source.uri
-        repo["line"] = source.line.strip()
-        repo["architectures"] = getattr(source, "architectures", [])
-        repos.setdefault(source.uri, []).append(repo)
+    if not _check_apt():
+        return _get_repo_apt()
+    else:
+        sources = sourceslist.SourcesList()
+        for source in sources.list:
+            if _skip_source(source):
+                continue
+            repo = {}
+            repo["file"] = source.file
+            repo["comps"] = getattr(source, "comps", [])
+            repo["disabled"] = source.disabled
+            repo["dist"] = source.dist
+            repo["type"] = source.type
+            repo["uri"] = source.uri
+            repo["line"] = source.line.strip()
+            repo["architectures"] = getattr(source, "architectures", [])
+            repos.setdefault(source.uri, []).append(repo)
     return repos
 
 
@@ -1708,7 +1777,6 @@ def get_repo(repo, **kwargs):
 
         salt '*' pkg.get_repo "myrepo definition"
     """
-    _check_apt()
     ppa_auth = kwargs.get("ppa_auth", None)
     # we have to be clever about this since the repo definition formats
     # are a bit more "loose" than in some other distributions
