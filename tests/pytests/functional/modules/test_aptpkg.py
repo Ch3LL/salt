@@ -1,6 +1,7 @@
 import pathlib
 
 import pytest
+import salt.exceptions
 import salt.modules.aptpkg as aptpkg
 import salt.modules.cmdmod as cmd
 import salt.modules.file as file
@@ -12,11 +13,38 @@ pytestmark = [
 
 
 @pytest.fixture
-def configure_loader_modules():
+def configure_loader_modules(minion_opts):
     return {
-        aptpkg: {"__salt__": {"cmd.run_all": cmd.run_all, "file.grep": file.grep}},
+        aptpkg: {
+            "__salt__": {"cmd.run_all": cmd.run_all, "file.grep": file.grep},
+            "__opts__": minion_opts,
+        },
         file: {"__salt__": {"cmd.run_all": cmd.run_all}},
     }
+
+
+def get_current_repo(multiple_comps=False):
+    """
+    Get a repo currently in sources.list
+
+    multiple_comps:
+        Search for a repo that contains multiple comps.
+        For example: main, restricted
+    """
+    with salt.utils.files.fopen("/etc/apt/sources.list") as fp:
+        for line in fp:
+            if line.startswith("#"):
+                continue
+            if "ubuntu.com" in line:
+                test_repo = line.strip()
+                comps = test_repo.split()[3:]
+                if multiple_comps:
+                    if len(comps) > 1:
+                        break
+                else:
+                    break
+
+    return test_repo, comps
 
 
 def test_list_repos():
@@ -49,15 +77,7 @@ def test_get_repos():
     """
     Test aptpkg.get_repos
     """
-    test_repo = None
-    with salt.utils.files.fopen("/etc/apt/sources.list") as fp:
-        for line in fp:
-            if line.startswith("#"):
-                continue
-            if "ubuntu.com" in line:
-                test_repo = line.strip()
-                comps = test_repo.split()[3:]
-                break
+    test_repo, comps = get_current_repo()
     if not test_repo:
         pytest.skip("Did not detect an ubuntu repo")
     exp_ret = test_repo.split()
@@ -73,16 +93,7 @@ def test_get_repos_multiple_comps():
     Test aptpkg.get_repos when multiple comps
     exist in repo.
     """
-    test_repo = None
-    with salt.utils.files.fopen("/etc/apt/sources.list") as fp:
-        for line in fp:
-            if line.startswith("#"):
-                continue
-            if "ubuntu.com" in line:
-                test_repo = line.strip()
-                comps = test_repo.split()[3:]
-                if len(comps) > 1:
-                    break
+    test_repo, comps = get_current_repo(multiple_comps=True)
     if not test_repo:
         pytest.skip("Did not detect an ubuntu repo")
     exp_ret = test_repo.split()
@@ -104,3 +115,22 @@ def test_get_repos_doesnot_exist():
     ]:
         ret = aptpkg.get_repo(repo=test_repo)
         assert not ret
+
+
+@pytest.mark.destructive_test
+def test_del_repo():
+    """
+    Test aptpkg.del_repo when passing repo
+    that exists. And checking correct error
+    is returned when it no longer exists.
+    """
+    test_repo, comps = get_current_repo()
+    try:
+        ret = aptpkg.del_repo(repo=test_repo)
+        assert "Repo '{}' has been removed".format(test_repo)
+        with pytest.raises(salt.exceptions.CommandExecutionError) as exc:
+            ret = aptpkg.del_repo(repo=test_repo)
+        assert "Repo {} doesn't exist".format(test_repo) in exc.value.message
+    finally:
+        # add the repository back
+        cmd.run(["add-apt-repository", test_repo])

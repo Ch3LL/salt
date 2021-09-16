@@ -1528,7 +1528,7 @@ def version_cmp(pkg1, pkg2, ignore_epoch=False, **kwargs):
 
 def _get_repo_apt():
     """
-    Get repo information using apt
+    Get repo information using apt cli
     """
     repos = {}
     out = _call_apt(["apt-cache", "policy"])
@@ -1859,7 +1859,6 @@ def del_repo(repo, **kwargs):
 
         salt '*' pkg.del_repo "myrepo definition"
     """
-    _check_apt()
     is_ppa = False
     if repo.startswith("ppa:") and __grains__["os"] in ("Ubuntu", "Mint", "neon"):
         # This is a PPA definition meaning special handling is needed
@@ -1880,8 +1879,16 @@ def del_repo(repo, **kwargs):
             else:
                 repo = softwareproperties.ppa.expand_ppa_line(repo, dist)[0]
 
-    sources = sourceslist.SourcesList()
-    repos = [s for s in sources.list if not s.invalid]
+    apt_lib = _check_apt()
+    if not apt_lib:
+        apt_cmd = salt.utils.path.which("apt-add-repository")
+        if not apt_cmd:
+            raise CommandNotFoundError("apt-add-repository is required")
+        sources = _get_repo_apt()
+        repos = [y for x in list(sources.values()) for y in x]
+    else:
+        sources = sourceslist.SourcesList()
+        repos = [s for s in sources.list if not s.invalid]
     if repos:
         deleted_from = dict()
         try:
@@ -1898,21 +1905,44 @@ def del_repo(repo, **kwargs):
             )
 
         for source in repos:
+            if not apt_lib:
+                source_type = source["type"]
+                source_architectures = source["architectures"]
+                source_uri = source["uri"]
+                source_dist = source["dist"]
+                source_file = source["file"]
+                source_comps = source["comps"]
+            else:
+                source_type = source.type
+                source_architectures = source.architectures
+                source_uri = source.uri
+                source_dist = source.dist
+                source_file = source.file
+                source_comps = source.comps
+
             if (
-                source.type == repo_type
-                and source.architectures == repo_architectures
-                and source.uri == repo_uri
-                and source.dist == repo_dist
+                source_type == repo_type
+                and source_architectures == repo_architectures
+                and source_uri == repo_uri
+                and source_dist == repo_dist
             ):
 
-                s_comps = set(source.comps)
+                s_comps = set(source_comps)
                 r_comps = set(repo_comps)
                 if s_comps.intersection(r_comps):
-                    deleted_from[source.file] = 0
-                    source.comps = list(s_comps.difference(r_comps))
-                    if not source.comps:
+                    deleted_from[source_file] = 0
+                    source_comps = list(s_comps.difference(r_comps))
+                    if not source_comps:
                         try:
-                            sources.remove(source)
+                            if not apt_lib:
+                                ret = _call_apt([apt_cmd, "--remove", source["line"]])
+                                if ret["retcode"] != 0:
+                                    msg += "{} cmd failed: {}".format(
+                                        apt_cmd, ret["stderr"]
+                                    )
+                                    raise CommandExecutionError(msg)
+                            else:
+                                sources.remove(source)
                         except ValueError:
                             pass
             # PPAs are special and can add deb-src where expand_ppa_line
@@ -1921,27 +1951,28 @@ def del_repo(repo, **kwargs):
             if (
                 is_ppa
                 and repo_type == "deb"
-                and source.type == "deb-src"
-                and source.uri == repo_uri
-                and source.dist == repo_dist
+                and source_type == "deb-src"
+                and source_uri == repo_uri
+                and source_dist == repo_dist
             ):
 
-                s_comps = set(source.comps)
+                s_comps = set(source_comps)
                 r_comps = set(repo_comps)
                 if s_comps.intersection(r_comps):
-                    deleted_from[source.file] = 0
-                    source.comps = list(s_comps.difference(r_comps))
-                    if not source.comps:
+                    deleted_from[source_file] = 0
+                    source_comps = list(s_comps.difference(r_comps))
+                    if not source_comps:
                         try:
                             sources.remove(source)
                         except ValueError:
                             pass
-            sources.save()
+            if apt_lib:
+                sources.save()
         if deleted_from:
             ret = ""
             for source in sources:
-                if source.file in deleted_from:
-                    deleted_from[source.file] += 1
+                if source_file in deleted_from:
+                    deleted_from[source_file] += 1
             for repo_file, count in deleted_from.items():
                 msg = "Repo '{0}' has been removed from {1}.\n"
                 if count == 0 and "sources.list.d/" in repo_file:
