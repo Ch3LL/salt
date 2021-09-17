@@ -43,7 +43,6 @@ def get_current_repo(multiple_comps=False):
                         break
                 else:
                     break
-
     return test_repo, comps
 
 
@@ -134,3 +133,28 @@ def test_del_repo():
     finally:
         # add the repository back
         cmd.run(["add-apt-repository", test_repo])
+
+
+def test_expand_repo_def():
+    """
+    Test aptpkg.expand_repo_def when the repo exists.
+    """
+    test_repo, comps = get_current_repo()
+    msg = "This is a test"
+    ret = aptpkg.expand_repo_def(repo=test_repo)
+    for key in [
+        "comps",
+        "dist",
+        "uri",
+        "line",
+        "architectures",
+        "file",
+        "type",
+    ]:
+        assert key in ret
+        assert pathlib.Path(ret["file"]).is_file()
+        assert ret["dist"] in ret["line"]
+        if isinstance(ret["comps"], list):
+            assert " ".join(ret["comps"]) in ret["line"]
+        else:
+            assert ret["comps"] in ret["line"]

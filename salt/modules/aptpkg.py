@@ -1540,7 +1540,7 @@ def _get_repo_apt():
         repo_info = line.split()
         other_info = repo_info[5].split(",")
         repo = {}
-        repo["comps"] = [x for x in other_info if x.startswith("c=")][0].strip("c=")
+        repo["comps"] = [[x for x in other_info if x.startswith("c=")][0].strip("c=")]
         repo["dist"] = repo_info[1].split("/")[0]
         repo["uri"] = repo_info[0]
         repo["architectures"] = [x for x in other_info if x.startswith("b=")][0].strip(
@@ -1552,7 +1552,7 @@ def _get_repo_apt():
             if (
                 repo["uri"] in line[1]
                 and repo["dist"] in line[1]
-                and repo["comps"] in line[1]
+                and ", ".join(repo["comps"]) in line[1]
             ):
                 # check if multiple comps exist
                 # apt-cache does not return all comps
@@ -1562,7 +1562,9 @@ def _get_repo_apt():
                 repo["file"] = line[0]
                 repo["type"] = line[1].split()[0]
                 repo["line"] = line[1]
+                repo["disabled"] = False
                 break
+
         repos.setdefault(repo["uri"], []).append(repo)
     return repos
 
@@ -2624,8 +2626,6 @@ def expand_repo_def(**kwargs):
     if "repo" not in kwargs:
         raise SaltInvocationError("missing 'repo' argument")
 
-    _check_apt()
-
     sanitized = {}
     repo = kwargs["repo"]
     if repo.startswith("ppa:") and __grains__["os"] in ("Ubuntu", "Mint", "neon"):
@@ -2649,7 +2649,11 @@ def expand_repo_def(**kwargs):
             filename = "/etc/apt/sources.list.d/{0}-{1}-{2}.list"
             kwargs["file"] = filename.format(owner_name, ppa_name, dist)
 
-    source_entry = sourceslist.SourceEntry(repo)
+    apt_lib = _check_apt()
+    if not apt_lib:
+        source_entry = get_repo(repo)
+    else:
+        source_entry = sourceslist.SourceEntry(repo)
     for list_args in ("architectures", "comps"):
         if list_args in kwargs:
             kwargs[list_args] = [
@@ -2657,25 +2661,37 @@ def expand_repo_def(**kwargs):
             ]
     for kwarg in _MODIFY_OK:
         if kwarg in kwargs:
-            setattr(source_entry, kwarg, kwargs[kwarg])
+            if not apt_lib:
+                source_entry[kwarg] = kwargs[kwarg]
+            else:
+                setattr(source_entry, kwarg, kwargs[kwarg])
 
-    source_list = sourceslist.SourcesList()
-    source_entry = source_list.add(
-        type=source_entry.type,
-        uri=source_entry.uri,
-        dist=source_entry.dist,
-        orig_comps=getattr(source_entry, "comps", []),
-        architectures=getattr(source_entry, "architectures", []),
-    )
-
-    sanitized["file"] = source_entry.file
-    sanitized["comps"] = getattr(source_entry, "comps", [])
-    sanitized["disabled"] = source_entry.disabled
-    sanitized["dist"] = source_entry.dist
-    sanitized["type"] = source_entry.type
-    sanitized["uri"] = source_entry.uri
-    sanitized["line"] = source_entry.line.strip()
-    sanitized["architectures"] = getattr(source_entry, "architectures", [])
+    if not apt_lib:
+        sanitized["type"] = source_entry["type"]
+        sanitized["architectures"] = source_entry["architectures"]
+        sanitized["uri"] = source_entry["uri"]
+        sanitized["dist"] = source_entry["dist"]
+        sanitized["file"] = source_entry["file"]
+        sanitized["comps"] = source_entry["comps"]
+        sanitized["line"] = source_entry["line"]
+        sanitized["disabled"] = source_entry["disabled"]
+    else:
+        source_list = sourceslist.SourcesList()
+        source_entry = source_list.add(
+            type=source_entry.type,
+            uri=source_entry.uri,
+            dist=source_entry.dist,
+            orig_comps=getattr(source_entry, "comps", []),
+            architectures=getattr(source_entry, "architectures", []),
+        )
+        sanitized["type"] = source_entry.type
+        sanitized["architectures"] = source_entry.architectures
+        sanitized["uri"] = source_entry.uri
+        sanitized["dist"] = source_entry.dist
+        sanitized["file"] = source_entry.file
+        sanitized["comps"] = source_entry.comps
+        sanitized["line"] = source_entry.line
+        sanitized["disabled"] = source_entry.disabled
 
     return sanitized
 
