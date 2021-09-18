@@ -1556,6 +1556,9 @@ def _get_repo_apt():
             ):
                 # check if multiple comps exist
                 # apt-cache does not return all comps
+                uri = line[1].split()[1]
+                if repo["uri"] != uri:
+                    repo["uri"] = uri
                 comps = line[1].split()[3:]
                 if [repo["comps"]] != comps:
                     repo["comps"] = comps
@@ -1579,7 +1582,7 @@ def _split_repo_str(repo):
         split = None
         if len(user_repo) < 4:
             return ("", [], "", "", [])
-        for _repo in ret[user_repo[1].rsplit("/", 1)[0]]:
+        for _repo in ret[user_repo[1]]:
             if (
                 user_repo[0] == _repo["type"]
                 and user_repo[2] == _repo["dist"]
@@ -2399,7 +2402,14 @@ def mod_repo(repo, saltenv="base", **kwargs):
                 'cannot parse "ppa:" style repo definitions: {}'.format(repo)
             )
 
-    sources = sourceslist.SourcesList()
+    apt_lib = _check_apt()
+    if not apt_lib:
+        sources = _get_repo_apt()
+        repos = [y for x in list(sources.values()) for y in x]
+    else:
+        sources = sourceslist.SourcesList()
+        repos = [s for s in sources if not s.invalid]
+
     if kwargs.get("consolidate", False):
         # attempt to de-dup and consolidate all sources
         # down to entries in sources.list
@@ -2414,7 +2424,6 @@ def mod_repo(repo, saltenv="base", **kwargs):
         # that are not the main sources.list file
         sources = _consolidate_repo_sources(sources)
 
-    repos = [s for s in sources if not s.invalid]
     mod_source = None
     try:
         (
@@ -2429,7 +2438,6 @@ def mod_repo(repo, saltenv="base", **kwargs):
             "Error: repo '{}' not a well formatted definition".format(repo)
         )
 
-    full_comp_list = {comp.strip() for comp in repo_comps}
     no_proxy = __salt__["config.option"]("no_proxy")
 
     if "keyid" in kwargs:
@@ -2507,11 +2515,13 @@ def mod_repo(repo, saltenv="base", **kwargs):
                 "Error: failed to add key:\n{}".format(key_text)
             )
 
+    full_comp_list = [comp.strip() for comp in repo_comps]
     if "comps" in kwargs:
+        full_comp_list = {comp.strip() for comp in repo_comps}
         kwargs["comps"] = [comp.strip() for comp in kwargs["comps"].split(",")]
         full_comp_list |= set(kwargs["comps"])
     else:
-        kwargs["comps"] = list(full_comp_list)
+        kwargs["comps"] = full_comp_list
 
     if "architectures" in kwargs:
         kwargs["architectures"] = kwargs["architectures"].split(",")
@@ -2527,24 +2537,43 @@ def mod_repo(repo, saltenv="base", **kwargs):
     kw_dist = kwargs.get("dist")
 
     for source in repos:
+        if not apt_lib:
+            source_type = source["type"]
+            source_architectures = source["architectures"]
+            source_uri = source["uri"]
+            source_dist = source["dist"]
+            source_file = source["file"]
+            source_comps = source["comps"]
+        else:
+            source_type = source.type
+            source_architectures = source.architectures
+            source_uri = source.uri
+            source_dist = source.dist
+            source_file = source.file
+            source_comps = source.comps
+
         # This series of checks will identify the starting source line
         # and the resulting source line.  The idea here is to ensure
         # we are not returning bogus data because the source line
         # has already been modified on a previous run.
         repo_matches = (
-            source.type == repo_type
-            and source.uri.rstrip("/") == repo_uri.rstrip("/")
-            and source.dist == repo_dist
+            source_type == repo_type
+            and source_uri.rstrip("/") == repo_uri.rstrip("/")
+            and source_dist == repo_dist
         )
-        kw_matches = source.dist == kw_dist and source.type == kw_type
+        kw_matches = source_dist == kw_dist and source_type == kw_type
 
         if repo_matches or kw_matches:
-            for comp in full_comp_list:
-                if comp in getattr(source, "comps", []):
+            if not apt_lib:
+                if repo_comps == source["comps"]:
                     mod_source = source
-            if not source.comps:
+            else:
+                for comp in full_comp_list:
+                    if comp in getattr(source, "comps", []):
+                        mod_source = source
+            if not source_comps:
                 mod_source = source
-            if kwargs["architectures"] != source.architectures:
+            if kwargs["architectures"] != source_architectures:
                 mod_source = source
             if mod_source:
                 break
@@ -2553,29 +2582,89 @@ def mod_repo(repo, saltenv="base", **kwargs):
         kwargs["comments"] = salt.utils.pkg.deb.combine_comments(kwargs["comments"])
 
     if not mod_source:
-        mod_source = sourceslist.SourceEntry(repo)
-        if "comments" in kwargs:
-            mod_source.comment = kwargs["comments"]
-        sources.list.append(mod_source)
+        if not apt_lib:
+            mod_source = get_repo(repo)
+            if "comments" in kwargs:
+                mod_source["comments"] = kwargs["comments"]
+        else:
+            mod_source = sourceslist.SourceEntry(repo)
+            if "comments" in kwargs:
+                mod_source.comment = kwargs["comments"]
+            sources.list.append(mod_source)
     elif "comments" in kwargs:
-        mod_source.comment = kwargs["comments"]
+        if not apt_lib:
+            mod_source["comments"] = kwargs["comments"]
+        else:
+            mod_source.comment = kwargs["comments"]
 
     for key in kwargs:
-        if key in _MODIFY_OK and hasattr(mod_source, key):
-            setattr(mod_source, key, kwargs[key])
-    sources.save()
+        if not apt_lib:
+            has_value = key in mod_source
+        else:
+            has_value = hasattr(mod_source, key)
+        if key in _MODIFY_OK and has_value:
+            if not apt_lib:
+                mod_source[key] = kwargs[key]
+            else:
+                setattr(mod_source, key, kwargs[key])
+    if not apt_lib:
+        new_repo = " ".join(
+            [
+                mod_source["type"],
+                mod_source["uri"],
+                mod_source["dist"],
+                " ".join(mod_source["comps"]),
+            ]
+        )
+        if "comments" in mod_source:
+            new_repo = new_repo + "\\n##" + mod_source["comments"]
+        if mod_source["disabled"]:
+            new_repo = "# " + new_repo
+        edit_repo = False
+        if os.path.exists(mod_source["file"]):
+            edit_repo = __salt__["file.replace"](
+                path=mod_source["file"], pattern=source["line"], repl=new_repo
+            )
+        else:
+            with salt.utils.files.fopen(mod_source["file"], "w") as fp:
+                fp.write(new_repo)
+            edit_repo = True
+        if not edit_repo:
+            __salt__["file.append"](path=mod_source["file"], args=new_repo)
+    else:
+        sources.save()
     # on changes, explicitly refresh
     if refresh:
         refresh_db()
+
+    if not apt_lib:
+        mod_source_type = mod_source["type"]
+        mod_source_architectures = mod_source["architectures"]
+        mod_source_uri = mod_source["uri"]
+        mod_source_dist = mod_source["dist"]
+        mod_source_file = mod_source["file"]
+        mod_source_comps = mod_source["comps"]
+        mod_source_disabled = mod_source["disabled"]
+        mod_source_line = mod_source["line"]
+    else:
+        mod_source_type = mod_source.type
+        mod_source_architectures = mod_source.architectures
+        mod_source_uri = mod_source.uri
+        mod_source_dist = mod_source.dist
+        mod_source_file = mod_source.file
+        mod_source_comps = mod_source.comps
+        mod_source_disabled = mod_source.disabled
+        mod_source_line = mod_source.line
+
     return {
         repo: {
-            "architectures": getattr(mod_source, "architectures", []),
-            "comps": mod_source.comps,
-            "disabled": mod_source.disabled,
-            "file": mod_source.file,
-            "type": mod_source.type,
-            "uri": mod_source.uri,
-            "line": mod_source.line,
+            "architectures": mod_source_architectures,
+            "comps": mod_source_comps,
+            "disabled": mod_source_disabled,
+            "file": mod_source_file,
+            "type": mod_source_type,
+            "uri": mod_source_uri,
+            "line": mod_source_line,
         }
     }
 

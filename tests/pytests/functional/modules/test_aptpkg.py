@@ -1,4 +1,5 @@
 import pathlib
+import shutil
 
 import pytest
 import salt.exceptions
@@ -6,6 +7,8 @@ import salt.modules.aptpkg as aptpkg
 import salt.modules.cmdmod as cmd
 import salt.modules.file as file
 import salt.utils.files
+import salt.utils.stringutils
+from tests.support.mock import Mock, patch
 
 pytestmark = [
     pytest.mark.skip_if_binaries_missing("apt-cache", "grep"),
@@ -16,11 +19,35 @@ pytestmark = [
 def configure_loader_modules(minion_opts):
     return {
         aptpkg: {
-            "__salt__": {"cmd.run_all": cmd.run_all, "file.grep": file.grep},
+            "__salt__": {
+                "cmd.run_all": cmd.run_all,
+                "file.replace": file.replace,
+                "file.append": file.append,
+                "file.grep": file.grep,
+            },
             "__opts__": minion_opts,
         },
-        file: {"__salt__": {"cmd.run_all": cmd.run_all}},
+        file: {
+            "__salt__": {"cmd.run_all": cmd.run_all},
+            "__utils__": {
+                "files.is_text": salt.utils.files.is_text,
+                "stringutils.get_diff": salt.utils.stringutils.get_diff,
+            },
+            "__opts__": minion_opts,
+        },
     }
+
+
+@pytest.fixture()
+def revert_repo_file(tmp_path):
+    repo_file = pathlib.Path("/etc") / "apt" / "sources.list"
+    backup = tmp_path / "repo_backup"
+    # make copy of repo file
+    shutil.copy(str(repo_file), str(backup))
+    yield
+    # revert repo file
+    shutil.copy(str(backup), str(repo_file))
+    aptpkg.refresh_db()
 
 
 def get_current_repo(multiple_comps=False):
@@ -82,7 +109,7 @@ def test_get_repos():
     exp_ret = test_repo.split()
     ret = aptpkg.get_repo(repo=test_repo)
     assert ret["type"] == exp_ret[0]
-    assert ret["uri"] == exp_ret[1].rsplit("/", 1)[0]
+    assert ret["uri"] == exp_ret[1]
     assert ret["dist"] == exp_ret[2]
     assert ret["comps"] == exp_ret[3:]
 
@@ -98,7 +125,7 @@ def test_get_repos_multiple_comps():
     exp_ret = test_repo.split()
     ret = aptpkg.get_repo(repo=test_repo)
     assert ret["type"] == exp_ret[0]
-    assert ret["uri"] == exp_ret[1].rsplit("/", 1)[0]
+    assert ret["uri"] == exp_ret[1]
     assert ret["dist"] == exp_ret[2]
     assert ret["comps"] == exp_ret[3:]
 
@@ -117,7 +144,7 @@ def test_get_repos_doesnot_exist():
 
 
 @pytest.mark.destructive_test
-def test_del_repo():
+def test_del_repo(revert_repo_file):
     """
     Test aptpkg.del_repo when passing repo
     that exists. And checking correct error
@@ -140,7 +167,6 @@ def test_expand_repo_def():
     Test aptpkg.expand_repo_def when the repo exists.
     """
     test_repo, comps = get_current_repo()
-    msg = "This is a test"
     ret = aptpkg.expand_repo_def(repo=test_repo)
     for key in [
         "comps",
@@ -158,3 +184,32 @@ def test_expand_repo_def():
             assert " ".join(ret["comps"]) in ret["line"]
         else:
             assert ret["comps"] in ret["line"]
+
+
+@pytest.mark.destructive_test
+def test_mod_repo(revert_repo_file):
+    """
+    Test aptpkg.mod_repo when the repo exists.
+    """
+    test_repo, comps = get_current_repo()
+    msg = "This is a test"
+    with patch.dict(aptpkg.__salt__, {"config.option": Mock()}):
+        ret = aptpkg.mod_repo(repo=test_repo, comments=msg)
+    assert sorted(ret[list(ret.keys())[0]]["comps"]) == sorted(comps)
+    ret = file.grep("/etc/apt/sources.list", msg)
+    assert "##{}".format(msg) in ret["stdout"]
+
+
+@pytest.mark.destructive_test
+def test_mod_repo_no_file(tmp_path, revert_repo_file):
+    """
+    Test aptpkg.mod_repo when the file does not exist.
+    It should create the file.
+    """
+    test_repo, comps = get_current_repo()
+    test_file = str(tmp_path / "test_repo")
+    with patch.dict(aptpkg.__salt__, {"config.option": Mock()}):
+        ret = aptpkg.mod_repo(repo=test_repo, file=test_file)
+    with salt.utils.files.fopen(test_file, "r") as fp:
+        ret = fp.read()
+    assert ret == test_repo
