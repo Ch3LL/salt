@@ -1526,48 +1526,31 @@ def version_cmp(pkg1, pkg2, ignore_epoch=False, **kwargs):
     return None
 
 
-def _get_repo_apt():
+def _parse_sources():
     """
-    Get repo information using apt cli
+    Parse repo information from /etc/apt/sources*
     """
     repos = {}
-    out = _call_apt(["apt-cache", "policy"])
     sources = __salt__["file.grep"]("/etc/apt/sources*", "-r", "http")
     source = [x.split(":", 1) for x in sources["stdout"].split("\n")]
-    for line in re.split("500|100", out["stdout"]):
-        if not line.strip().startswith("http"):
-            continue
-        repo_info = line.split()
-        other_info = repo_info[5].split(",")
+    for line in source:
         repo = {}
-        repo["comps"] = [[x for x in other_info if x.startswith("c=")][0].strip("c=")]
-        repo["dist"] = repo_info[1].split("/")[0]
-        repo["uri"] = repo_info[0]
-        repo["architectures"] = [x for x in other_info if x.startswith("b=")][0].strip(
-            "b="
-        )
-        for line in source:
-            if line[1].startswith("#"):
-                continue
-            if (
-                repo["uri"] in line[1]
-                and repo["dist"] in line[1]
-                and ", ".join(repo["comps"]) in line[1]
-            ):
-                # check if multiple comps exist
-                # apt-cache does not return all comps
-                uri = line[1].split()[1]
-                if repo["uri"] != uri:
-                    repo["uri"] = uri
-                comps = line[1].split()[3:]
-                if [repo["comps"]] != comps:
-                    repo["comps"] = comps
-                repo["file"] = line[0]
-                repo["type"] = line[1].split()[0]
-                repo["line"] = line[1]
-                repo["disabled"] = False
-                break
+        repo["disabled"] = False
+        repo_line = line[1].strip().split()
+        if repo_line[0].startswith("#"):
+            repo_line.pop(0)
+            repo["disabled"] = True
+        if repo_line[0] not in ["deb", "deb-src"]:
+            continue
 
+        # TODO: add architectures detection
+        repo["architectures"] = []
+        repo["type"] = repo_line[0]
+        repo["uri"] = repo_line[1]
+        repo["dist"] = repo_line[2]
+        repo["comps"] = repo_line[3:]
+        repo["file"] = line[0]
+        repo["line"] = line[1]
         repos.setdefault(repo["uri"], []).append(repo)
     return repos
 
@@ -1578,7 +1561,7 @@ def _split_repo_str(repo):
     """
     if not _check_apt():
         user_repo = repo.split()
-        ret = _get_repo_apt()
+        ret = _parse_sources()
         split = None
         if len(user_repo) < 4:
             return ("", [], "", "", [])
@@ -1751,7 +1734,7 @@ def list_repos(**kwargs):
     """
     repos = {}
     if not _check_apt():
-        return _get_repo_apt()
+        return _parse_sources()
     else:
         sources = sourceslist.SourcesList()
         for source in sources.list:
@@ -1889,7 +1872,7 @@ def del_repo(repo, **kwargs):
         apt_cmd = salt.utils.path.which("apt-add-repository")
         if not apt_cmd:
             raise CommandNotFoundError("apt-add-repository is required")
-        sources = _get_repo_apt()
+        sources = _parse_sources()
         repos = [y for x in list(sources.values()) for y in x]
     else:
         sources = sourceslist.SourcesList()
@@ -2404,7 +2387,7 @@ def mod_repo(repo, saltenv="base", **kwargs):
 
     apt_lib = _check_apt()
     if not apt_lib:
-        sources = _get_repo_apt()
+        sources = _parse_sources()
         repos = [y for x in list(sources.values()) for y in x]
     else:
         sources = sourceslist.SourcesList()
