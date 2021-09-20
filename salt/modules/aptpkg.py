@@ -1542,9 +1542,15 @@ def _parse_sources():
             repo["disabled"] = True
         if repo_line[0] not in ["deb", "deb-src"]:
             continue
-
-        # TODO: add architectures detection
         repo["architectures"] = []
+        if repo_line[1].startswith("["):
+            opts = re.search(r"\[.*\]", line[1]).group(0).strip("[]")
+            repo_line.pop(repo_line.index("["))
+            repo_line.pop(repo_line.index("]"))
+            for opt in opts.split():
+                if opt.startswith("arch"):
+                    repo["architectures"] = opt.split("=", 1)[1]
+                repo_line.pop(repo_line.index(opt))
         repo["type"] = repo_line[0]
         repo["uri"] = repo_line[1]
         repo["dist"] = repo_line[2]
@@ -1561,6 +1567,9 @@ def _split_repo_str(repo):
     """
     if not _check_apt():
         user_repo = repo.split()
+        opts = re.search(r"\[.*\]", repo)
+        if opts:
+            user_repo = repo.replace(opts.group(0), "").split()
         ret = _parse_sources()
         split = None
         if len(user_repo) < 4:
@@ -2599,6 +2608,16 @@ def mod_repo(repo, saltenv="base", **kwargs):
                 " ".join(mod_source["comps"]),
             ]
         )
+        if mod_source["architectures"]:
+            new_repo = " ".join(
+                [
+                    mod_source["type"],
+                    "[ arch={} ]".format(", ".join(mod_source["architectures"])),
+                    mod_source["uri"],
+                    mod_source["dist"],
+                    " ".join(mod_source["comps"]),
+                ]
+            )
         if "comments" in mod_source:
             new_repo = new_repo + "\\n##" + mod_source["comments"]
         if mod_source["disabled"]:
