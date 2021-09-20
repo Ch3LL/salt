@@ -21,6 +21,7 @@ def configure_loader_modules(minion_opts):
         aptpkg: {
             "__salt__": {
                 "cmd.run_all": cmd.run_all,
+                "cmd.run": cmd.run,
                 "file.replace": file.replace,
                 "file.append": file.append,
                 "file.grep": file.grep,
@@ -197,7 +198,7 @@ def test_mod_repo(revert_repo_file):
         ret = aptpkg.mod_repo(repo=test_repo, comments=msg)
     assert sorted(ret[list(ret.keys())[0]]["comps"]) == sorted(comps)
     ret = file.grep("/etc/apt/sources.list", msg)
-    assert "##{}".format(msg) in ret["stdout"]
+    assert "# {}".format(msg) in ret["stdout"]
 
 
 @pytest.mark.destructive_test
@@ -212,4 +213,4 @@ def test_mod_repo_no_file(tmp_path, revert_repo_file):
         ret = aptpkg.mod_repo(repo=test_repo, file=test_file)
     with salt.utils.files.fopen(test_file, "r") as fp:
         ret = fp.read()
-    assert ret == test_repo
+    assert ret.strip() == test_repo

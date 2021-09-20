@@ -15,6 +15,7 @@ import datetime
 import fnmatch
 import logging
 import os
+import pathlib
 import re
 import time
 from urllib.error import HTTPError
@@ -51,7 +52,10 @@ log = logging.getLogger(__name__)
 try:
     import apt.cache
     import apt.debfile
-    from aptsources import sourceslist
+    from aptsources.sourceslist import (
+        SourceEntry,
+        SourcesList,
+    )
 
     HAS_APT = True
 except ImportError:
@@ -117,6 +121,123 @@ def __init__(opts):
         os.environ.update(DPKG_ENV_VARS)
 
 
+if not HAS_APT:
+
+    class SourceEntry:  # pylint: disable=function-redefined
+        def __init__(self, line, file=None):
+            self.invalid = False
+            self.comps = []
+            self.disabled = False
+            self.comment = ""
+            self.dist = ""
+            self.type = ""
+            self.uri = ""
+            self.line = line
+            self.architectures = []
+            self.file = file
+            if not self.file:
+                self.file = str(pathlib.Path("/etc/") / "apt" / "sources.list")
+            self.edit = False
+            self._parse_sources(line)
+
+        def repo_line(self):
+            """
+            Return the repo line for the sources file
+            """
+            repo_line = []
+            if self.invalid:
+                return self.line
+            if self.disabled:
+                repo_line = repo_line.append("# ")
+
+            repo_line.append(self.type)
+            if self.architectures:
+                repo_line.append(" [arch={}] ".format(" ".join(self.architectures)))
+
+            repo_line = repo_line + [self.uri, self.dist, " ".join(self.comps)]
+            if self.comment:
+                repo_line.append("# {}".format(self.comment))
+            repo_line.append("\n")
+            return " ".join(repo_line)
+
+        def _parse_sources(self, line):
+            """
+            Parse lines from sources files
+            """
+            self.disabled = False
+            repo_line = self.line.strip().split()
+            if not repo_line:
+                self.invalid = True
+                return False
+            if repo_line[0].startswith("#"):
+                repo_line.pop(0)
+                self.disabled = True
+            if repo_line[0] not in ["deb", "deb-src", "rpm", "rpm-src"]:
+                self.invalid = True
+                return False
+            self.architectures = []
+            if repo_line[1].startswith("["):
+                opts = re.search(r"\[.*\]", self.line).group(0).strip("[]")
+                repo_line = [x for x in repo_line if x.strip("[]")]
+                for opt in opts.split():
+                    if opt.startswith("arch"):
+                        self.architectures = opt.split("=", 1)[1]
+                    try:
+                        repo_line.pop(repo_line.index(opt))
+                    except ValueError:
+                        repo_line.pop(repo_line.index("[" + opt + "]"))
+            self.type = repo_line[0]
+            self.uri = repo_line[1]
+            self.dist = repo_line[2]
+            self.comps = repo_line[3:]
+
+    class SourcesList:  # pylint: disable=function-redefined
+        def __init__(self):
+            self.list = []
+            self.files = [
+                pathlib.Path("/etc") / "apt" / "sources.list",
+                pathlib.Path("/etc") / "apt" / "sources.list.d",
+            ]
+            for file in self.files:
+                if file.is_dir():
+                    for fp in file.glob("**/*.list"):
+                        file = fp
+                with salt.utils.files.fopen(file) as source:
+                    for line in source:
+                        self.list.append(SourceEntry(line, file=str(file)))
+
+        def __iter__(self):
+            yield from self.list
+
+        def add(self, type, uri, dist, orig_comps, architectures):
+            repo_line = [
+                type,
+                " [arch={}] ".format(" ".join(architectures)) if architectures else "",
+                uri,
+                dist,
+                " ".join(orig_comps),
+            ]
+            return SourceEntry(" ".join(repo_line))
+
+        def remove(self, source):
+            apt_cmd = salt.utils.path.which("apt-add-repository")
+            if not apt_cmd:
+                raise CommandNotFoundError("apt-add-repository is required")
+            __salt__["cmd.run"]([apt_cmd, "--remove", source.line])
+            self.list.remove(source)
+
+        def save(self):
+            for source in self.list:
+                if source.edit:
+                    if not pathlib.Path(source.file).is_file():
+                        with salt.utils.files.fopen(source.file, "w") as fp:
+                            fp.write(source.repo_line())
+                    else:
+                        __salt__["file.replace"](
+                            source.file, pattern=source.line, repl=source.repo_line()
+                        )
+
+
 def _get_ppa_info_from_launchpad(owner_name, ppa_name):
     """
     Idea from softwareproperties.ppa.
@@ -142,16 +263,6 @@ def _reconstruct_ppa_name(owner_name, ppa_name):
     Stringify PPA name from args.
     """
     return "ppa:{}/{}".format(owner_name, ppa_name)
-
-
-def _check_apt():
-    """
-    Abort if python-apt is not installed
-    """
-    if not HAS_APT:
-        log.debug("'python-apt' package not installed, using shell commands")
-        return False
-    return True
 
 
 def _call_apt(args, scope=True, **kwargs):
@@ -1526,88 +1637,24 @@ def version_cmp(pkg1, pkg2, ignore_epoch=False, **kwargs):
     return None
 
 
-def _parse_sources():
-    """
-    Parse repo information from /etc/apt/sources*
-    """
-    repos = {}
-    sources = __salt__["file.grep"]("/etc/apt/sources*", "-r", "http")
-    source = [x.split(":", 1) for x in sources["stdout"].split("\n")]
-    for line in source:
-        repo = {}
-        repo["disabled"] = False
-        repo_line = line[1].strip().split()
-        if repo_line[0].startswith("#"):
-            repo_line.pop(0)
-            repo["disabled"] = True
-        if repo_line[0] not in ["deb", "deb-src"]:
-            continue
-        repo["architectures"] = []
-        if repo_line[1].startswith("["):
-            opts = re.search(r"\[.*\]", line[1]).group(0).strip("[]")
-            repo_line.pop(repo_line.index("["))
-            repo_line.pop(repo_line.index("]"))
-            for opt in opts.split():
-                if opt.startswith("arch"):
-                    repo["architectures"] = opt.split("=", 1)[1]
-                repo_line.pop(repo_line.index(opt))
-        repo["type"] = repo_line[0]
-        repo["uri"] = repo_line[1]
-        repo["dist"] = repo_line[2]
-        repo["comps"] = repo_line[3:]
-        repo["file"] = line[0]
-        repo["line"] = line[1]
-        repos.setdefault(repo["uri"], []).append(repo)
-    return repos
-
-
 def _split_repo_str(repo):
     """
     Return APT source entry as a tuple.
     """
-    if not _check_apt():
-        user_repo = repo.split()
-        opts = re.search(r"\[.*\]", repo)
-        if opts:
-            user_repo = repo.replace(opts.group(0), "").split()
-        ret = _parse_sources()
-        split = None
-        if len(user_repo) < 4:
-            return ("", [], "", "", [])
-        for _repo in ret[user_repo[1]]:
-            if (
-                user_repo[0] == _repo["type"]
-                and user_repo[2] == _repo["dist"]
-                and user_repo[3] in _repo["comps"]
-            ):
-                split = _repo
-                break
-        if not split:
-            return ("", [], "", "", [])
-        return (
-            split["type"],
-            split["architectures"],
-            split["uri"],
-            split["dist"],
-            split["comps"],
-        )
-    else:
-        split = sourceslist.SourceEntry(repo)
-        return split.type, split.architectures, split.uri, split.dist, split.comps
+    split = SourceEntry(repo)
+    return split.type, split.architectures, split.uri, split.dist, split.comps
 
 
 def _consolidate_repo_sources(sources):
     """
     Consolidate APT sources.
     """
-    if not isinstance(sources, sourceslist.SourcesList):
-        raise TypeError(
-            "'{}' not a '{}'".format(type(sources), sourceslist.SourcesList)
-        )
+    if not isinstance(sources, SourcesList):
+        raise TypeError("'{}' not a '{}'".format(type(sources), SourcesList))
 
     consolidated = {}
     delete_files = set()
-    base_file = sourceslist.SourceEntry("").file
+    base_file = SourceEntry("").file
 
     repos = [s for s in sources.list if not s.invalid]
 
@@ -1626,7 +1673,7 @@ def _consolidate_repo_sources(sources):
             combined_comps = set(repo.comps).union(set(combined.comps))
             consolidated[key].comps = list(combined_comps)
         else:
-            consolidated[key] = sourceslist.SourceEntry(repo.line)
+            consolidated[key] = SourceEntry(repo.line)
 
         if repo.file != base_file:
             delete_files.add(repo.file)
@@ -1742,23 +1789,20 @@ def list_repos(**kwargs):
        salt '*' pkg.list_repos disabled=True
     """
     repos = {}
-    if not _check_apt():
-        return _parse_sources()
-    else:
-        sources = sourceslist.SourcesList()
-        for source in sources.list:
-            if _skip_source(source):
-                continue
-            repo = {}
-            repo["file"] = source.file
-            repo["comps"] = getattr(source, "comps", [])
-            repo["disabled"] = source.disabled
-            repo["dist"] = source.dist
-            repo["type"] = source.type
-            repo["uri"] = source.uri
-            repo["line"] = source.line.strip()
-            repo["architectures"] = getattr(source, "architectures", [])
-            repos.setdefault(source.uri, []).append(repo)
+    sources = SourcesList()
+    for source in sources.list:
+        if _skip_source(source):
+            continue
+        repo = {}
+        repo["file"] = source.file
+        repo["comps"] = getattr(source, "comps", [])
+        repo["disabled"] = source.disabled
+        repo["dist"] = source.dist
+        repo["type"] = source.type
+        repo["uri"] = source.uri
+        repo["line"] = source.line.strip()
+        repo["architectures"] = getattr(source, "architectures", [])
+        repos.setdefault(source.uri, []).append(repo)
     return repos
 
 
@@ -1876,16 +1920,8 @@ def del_repo(repo, **kwargs):
             else:
                 repo = softwareproperties.ppa.expand_ppa_line(repo, dist)[0]
 
-    apt_lib = _check_apt()
-    if not apt_lib:
-        apt_cmd = salt.utils.path.which("apt-add-repository")
-        if not apt_cmd:
-            raise CommandNotFoundError("apt-add-repository is required")
-        sources = _parse_sources()
-        repos = [y for x in list(sources.values()) for y in x]
-    else:
-        sources = sourceslist.SourcesList()
-        repos = [s for s in sources.list if not s.invalid]
+    sources = SourcesList()
+    repos = [s for s in sources.list if not s.invalid]
     if repos:
         deleted_from = dict()
         try:
@@ -1902,20 +1938,12 @@ def del_repo(repo, **kwargs):
             )
 
         for source in repos:
-            if not apt_lib:
-                source_type = source["type"]
-                source_architectures = source["architectures"]
-                source_uri = source["uri"]
-                source_dist = source["dist"]
-                source_file = source["file"]
-                source_comps = source["comps"]
-            else:
-                source_type = source.type
-                source_architectures = source.architectures
-                source_uri = source.uri
-                source_dist = source.dist
-                source_file = source.file
-                source_comps = source.comps
+            source_type = source.type
+            source_architectures = source.architectures
+            source_uri = source.uri
+            source_dist = source.dist
+            source_file = source.file
+            source_comps = source.comps
 
             if (
                 source_type == repo_type
@@ -1931,15 +1959,7 @@ def del_repo(repo, **kwargs):
                     source_comps = list(s_comps.difference(r_comps))
                     if not source_comps:
                         try:
-                            if not apt_lib:
-                                ret = _call_apt([apt_cmd, "--remove", source["line"]])
-                                if ret["retcode"] != 0:
-                                    msg += "{} cmd failed: {}".format(
-                                        apt_cmd, ret["stderr"]
-                                    )
-                                    raise CommandExecutionError(msg)
-                            else:
-                                sources.remove(source)
+                            sources.remove(source)
                         except ValueError:
                             pass
             # PPAs are special and can add deb-src where expand_ppa_line
@@ -1963,8 +1983,7 @@ def del_repo(repo, **kwargs):
                             sources.remove(source)
                         except ValueError:
                             pass
-            if apt_lib:
-                sources.save()
+            sources.save()
         if deleted_from:
             ret = ""
             for source in sources:
@@ -2283,7 +2302,6 @@ def mod_repo(repo, saltenv="base", **kwargs):
     else:
         refresh = kwargs.get("refresh", True)
 
-    _check_apt()
     # to ensure no one sets some key values that _shouldn't_ be changed on the
     # object itself, this is just a white-list of "ok" to set properties
     if repo.startswith("ppa:"):
@@ -2394,13 +2412,8 @@ def mod_repo(repo, saltenv="base", **kwargs):
                 'cannot parse "ppa:" style repo definitions: {}'.format(repo)
             )
 
-    apt_lib = _check_apt()
-    if not apt_lib:
-        sources = _parse_sources()
-        repos = [y for x in list(sources.values()) for y in x]
-    else:
-        sources = sourceslist.SourcesList()
-        repos = [s for s in sources if not s.invalid]
+    sources = SourcesList()
+    repos = [s for s in sources if not s.invalid]
 
     if kwargs.get("consolidate", False):
         # attempt to de-dup and consolidate all sources
@@ -2529,20 +2542,12 @@ def mod_repo(repo, saltenv="base", **kwargs):
     kw_dist = kwargs.get("dist")
 
     for source in repos:
-        if not apt_lib:
-            source_type = source["type"]
-            source_architectures = source["architectures"]
-            source_uri = source["uri"]
-            source_dist = source["dist"]
-            source_file = source["file"]
-            source_comps = source["comps"]
-        else:
-            source_type = source.type
-            source_architectures = source.architectures
-            source_uri = source.uri
-            source_dist = source.dist
-            source_file = source.file
-            source_comps = source.comps
+        source_type = source.type
+        source_architectures = source.architectures
+        source_uri = source.uri
+        source_dist = source.dist
+        source_file = source.file
+        source_comps = source.comps
 
         # This series of checks will identify the starting source line
         # and the resulting source line.  The idea here is to ensure
@@ -2556,16 +2561,9 @@ def mod_repo(repo, saltenv="base", **kwargs):
         kw_matches = source_dist == kw_dist and source_type == kw_type
 
         if repo_matches or kw_matches:
-            if not apt_lib:
-                if repo_comps == source["comps"]:
-                    mod_source = source
-            else:
-                for comp in full_comp_list:
-                    if comp in getattr(source, "comps", []):
-                        mod_source = source
-            if not source_comps:
+            if repo_comps == source.comps:
                 mod_source = source
-            if kwargs["architectures"] != source_architectures:
+            if not source_comps:
                 mod_source = source
             if mod_source:
                 break
@@ -2574,89 +2572,31 @@ def mod_repo(repo, saltenv="base", **kwargs):
         kwargs["comments"] = salt.utils.pkg.deb.combine_comments(kwargs["comments"])
 
     if not mod_source:
-        if not apt_lib:
-            mod_source = get_repo(repo)
-            if "comments" in kwargs:
-                mod_source["comments"] = kwargs["comments"]
-        else:
-            mod_source = sourceslist.SourceEntry(repo)
-            if "comments" in kwargs:
-                mod_source.comment = kwargs["comments"]
-            sources.list.append(mod_source)
-    elif "comments" in kwargs:
-        if not apt_lib:
-            mod_source["comments"] = kwargs["comments"]
-        else:
+        mod_source = SourceEntry(repo)
+        if "comments" in kwargs:
             mod_source.comment = kwargs["comments"]
+        sources.list.append(mod_source)
+    elif "comments" in kwargs:
+        mod_source.comment = kwargs["comments"]
 
     for key in kwargs:
-        if not apt_lib:
-            has_value = key in mod_source
-        else:
-            has_value = hasattr(mod_source, key)
+        has_value = hasattr(mod_source, key)
         if key in _MODIFY_OK and has_value:
-            if not apt_lib:
-                mod_source[key] = kwargs[key]
-            else:
-                setattr(mod_source, key, kwargs[key])
-    if not apt_lib:
-        new_repo = " ".join(
-            [
-                mod_source["type"],
-                mod_source["uri"],
-                mod_source["dist"],
-                " ".join(mod_source["comps"]),
-            ]
-        )
-        if mod_source["architectures"]:
-            new_repo = " ".join(
-                [
-                    mod_source["type"],
-                    "[ arch={} ]".format(", ".join(mod_source["architectures"])),
-                    mod_source["uri"],
-                    mod_source["dist"],
-                    " ".join(mod_source["comps"]),
-                ]
-            )
-        if "comments" in mod_source:
-            new_repo = new_repo + "\\n##" + mod_source["comments"]
-        if mod_source["disabled"]:
-            new_repo = "# " + new_repo
-        edit_repo = False
-        if os.path.exists(mod_source["file"]):
-            edit_repo = __salt__["file.replace"](
-                path=mod_source["file"], pattern=source["line"], repl=new_repo
-            )
-        else:
-            with salt.utils.files.fopen(mod_source["file"], "w") as fp:
-                fp.write(new_repo)
-            edit_repo = True
-        if not edit_repo:
-            __salt__["file.append"](path=mod_source["file"], args=new_repo)
-    else:
-        sources.save()
+            setattr(mod_source, key, kwargs[key])
+    mod_source.edit = True
+    sources.save()
     # on changes, explicitly refresh
     if refresh:
         refresh_db()
 
-    if not apt_lib:
-        mod_source_type = mod_source["type"]
-        mod_source_architectures = mod_source["architectures"]
-        mod_source_uri = mod_source["uri"]
-        mod_source_dist = mod_source["dist"]
-        mod_source_file = mod_source["file"]
-        mod_source_comps = mod_source["comps"]
-        mod_source_disabled = mod_source["disabled"]
-        mod_source_line = mod_source["line"]
-    else:
-        mod_source_type = mod_source.type
-        mod_source_architectures = mod_source.architectures
-        mod_source_uri = mod_source.uri
-        mod_source_dist = mod_source.dist
-        mod_source_file = mod_source.file
-        mod_source_comps = mod_source.comps
-        mod_source_disabled = mod_source.disabled
-        mod_source_line = mod_source.line
+    mod_source_type = mod_source.type
+    mod_source_architectures = mod_source.architectures
+    mod_source_uri = mod_source.uri
+    mod_source_dist = mod_source.dist
+    mod_source_file = mod_source.file
+    mod_source_comps = mod_source.comps
+    mod_source_disabled = mod_source.disabled
+    mod_source_line = mod_source.line
 
     return {
         repo: {
@@ -2740,11 +2680,7 @@ def expand_repo_def(**kwargs):
             filename = "/etc/apt/sources.list.d/{0}-{1}-{2}.list"
             kwargs["file"] = filename.format(owner_name, ppa_name, dist)
 
-    apt_lib = _check_apt()
-    if not apt_lib:
-        source_entry = get_repo(repo)
-    else:
-        source_entry = sourceslist.SourceEntry(repo)
+    source_entry = SourceEntry(repo)
     for list_args in ("architectures", "comps"):
         if list_args in kwargs:
             kwargs[list_args] = [
@@ -2752,37 +2688,24 @@ def expand_repo_def(**kwargs):
             ]
     for kwarg in _MODIFY_OK:
         if kwarg in kwargs:
-            if not apt_lib:
-                source_entry[kwarg] = kwargs[kwarg]
-            else:
-                setattr(source_entry, kwarg, kwargs[kwarg])
+            setattr(source_entry, kwarg, kwargs[kwarg])
 
-    if not apt_lib:
-        sanitized["type"] = source_entry["type"]
-        sanitized["architectures"] = source_entry["architectures"]
-        sanitized["uri"] = source_entry["uri"]
-        sanitized["dist"] = source_entry["dist"]
-        sanitized["file"] = source_entry["file"]
-        sanitized["comps"] = source_entry["comps"]
-        sanitized["line"] = source_entry["line"]
-        sanitized["disabled"] = source_entry["disabled"]
-    else:
-        source_list = sourceslist.SourcesList()
-        source_entry = source_list.add(
-            type=source_entry.type,
-            uri=source_entry.uri,
-            dist=source_entry.dist,
-            orig_comps=getattr(source_entry, "comps", []),
-            architectures=getattr(source_entry, "architectures", []),
-        )
-        sanitized["type"] = source_entry.type
-        sanitized["architectures"] = source_entry.architectures
-        sanitized["uri"] = source_entry.uri
-        sanitized["dist"] = source_entry.dist
-        sanitized["file"] = source_entry.file
-        sanitized["comps"] = source_entry.comps
-        sanitized["line"] = source_entry.line
-        sanitized["disabled"] = source_entry.disabled
+    source_list = SourcesList()
+    source_entry = source_list.add(
+        type=source_entry.type,
+        uri=source_entry.uri,
+        dist=source_entry.dist,
+        orig_comps=getattr(source_entry, "comps", []),
+        architectures=getattr(source_entry, "architectures", []),
+    )
+    sanitized["type"] = source_entry.type
+    sanitized["architectures"] = source_entry.architectures
+    sanitized["uri"] = source_entry.uri
+    sanitized["dist"] = source_entry.dist
+    sanitized["file"] = source_entry.file
+    sanitized["comps"] = source_entry.comps
+    sanitized["line"] = source_entry.line
+    sanitized["disabled"] = source_entry.disabled
 
     return sanitized
 
