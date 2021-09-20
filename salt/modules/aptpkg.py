@@ -1938,26 +1938,19 @@ def del_repo(repo, **kwargs):
             )
 
         for source in repos:
-            source_type = source.type
-            source_architectures = source.architectures
-            source_uri = source.uri
-            source_dist = source.dist
-            source_file = source.file
-            source_comps = source.comps
-
             if (
-                source_type == repo_type
-                and source_architectures == repo_architectures
-                and source_uri == repo_uri
-                and source_dist == repo_dist
+                source.type == repo_type
+                and source.architectures == repo_architectures
+                and source.uri == repo_uri
+                and source.dist == repo_dist
             ):
 
-                s_comps = set(source_comps)
+                s_comps = set(source.comps)
                 r_comps = set(repo_comps)
                 if s_comps.intersection(r_comps):
-                    deleted_from[source_file] = 0
-                    source_comps = list(s_comps.difference(r_comps))
-                    if not source_comps:
+                    deleted_from[source.file] = 0
+                    source.comps = list(s_comps.difference(r_comps))
+                    if not source.comps:
                         try:
                             sources.remove(source)
                         except ValueError:
@@ -1968,17 +1961,17 @@ def del_repo(repo, **kwargs):
             if (
                 is_ppa
                 and repo_type == "deb"
-                and source_type == "deb-src"
-                and source_uri == repo_uri
-                and source_dist == repo_dist
+                and source.type == "deb-src"
+                and source.uri == repo_uri
+                and source.dist == repo_dist
             ):
 
-                s_comps = set(source_comps)
+                s_comps = set(source.comps)
                 r_comps = set(repo_comps)
                 if s_comps.intersection(r_comps):
-                    deleted_from[source_file] = 0
-                    source_comps = list(s_comps.difference(r_comps))
-                    if not source_comps:
+                    deleted_from[source.file] = 0
+                    source.comps = list(s_comps.difference(r_comps))
+                    if not source.comps:
                         try:
                             sources.remove(source)
                         except ValueError:
@@ -1987,8 +1980,8 @@ def del_repo(repo, **kwargs):
         if deleted_from:
             ret = ""
             for source in sources:
-                if source_file in deleted_from:
-                    deleted_from[source_file] += 1
+                if source.file in deleted_from:
+                    deleted_from[source.file] += 1
             for repo_file, count in deleted_from.items():
                 msg = "Repo '{0}' has been removed from {1}.\n"
                 if count == 0 and "sources.list.d/" in repo_file:
@@ -2413,8 +2406,6 @@ def mod_repo(repo, saltenv="base", **kwargs):
             )
 
     sources = SourcesList()
-    repos = [s for s in sources if not s.invalid]
-
     if kwargs.get("consolidate", False):
         # attempt to de-dup and consolidate all sources
         # down to entries in sources.list
@@ -2429,6 +2420,7 @@ def mod_repo(repo, saltenv="base", **kwargs):
         # that are not the main sources.list file
         sources = _consolidate_repo_sources(sources)
 
+    repos = [s for s in sources if not s.invalid]
     mod_source = None
     try:
         (
@@ -2443,6 +2435,7 @@ def mod_repo(repo, saltenv="base", **kwargs):
             "Error: repo '{}' not a well formatted definition".format(repo)
         )
 
+    full_comp_list = {comp.strip() for comp in repo_comps}
     no_proxy = __salt__["config.option"]("no_proxy")
 
     if "keyid" in kwargs:
@@ -2520,13 +2513,11 @@ def mod_repo(repo, saltenv="base", **kwargs):
                 "Error: failed to add key:\n{}".format(key_text)
             )
 
-    full_comp_list = [comp.strip() for comp in repo_comps]
     if "comps" in kwargs:
-        full_comp_list = {comp.strip() for comp in repo_comps}
         kwargs["comps"] = [comp.strip() for comp in kwargs["comps"].split(",")]
         full_comp_list |= set(kwargs["comps"])
     else:
-        kwargs["comps"] = full_comp_list
+        kwargs["comps"] = list(full_comp_list)
 
     if "architectures" in kwargs:
         kwargs["architectures"] = kwargs["architectures"].split(",")
@@ -2542,28 +2533,21 @@ def mod_repo(repo, saltenv="base", **kwargs):
     kw_dist = kwargs.get("dist")
 
     for source in repos:
-        source_type = source.type
-        source_architectures = source.architectures
-        source_uri = source.uri
-        source_dist = source.dist
-        source_file = source.file
-        source_comps = source.comps
-
         # This series of checks will identify the starting source line
         # and the resulting source line.  The idea here is to ensure
         # we are not returning bogus data because the source line
         # has already been modified on a previous run.
         repo_matches = (
-            source_type == repo_type
-            and source_uri.rstrip("/") == repo_uri.rstrip("/")
-            and source_dist == repo_dist
+            source.type == repo_type
+            and source.uri.rstrip("/") == repo_uri.rstrip("/")
+            and source.dist == repo_dist
         )
-        kw_matches = source_dist == kw_dist and source_type == kw_type
+        kw_matches = source.dist == kw_dist and source.type == kw_type
 
         if repo_matches or kw_matches:
             if repo_comps == source.comps:
                 mod_source = source
-            if not source_comps:
+            if not source.comps:
                 mod_source = source
             if mod_source:
                 break
@@ -2580,33 +2564,22 @@ def mod_repo(repo, saltenv="base", **kwargs):
         mod_source.comment = kwargs["comments"]
 
     for key in kwargs:
-        has_value = hasattr(mod_source, key)
-        if key in _MODIFY_OK and has_value:
+        if key in _MODIFY_OK and hasattr(mod_source, key):
             setattr(mod_source, key, kwargs[key])
     mod_source.edit = True
     sources.save()
     # on changes, explicitly refresh
     if refresh:
         refresh_db()
-
-    mod_source_type = mod_source.type
-    mod_source_architectures = mod_source.architectures
-    mod_source_uri = mod_source.uri
-    mod_source_dist = mod_source.dist
-    mod_source_file = mod_source.file
-    mod_source_comps = mod_source.comps
-    mod_source_disabled = mod_source.disabled
-    mod_source_line = mod_source.line
-
     return {
         repo: {
-            "architectures": mod_source_architectures,
-            "comps": mod_source_comps,
-            "disabled": mod_source_disabled,
-            "file": mod_source_file,
-            "type": mod_source_type,
-            "uri": mod_source_uri,
-            "line": mod_source_line,
+            "architectures": getattr(mod_source, "architectures", []),
+            "comps": mod_source.comps,
+            "disabled": mod_source.disabled,
+            "file": mod_source.file,
+            "type": mod_source.type,
+            "uri": mod_source.uri,
+            "line": mod_source.line,
         }
     }
 
@@ -2698,14 +2671,15 @@ def expand_repo_def(**kwargs):
         orig_comps=getattr(source_entry, "comps", []),
         architectures=getattr(source_entry, "architectures", []),
     )
-    sanitized["type"] = source_entry.type
-    sanitized["architectures"] = source_entry.architectures
-    sanitized["uri"] = source_entry.uri
-    sanitized["dist"] = source_entry.dist
+
     sanitized["file"] = source_entry.file
-    sanitized["comps"] = source_entry.comps
-    sanitized["line"] = source_entry.line
+    sanitized["comps"] = getattr(source_entry, "comps", [])
     sanitized["disabled"] = source_entry.disabled
+    sanitized["dist"] = source_entry.dist
+    sanitized["type"] = source_entry.type
+    sanitized["uri"] = source_entry.uri
+    sanitized["line"] = source_entry.line.strip()
+    sanitized["architectures"] = getattr(source_entry, "architectures", [])
 
     return sanitized
 
