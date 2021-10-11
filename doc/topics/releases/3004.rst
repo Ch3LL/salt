@@ -215,3 +215,12 @@ Added
 - Add the ``detect_remote_minions`` and ``remote_minions_port`` options to allow the master to detect remote ports for connected minions. This will allow users to detect Heist-Salt minions the master is connected to over port 22 by default. (#60612)
 - Add the python rpm-vercmp library in the rpm_lowpkg.py module. (#60814)
 - Allow a user to use the aptpkg.py module without installing python-apt. (#60818)
+
+
+Fixed
+-----
+
+- Clear and update the Pillar Cache when running saltutil.refresh_pillar. This only affects users
+  that have `pillar_cache` set to True. If you do not want to clear the cache you can pass the kwarg
+  `clean_cache=False` to `saltutil.refresh_pillar`. (#60897)
+

@@ -7,6 +7,17 @@ Versions are `MAJOR.PATCH`.
 
 # Changelog
 
+Salt 3004 (2021-10-11)
+======================
+
+Fixed
+-----
+
+- Clear and update the Pillar Cache when running saltutil.refresh_pillar. This only affects users
+  that have `pillar_cache` set to True. If you do not want to clear the cache you can pass the kwarg
+  `clean_cache=False` to `saltutil.refresh_pillar`. (#60897)
+
+
 Salt v3004 (2021-10-11)
 =======================
 
