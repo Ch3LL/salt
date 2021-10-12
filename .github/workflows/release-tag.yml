@@ -15,7 +15,6 @@ jobs:
     name: Generate Tag and Github Release
     runs-on: ubuntu-latest
     steps:
-    - name: Delete Tag and Release
     - uses: dev-drprasad/delete-tag-and-release@v0.2.0
       if: github.event.inputs.reTag == 'true'
       with:
