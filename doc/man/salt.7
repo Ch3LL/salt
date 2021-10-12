@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "SALT" "7" "Sep 27, 2021" "3004" "Salt"
+.TH "SALT" "7" "Oct 12, 2021" "3004" "Salt"
 .SH NAME
 salt \- Salt Documentation
 .
@@ -36473,6 +36473,25 @@ pillar data is modified, and then states are run, the states will see the
 updated pillar data, but \fBpillar.item\fP,
 \fBpillar.get\fP, and \fBpillar.raw\fP will not see this data unless refreshed using
 \fBsaltutil.refresh_pillar\fP\&.
+.sp
+If you are using the Pillar Cache and have set \fBpillar_cache\fP to \fITrue\fP,
+the pillar cache can be updated either when you run \fBsaltutil.refresh_pillar\fP, or using the pillar runner function
+\fBpillar.clear_pillar_cache\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+salt\-run pillar.clear_pillar_cache \(aqminion\(aq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The pillar will not be updated when running \fBpillar.items\fP or a state for example. If you are
+using a Salt version before 3003, you would need to manually delete the cache
+file, located in Salt\(aqs master cache. For example, on linux the file would be
+in this directory: /var/cache/salt/master/pillar_cache/
 .SS How Pillar Environments Are Handled
 .sp
 When multiple pillar environments are used, the default behavior is for the
@@ -116918,11 +116937,19 @@ Return the repo line for the sources file
 .UNINDENT
 .INDENT 7.0
 .TP
+.B add_file(file)
+Add the lines of a file to self.list
+.UNINDENT
+.INDENT 7.0
+.TP
 .B remove(source)
+remove a source from the list of sources
 .UNINDENT
 .INDENT 7.0
 .TP
 .B save()
+write all of the sources from the list of sources
+to the file.
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
@@ -152382,7 +152409,7 @@ salt \(aq*\(aq cmd.powershell_all "dir mydirectory" force_list=True
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.retcode(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.retcode(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute a shell command and return the command\(aqs return code.
 .INDENT 7.0
 .TP
@@ -152641,7 +152668,7 @@ salt \(aq*\(aq cmd.retcode "grep f" stdin=\(aqone\entwo\enthree\enfour\enfive\en
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, encoded_cmd=False, raise_err=False, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, encoded_cmd=False, raise_err=False, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute the passed command and return the output as a string
 .INDENT 7.0
 .TP
@@ -153022,7 +153049,7 @@ salt \(aq*\(aq cmd.run cmd=\(aqsed \-e s/=/:/g\(aq
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run_all(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, redirect_stderr=False, password=None, encoded_cmd=False, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run_all(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, redirect_stderr=False, password=None, encoded_cmd=False, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute the passed command and return a dict of return data
 .INDENT 7.0
 .TP
@@ -153365,7 +153392,7 @@ salt \(aq*\(aq cmd.run_all "grep f" stdin=\(aqone\entwo\enthree\enfour\enfive\en
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run_bg(cmd, cwd=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, umask=None, timeout=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run_bg(cmd, cwd=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, umask=None, timeout=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 New in version 2016.3.0.
 
 .sp
@@ -153666,7 +153693,7 @@ salt \(aq*\(aq cmd.run_bg cmd=\(aqls \-lR / | sed \-e s/=/:/g > /tmp/dontwait\(a
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run_chroot(root, cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=True, binds=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqquiet\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run_chroot(root, cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=True, binds=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqquiet\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 New in version 2014.7.0.
 
 .sp
@@ -153887,7 +153914,7 @@ salt \(aq*\(aq cmd.run_chroot /var/lib/lxc/container_name/rootfs \(aqsh /tmp/boo
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run_stderr(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run_stderr(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute a command and only return the standard error
 .INDENT 7.0
 .TP
@@ -154164,7 +154191,7 @@ salt \(aq*\(aq cmd.run_stderr "grep f" stdin=\(aqone\entwo\enthree\enfour\enfive
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.run_stdout(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.run_stdout(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute a command, and only return the standard out
 .INDENT 7.0
 .TP
@@ -154441,7 +154468,7 @@ salt \(aq*\(aq cmd.run_stdout "grep f" stdin=\(aqone\entwo\enthree\enfour\enfive
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.script(source, args=None, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, template=None, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.script(source, args=None, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, template=None, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Download a script from a remote location and execute the script locally.
 The script can be located on the salt master file server or on an HTTP/FTP
 server.
@@ -154718,7 +154745,7 @@ salt \(aq*\(aq cmd.script salt://scripts/runme.sh stdin=\(aqone\entwo\enthree\en
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.script_retcode(source, args=None, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, python_shell=None, env=None, template=\(aqjinja\(aq, umask=None, timeout=None, reset_system_locale=True, saltenv=\(aqbase\(aq, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, use_vt=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.script_retcode(source, args=None, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, python_shell=None, env=None, template=\(aqjinja\(aq, umask=None, timeout=None, reset_system_locale=True, saltenv=\(aqbase\(aq, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, use_vt=False, password=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Download a script from a remote location and execute the script locally.
 The script can be located on the salt master file server or on an HTTP/FTP
 server.
@@ -154943,7 +154970,7 @@ salt \(aq*\(aq cmd.script_retcode salt://scripts/runme.sh stdin=\(aqone\entwo\en
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.cmdmod.shell(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/bash\(aq, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
+.B salt.modules.cmdmod.shell(cmd, cwd=None, stdin=None, runas=None, group=None, shell=\(aq/bin/sh\(aq, env=None, clean_env=False, template=None, rstrip=True, umask=None, output_encoding=None, output_loglevel=\(aqdebug\(aq, log_callback=None, hide_output=False, timeout=None, reset_system_locale=True, ignore_retcode=False, saltenv=\(aqbase\(aq, use_vt=False, bg=False, password=None, prepend_path=None, success_retcodes=None, success_stdout=None, success_stderr=None, **kwargs)
 Execute the passed command and return the output as a string.
 .sp
 New in version 2015.5.0.
@@ -193862,7 +193889,7 @@ Passes through all the parameters described in the
 \fI\%utils.http.query function\fP:
 .INDENT 7.0
 .TP
-.B salt.utils.http.query(url, method=\(aqGET\(aq, params=None, data=None, data_file=None, header_dict=None, header_list=None, header_file=None, username=None, password=None, auth=None, decode=False, decode_type=\(aqauto\(aq, status=False, headers=False, text=False, cookies=None, cookie_jar=None, cookie_format=\(aqlwp\(aq, persist_session=False, session_cookie_jar=None, data_render=False, data_renderer=None, header_render=False, header_renderer=None, template_dict=None, test=False, test_url=None, node=\(aqminion\(aq, port=80, opts=None, backend=None, ca_bundle=None, verify_ssl=None, cert=None, text_out=None, headers_out=None, decode_out=None, stream=False, streaming_callback=None, header_callback=None, handle=False, agent=\(aqSalt/3004rc0+315.g248e4e042c\(aq, hide_fields=None, raise_error=True, formdata=False, formdata_fieldname=None, formdata_filename=None, decode_body=True, **kwargs)
+.B salt.utils.http.query(url, method=\(aqGET\(aq, params=None, data=None, data_file=None, header_dict=None, header_list=None, header_file=None, username=None, password=None, auth=None, decode=False, decode_type=\(aqauto\(aq, status=False, headers=False, text=False, cookies=None, cookie_jar=None, cookie_format=\(aqlwp\(aq, persist_session=False, session_cookie_jar=None, data_render=False, data_renderer=None, header_render=False, header_renderer=None, template_dict=None, test=False, test_url=None, node=\(aqminion\(aq, port=80, opts=None, backend=None, ca_bundle=None, verify_ssl=None, cert=None, text_out=None, headers_out=None, decode_out=None, stream=False, streaming_callback=None, header_callback=None, handle=False, agent=\(aqSalt/3004+0na.92217f2\(aq, hide_fields=None, raise_error=True, formdata=False, formdata_fieldname=None, formdata_filename=None, decode_body=True, **kwargs)
 Query a resource, and decode the return data
 .UNINDENT
 .INDENT 7.0
@@ -193880,7 +193907,7 @@ CLI Example:
 .nf
 .ft C
 salt \(aq*\(aq http.query http://somelink.com/
-salt \(aq*\(aq http.query http://somelink.com/ method=POST             params=\(aqkey1=val1&key2=val2\(aq
+salt \(aq*\(aq http.query http://somelink.com/ method=POST             params=\(aq{"key1": "val1", "key2": "val2"}\(aq
 salt \(aq*\(aq http.query http://somelink.com/ method=POST             data=\(aq<xml>somecontent</xml>\(aq
 .ft P
 .fi
@@ -211524,7 +211551,7 @@ It comes very handy when debugging complex Jinja templates, for example:
 .nf
 .ft C
 {%\- for var in range(10) %}
-  {%\- do salt.log.info(var) \-%}
+  {%\- do salt["log.info"](var) \-%}
 {%\- endfor %}
 .ft P
 .fi
@@ -278884,7 +278911,7 @@ salt \(aq*\(aq saltutil.mmodule base test.ping
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.saltutil.pillar_refresh(wait=False, timeout=30)
+.B salt.modules.saltutil.pillar_refresh(wait=False, timeout=30, clean_cache=True)
 This function is an alias of \fBrefresh_pillar\fP\&.
 .INDENT 7.0
 .INDENT 3.5
@@ -278902,6 +278929,13 @@ How long to wait in seconds, only used when wait is True, defaults to 30.
 .TP
 .B type timeout
 int, optional
+.TP
+.B param clean_cache
+Clean the pillar cache, only used when \fIpillar_cache\fP is True. Defaults to True
+.TP
+.B type clean_cache
+bool, optional
+\&.. versionadded:: 3005
 .TP
 .B return
 Boolean status, True when the pillar_refresh event was fired successfully.
@@ -279014,7 +279048,7 @@ salt \(aq*\(aq saltutil.refresh_modules
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.saltutil.refresh_pillar(wait=False, timeout=30)
+.B salt.modules.saltutil.refresh_pillar(wait=False, timeout=30, clean_cache=True)
 Signal the minion to refresh the in\-memory pillar data. See pillar\-in\-memory\&.
 .INDENT 7.0
 .TP
@@ -279024,6 +279058,9 @@ Signal the minion to refresh the in\-memory pillar data. See pillar\-in\-memory\
 \fBwait\fP (\fI\%bool\fP\fI, \fP\fIoptional\fP) \-\- Wait for pillar refresh to complete, defaults to False.
 .IP \(bu 2
 \fBtimeout\fP (\fI\%int\fP\fI, \fP\fIoptional\fP) \-\- How long to wait in seconds, only used when wait is True, defaults to 30.
+.IP \(bu 2
+\fBclean_cache\fP (\fI\%bool\fP\fI, \fP\fIoptional
+\&.. versionadded:: 3005\fP) \-\- Clean the pillar cache, only used when \fIpillar_cache\fP is True. Defaults to True
 .UNINDENT
 .TP
 .B Returns
@@ -335674,8 +335711,8 @@ Alternate constructor that accept multiple recipients and rooms
 .B filter(record)
 Determine if the specified record is to be logged.
 .sp
-Returns True if the record should be logged, or False otherwise.
-If deemed appropriate, the record may be modified in\-place.
+Is the specified record to be logged? Returns 0 for no, nonzero for
+yes. If deemed appropriate, the record may be modified in\-place.
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
@@ -373330,7 +373367,7 @@ sls dumper.
 .UNINDENT
 .INDENT 7.0
 .TP
-.B yaml_multi_representers = {<class \(aqNoneType\(aq>: <function SafeRepresenter.represent_none>, <class \(aqbytes\(aq>: <function SafeRepresenter.represent_binary>, <class \(aqstr\(aq>: <function SafeRepresenter.represent_str>, <class \(aqbool\(aq>: <function SafeRepresenter.represent_bool>, <class \(aqint\(aq>: <function SafeRepresenter.represent_int>, <class \(aqfloat\(aq>: <function SafeRepresenter.represent_float>, <class \(aqlist\(aq>: <function SafeRepresenter.represent_list>, <class \(aqtuple\(aq>: <function SafeRepresenter.represent_list>, <class \(aqdict\(aq>: <function Dumper.represent_odict>, <class \(aqset\(aq>: <function SafeRepresenter.represent_set>, <class \(aqdatetime.date\(aq>: <function SafeRepresenter.represent_date>, <class \(aqdatetime.datetime\(aq>: <function SafeRepresenter.represent_datetime>, None: <function SafeRepresenter.represent_undefined>}
+.B yaml_multi_representers = {<class \(aqjnpr.junos.facts.swver.version_info\(aq>: <function version_yaml_representer>, <class \(aqNoneType\(aq>: <function SafeRepresenter.represent_none>, <class \(aqbytes\(aq>: <function SafeRepresenter.represent_binary>, <class \(aqstr\(aq>: <function SafeRepresenter.represent_str>, <class \(aqbool\(aq>: <function SafeRepresenter.represent_bool>, <class \(aqint\(aq>: <function SafeRepresenter.represent_int>, <class \(aqfloat\(aq>: <function SafeRepresenter.represent_float>, <class \(aqlist\(aq>: <function SafeRepresenter.represent_list>, <class \(aqtuple\(aq>: <function SafeRepresenter.represent_list>, <class \(aqdict\(aq>: <function Dumper.represent_odict>, <class \(aqset\(aq>: <function SafeRepresenter.represent_set>, <class \(aqdatetime.date\(aq>: <function SafeRepresenter.represent_date>, <class \(aqdatetime.datetime\(aq>: <function SafeRepresenter.represent_datetime>, None: <function SafeRepresenter.represent_undefined>}
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
@@ -394689,8 +394726,10 @@ is not set.
 .INDENT 0.0
 .TP
 .B salt.states.cron.absent(name, user=\(aqroot\(aq, identifier=False, special=None, **kwargs)
-Verifies that the specified cron job is absent for the specified user; only
-the name is matched when removing a cron job.
+Verifies that the specified cron job is absent for the specified user.
+.sp
+If an \fBidentifier\fP is not passed then the \fBname\fP is used to identify
+the cron job for removal.
 .INDENT 7.0
 .TP
 .B name
@@ -432617,10 +432656,10 @@ Ensure the RabbitMQ user exists.
 User name
 .TP
 .B password
-User\(aqs password, if one needs to be set
+The user\(aqs password
 .TP
 .B force
-If user exists, forcibly change the password
+If force is \fBTrue\fP, the password will be automatically updated without extra password change check.
 .TP
 .B tags
 Optional list of tags for the user
@@ -447263,7 +447302,7 @@ installed2
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.states.zcbuildout.installed(name, config=\(aqbuildout.cfg\(aq, quiet=False, parts=None, user=None, env=(), buildout_ver=None, test_release=False, distribute=None, new_st=None, offline=False, newest=False, python=\(aq/home/dscripter/git/saltopen/salt/.nox/docs\-man\-compress\-false\-update\-true\-clean\-true/bin/python\(aq, debug=False, verbose=False, unless=None, onlyif=None, use_vt=False, loglevel=\(aqdebug\(aq, **kwargs)
+.B salt.states.zcbuildout.installed(name, config=\(aqbuildout.cfg\(aq, quiet=False, parts=None, user=None, env=(), buildout_ver=None, test_release=False, distribute=None, new_st=None, offline=False, newest=False, python=\(aq/__w/salt/salt/.nox/docs\-man\-compress\-false\-update\-true\-clean\-true/bin/python\(aq, debug=False, verbose=False, unless=None, onlyif=None, use_vt=False, loglevel=\(aqdebug\(aq, **kwargs)
 Install buildout in a specific directory
 .sp
 It is a thin wrapper to modules.buildout.buildout
@@ -455512,7 +455551,7 @@ towncrier \-\-draft \-\-version=3001
 .sp
 .nf
 .ft C
-nox \-e \(aqchangelog(draft=True)\(aq \-\- 3000.1
+nox \-e \(aqchangelog(force=False, draft=True)\(aq \-\- 3000.1
 .ft P
 .fi
 .UNINDENT
@@ -455535,13 +455574,26 @@ towncrier \-\-version=3001
 .sp
 .nf
 .ft C
-nox \-e \(aqchangelog(draft=False)\(aq \-\- 3000.1
+nox \-e \(aqchangelog(force=False, draft=False)\(aq \-\- 3000.1
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
 .sp
 After this is run towncrier will automatically remove all the files in the changelog directory.
+.sp
+If you want to force towncrier to automatically remove all the files in the changelog directory
+without asking you to type yes, you can set force to True.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+nox \-e \(aqchangelog(force=True, draft=False)\(aq \-\- 3000.1
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
 .SS Contributing
 .sp
 So you want to contribute to the Salt project? Excellent! You can help
@@ -588315,6 +588367,8 @@ Removed deprecated virt.migrate_non_shared, virt.migrate_non_shared_inc, ssh fro
 utils/boto3_elasticsearch is no longer needed (#59882)
 .IP \(bu 2
 Changed "manufacture" grain to "manufacturer" for Solaris on SPARC to unify the name across all platforms. The old "manufacture" grain is now deprecated and will be removed in Sulfur (#60511)
+.IP \(bu 2
+Deprecate \fBsalt.payload.Serial\fP (#60953)
 .UNINDENT
 .SS Changed
 .INDENT 0.0
@@ -588331,6 +588385,8 @@ Changed the default character set used by \fButils.pycrypto.secure_password()\fP
 .UNINDENT
 .SS Fixed
 .INDENT 0.0
+.IP \(bu 2
+Redirect imports of \fBsalt.ext.six\fP to \fBsix\fP (#60966)
 .IP \(bu 2
 Surface strerror to user state instead of returning false (#20789)
 .IP \(bu 2
@@ -588554,8 +588610,6 @@ Ensure all data that is being passed along to LDAP is in an OrderedSet and conta
 Update the AWS API version so VMs spun up by salt\-cloud where the VPC has it enabled to assign ipv6 addresses by default, actually get ipv6 addresses assigned by default. (#60804)
 .IP \(bu 2
 Remove un\-needed singletons from tranports (#60851)
-.IP \(bu 2
-Deprecate \fBsalt.payload.Serial\fP (#60953)
 .UNINDENT
 .SS Added
 .INDENT 0.0

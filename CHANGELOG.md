@@ -7,6 +7,31 @@ Versions are `MAJOR.PATCH`.
 
 # Changelog
 
+Salt 3005 (2021-10-12)
+======================
+
+Deprecated
+----------
+
+- The _ext_nodes alias to the master_tops function was added back in 3004 to maintain backwards compatibility with older supported versions. This alias will now be removed in 3006. This change will break Master and Minion communication compatibility with Salt minions running versions 3003 and lower. (#60980)
+
+
+Fixed
+-----
+
+- fixed issue where multiple args to netapi were not preserved (#59182)
+- loader: Fix loading grains with annotations (#60285)
+- Handle signals and properly exit, instead of raising exceptions. (#60391, #60963)
+- Clear and update the Pillar Cache when running saltutil.refresh_pillar. This only affects users
+  that have `pillar_cache` set to True. If you do not want to clear the cache you can pass the kwarg
+  `clean_cache=False` to `saltutil.refresh_pillar`. (#60897)
+- Handle all repo formats in the aptpkg module. (#60971)
+- Do not break master_tops for minion with version lower to 3003
+  This is going to be removed in Salt 3006 (Sulfur) (#60980)
+- Reverting changes in PR #60150. Updating installed and removed functions to return changes when test=True. (#60995)
+- Set default 'bootstrap_delay' to 0 (#61005)
+
+
 Salt 3004 (2021-09-28)
 ======================
 
