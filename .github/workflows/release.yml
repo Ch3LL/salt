@@ -62,7 +62,11 @@ jobs:
       run: |
         nox --forcecolor -e 'changelog(force=False, draft=True)' -- ${{ github.event.inputs.saltVersion }} > rn_changelog
         nox --forcecolor -e 'changelog(force=True, draft=False)' -- ${{ github.event.inputs.saltVersion }}
-        git diff > patch.txt
+        git restore --staged changelog/
+        echo "git diff--------"
+        git diff --no-color
+        git diff --no-color > changelog_patch.txt
+        cat changelog_patch.txt
 
     - name: Store Generated Changelog
       uses: actions/upload-artifact@v2
@@ -71,7 +75,7 @@ jobs:
         path: |
           #          CHANGELOG.md
           #          changelog/*
-          patch.txt
+          changelog_patch.txt
           rn_changelog
 
   Manpages:
@@ -167,7 +171,9 @@ jobs:
 
     - name: Generate Release Notes and changelog
       run: |
-       git apply patch.txt
+       echo "---------------cat changelog_patch.txt-------------"
+       cat changelog_patch.txt
+       echo "---------next step--------------"
        sed -i '0,/^======/d' rn_changelog
        cat rn_changelog
        cat rn_changelog >> doc/topics/releases/${{ github.event.inputs.saltVersion }}.rst
