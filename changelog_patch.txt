@@ -1,0 +1,1642 @@
+diff --git a/changelog/25721.fixed b/changelog/25721.fixed
+deleted file mode 100644
+index bc070c8ce3..0000000000
+--- a/changelog/25721.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix SSH password regex to not search for content after password:.
+diff --git a/changelog/29562.fixed b/changelog/29562.fixed
+deleted file mode 100644
+index e918c872c0..0000000000
+--- a/changelog/29562.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Addressing a few issues when having keep_symlinks set to True with file.recurse.  Also allow symlinks that are outside the salt fileserver root to be discoverable as symlinks when fileserver_followsymlinks is set to False.
+diff --git a/changelog/35215.fixed b/changelog/35215.fixed
+deleted file mode 100644
+index 7c08b3d635..0000000000
+--- a/changelog/35215.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-serialize to JSON only non string objects.
+diff --git a/changelog/38605.fixed b/changelog/38605.fixed
+deleted file mode 100644
+index 655860ca13..0000000000
+--- a/changelog/38605.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix archive.extracted doesn't set user/group ownership correctly
+diff --git a/changelog/48735.fixed b/changelog/48735.fixed
+deleted file mode 100644
+index 44b785eec9..0000000000
+--- a/changelog/48735.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Make sys.argspec work on functions with annotations
+diff --git a/changelog/49648.fixed b/changelog/49648.fixed
+deleted file mode 100644
+index d8a62176c6..0000000000
+--- a/changelog/49648.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed pdbedit.list_users with Samba 4.8
+diff --git a/changelog/49835.fixed b/changelog/49835.fixed
+deleted file mode 100644
+index e69cae73c5..0000000000
+--- a/changelog/49835.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixes a scenario where ipv6 is enabled but the master is configured as an ipv4 IP address.
+diff --git a/changelog/50394.added b/changelog/50394.added
+deleted file mode 100644
+index 8b4a4eedae..0000000000
+--- a/changelog/50394.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added ability to request VPC peering connections in different AWS regions (boto_vpc).
+\ No newline at end of file
+diff --git a/changelog/50815.added b/changelog/50815.added
+deleted file mode 100644
+index 15fc647b28..0000000000
+--- a/changelog/50815.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added event return capability to Splunk returner
+diff --git a/changelog/50851.fixed b/changelog/50851.fixed
+deleted file mode 100644
+index 37163c2626..0000000000
+--- a/changelog/50851.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Ensure that NOTIFY_SOCKET is not passed to child processes created with cmdmod unless it's set explicitly for such call.
+diff --git a/changelog/51559.fixed b/changelog/51559.fixed
+deleted file mode 100644
+index 0df32ca288..0000000000
+--- a/changelog/51559.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-remove escaping of dbname in mysql.alter_db function.
+diff --git a/changelog/52759.fixed b/changelog/52759.fixed
+deleted file mode 100644
+index 819094ef69..0000000000
+--- a/changelog/52759.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix runit module failing to find service if it is not symlinked.
+\ No newline at end of file
+diff --git a/changelog/52977.added b/changelog/52977.added
+deleted file mode 100644
+index 95fb475def..0000000000
+--- a/changelog/52977.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added allow downgrades support to apt upgrade
+diff --git a/changelog/53223.added b/changelog/53223.added
+deleted file mode 100644
+index 878fb5039d..0000000000
+--- a/changelog/53223.added
++++ /dev/null
+@@ -1 +0,0 @@
+-added new grain for metadata to handle googles metadata differences
+diff --git a/changelog/53513.fixed b/changelog/53513.fixed
+deleted file mode 100644
+index 9a653c8476..0000000000
+--- a/changelog/53513.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Changed manage.versions to report minions offline if minion call fails.
+diff --git a/changelog/53706.added b/changelog/53706.added
+deleted file mode 100644
+index 47b5fa275a..0000000000
+--- a/changelog/53706.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added win_shortcut execution and state module that does not prepend the current working directory to paths. Use shortcut.create and shortcut.present instead of file.shortcut.
+diff --git a/changelog/53742.fixed b/changelog/53742.fixed
+deleted file mode 100644
+index b66c121a4c..0000000000
+--- a/changelog/53742.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed events stream from /events endpoint not halting when auth token has expired.
+\ No newline at end of file
+diff --git a/changelog/53961.fixed b/changelog/53961.fixed
+deleted file mode 100644
+index a5235eada7..0000000000
+--- a/changelog/53961.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed user.present which was breaking when updating workphone,homephone, fullname and "other" fields in case int was passed instead of string
+\ No newline at end of file
+diff --git a/changelog/53977.fixed b/changelog/53977.fixed
+deleted file mode 100644
+index c6123f2ebd..0000000000
+--- a/changelog/53977.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix error in webutil state module when attempting to grep a file that does not exist.
+diff --git a/changelog/54301.fixed b/changelog/54301.fixed
+deleted file mode 100644
+index daeee6e1fc..0000000000
+--- a/changelog/54301.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed ability to modify the "Audit: Force audit policy subcategory settings..." policy
+diff --git a/changelog/55394.fixed b/changelog/55394.fixed
+deleted file mode 100644
+index 745d9cd858..0000000000
+--- a/changelog/55394.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix timeout handling in netapi/saltnado.
+diff --git a/changelog/55654.fixed b/changelog/55654.fixed
+deleted file mode 100644
+index 748ab1727c..0000000000
+--- a/changelog/55654.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixing REST auth so that we actually support using ACLs from the REST server like we said in the documentation.
+diff --git a/changelog/55747.added b/changelog/55747.added
+deleted file mode 100644
+index 390455eb36..0000000000
+--- a/changelog/55747.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add __env__ substitution inside file and pillar root paths
+diff --git a/changelog/55847.fixed b/changelog/55847.fixed
+deleted file mode 100644
+index 3d6a576c77..0000000000
+--- a/changelog/55847.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Salt now correctly handles macOS after Py3.8 where python defaults to spawn instead of fork.
+diff --git a/changelog/56055.removed b/changelog/56055.removed
+deleted file mode 100644
+index d9d88db469..0000000000
+--- a/changelog/56055.removed
++++ /dev/null
+@@ -1 +0,0 @@
+-Deprecating and removing salt-unity.
+diff --git a/changelog/56144.added b/changelog/56144.added
+deleted file mode 100644
+index ee11caee58..0000000000
+--- a/changelog/56144.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added support cpu hot add/remove, memory hot add, and nested virtualization to VMware salt-cloud driver.
+diff --git a/changelog/56495.fixed b/changelog/56495.fixed
+deleted file mode 100644
+index ba43c84bcc..0000000000
+--- a/changelog/56495.fixed
++++ /dev/null
+@@ -1,2 +0,0 @@
+-Factor out sum and sorting of permissions into separate functions.
+-Additionally, the same logic was applied to the rest_cherrypy netapi
+diff --git a/changelog/56864.fixed b/changelog/56864.fixed
+deleted file mode 100644
+index 16b9dd060d..0000000000
+--- a/changelog/56864.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Display packages that are marked NoRemove in pkg.list_pkgs for Windows platforms
+diff --git a/changelog/56957.fixed b/changelog/56957.fixed
+deleted file mode 100644
+index 3164bfa3cd..0000000000
+--- a/changelog/56957.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Attempt to fix 56957 by detecting the broken recusion and stopping it.
+diff --git a/changelog/57133.fixed b/changelog/57133.fixed
+deleted file mode 100644
+index 5ac9a22524..0000000000
+--- a/changelog/57133.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed bytes vs. text issue when using sqlite for sdb backend.
+diff --git a/changelog/57144.fixed b/changelog/57144.fixed
+deleted file mode 100644
+index 2111c57a94..0000000000
+--- a/changelog/57144.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Ensure test is added to opts when using the state module with salt-ssh.
+diff --git a/changelog/57721.fixed b/changelog/57721.fixed
+deleted file mode 100644
+index 9542e48e90..0000000000
+--- a/changelog/57721.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed RuntimeError OrderedDict mutated in network.managed for Debian systems.
+diff --git a/changelog/57742.fixed b/changelog/57742.fixed
+deleted file mode 100644
+index e5b649ae8e..0000000000
+--- a/changelog/57742.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Improved the multiprocessing classes to better handle spawning platforms
+diff --git a/changelog/57873.fixed b/changelog/57873.fixed
+deleted file mode 100644
+index e70f6c9256..0000000000
+--- a/changelog/57873.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Config options are enforced according to config type
+diff --git a/changelog/57992.fixed b/changelog/57992.fixed
+deleted file mode 100644
+index 88c86b964e..0000000000
+--- a/changelog/57992.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-fixed 57992 fix multi item kv v2 items read. 
+diff --git a/changelog/58101.added b/changelog/58101.added
+deleted file mode 100644
+index 2cb120710b..0000000000
+--- a/changelog/58101.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add a consul state module with acl_present and acl_absent functions.
+diff --git a/changelog/58141.fixed b/changelog/58141.fixed
+deleted file mode 100644
+index e079d3f009..0000000000
+--- a/changelog/58141.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed thread leak during FQDN lookup when DNS entries had malformed PTR records, or other similar issues.
+diff --git a/changelog/58195.fixed b/changelog/58195.fixed
+deleted file mode 100644
+index d41c9391ea..0000000000
+--- a/changelog/58195.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Remove unnecessary dot in template that cause the bridge interface to fail on debian. Fixes #58195
+diff --git a/changelog/58329.fixed b/changelog/58329.fixed
+deleted file mode 100644
+index 7250c51624..0000000000
+--- a/changelog/58329.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-update salt.module.schedule to check the job_args and job_kwargs for valid formatting.
+diff --git a/changelog/58662.fixed b/changelog/58662.fixed
+deleted file mode 100644
+index 5d225f59c8..0000000000
+--- a/changelog/58662.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allowe use of `roster` in salt.function state when using the SSH client.
+diff --git a/changelog/58745.changed b/changelog/58745.changed
+deleted file mode 100644
+index 969628d09d..0000000000
+--- a/changelog/58745.changed
++++ /dev/null
+@@ -1 +0,0 @@
+-alternatives: Do not access /var/lib/dpkg/alternatives directly
+diff --git a/changelog/58763.fixed b/changelog/58763.fixed
+deleted file mode 100644
+index 53ee8304c0..0000000000
+--- a/changelog/58763.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Detect new and legacy styles of calling module.run and support them both.
+diff --git a/changelog/58807.fixed b/changelog/58807.fixed
+deleted file mode 100644
+index 4ceaaf5071..0000000000
+--- a/changelog/58807.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Clean repo uri before checking if it's present, avoiding ghost change.
+diff --git a/changelog/58934.fixed b/changelog/58934.fixed
+deleted file mode 100644
+index cf1d35727c..0000000000
+--- a/changelog/58934.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix error "'__opts__' is not defined" when using the boto v2 modules
+diff --git a/changelog/58963.fixed b/changelog/58963.fixed
+deleted file mode 100644
+index a6e134b845..0000000000
+--- a/changelog/58963.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-hgfs: fix bytes vs str issues within hgfs. 
+diff --git a/changelog/59006.added b/changelog/59006.added
+deleted file mode 100644
+index d6971d2d0e..0000000000
+--- a/changelog/59006.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added restconf module/states/proxy code for network device automation
+\ No newline at end of file
+diff --git a/changelog/59033.fixed b/changelog/59033.fixed
+deleted file mode 100644
+index 5d8d649091..0000000000
+--- a/changelog/59033.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixes salt-ssh error when targetting IPs or hostnames directly.
+diff --git a/changelog/59090.fixed b/changelog/59090.fixed
+deleted file mode 100644
+index 2f9a43a5c0..0000000000
+--- a/changelog/59090.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow for multiple configuration entries with keyword strict_config=False on yum-based systems
+diff --git a/changelog/59101.fixed b/changelog/59101.fixed
+deleted file mode 100644
+index 01959a5949..0000000000
+--- a/changelog/59101.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed error when running legacy code in winrepo.update_git_repos
+\ No newline at end of file
+diff --git a/changelog/59102.fixed b/changelog/59102.fixed
+deleted file mode 100644
+index d248d0f1db..0000000000
+--- a/changelog/59102.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Clarify the persist argument in the scheduler module. Adding code in the list function to indicate if the schedule job is saved or not.
+diff --git a/changelog/59331.fixed b/changelog/59331.fixed
+deleted file mode 100644
+index 88ed01ff6f..0000000000
+--- a/changelog/59331.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Swap ret["retcode"] for ret.get("retcode") in the event that there is no retcode, eg. when a function is not passed with a module.
+diff --git a/changelog/59361.fixed b/changelog/59361.fixed
+deleted file mode 100644
+index 642f5c6033..0000000000
+--- a/changelog/59361.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix race condition when caching vault tokens
+diff --git a/changelog/59429.fixed b/changelog/59429.fixed
+deleted file mode 100644
+index 979a3d4717..0000000000
+--- a/changelog/59429.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-The ssh module now accepts all ssh public key types as of openssh server version 8.7.
+diff --git a/changelog/59448.fixed b/changelog/59448.fixed
+deleted file mode 100644
+index 18820046cf..0000000000
+--- a/changelog/59448.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Set default transport and port settings for Napalm NXOS, if not set.
+diff --git a/changelog/59503.fixed b/changelog/59503.fixed
+deleted file mode 100644
+index b39daf7de4..0000000000
+--- a/changelog/59503.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Use __salt_system_encoding__ when retrieving keystore certificate SHA1 str
+diff --git a/changelog/59554.fixed b/changelog/59554.fixed
+deleted file mode 100644
+index 6e0fb07631..0000000000
+--- a/changelog/59554.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix error being thrown on empty flags list given to file.replace 
+diff --git a/changelog/59604.fixed b/changelog/59604.fixed
+deleted file mode 100644
+index c7c4489665..0000000000
+--- a/changelog/59604.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Update url for ez_setup.py script in virtualenv_mod.py
+diff --git a/changelog/59702.added b/changelog/59702.added
+deleted file mode 100644
+index c9d2656fb3..0000000000
+--- a/changelog/59702.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Adds the ability to get version information from a file on Windows systems
+diff --git a/changelog/59705.fixed b/changelog/59705.fixed
+deleted file mode 100644
+index a660cbe2bc..0000000000
+--- a/changelog/59705.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Changed yumpkg module to normalize versions to strings when they were ambiguously floats (example version=3005.0).
+diff --git a/changelog/59785.added b/changelog/59785.added
+deleted file mode 100644
+index d87d1ae52a..0000000000
+--- a/changelog/59785.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add aptkey=False kwarg option to the aptpkg.py module and pkgrepo state. Apt-key is on the path to be deprecated. This will allow users to not use apt-key to manage the repo keys. It will set aptkey=False automatically if it does not detect apt-key exists on the machine.
+diff --git a/changelog/59935.fixed b/changelog/59935.fixed
+deleted file mode 100644
+index 6eea3cc5ed..0000000000
+--- a/changelog/59935.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix pillar_roots.write on subdirectories broken after CVE-2021-25282 patch.
+diff --git a/changelog/59970.fixed b/changelog/59970.fixed
+deleted file mode 100644
+index 4cdeaf682e..0000000000
+--- a/changelog/59970.fixed
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Improved performance of zfs.filesystem_present and zfs.volume_present.  When
+-applying these states, only query specified ZFS properties rather than all
+-properties.
+diff --git a/changelog/60004.added b/changelog/60004.added
+deleted file mode 100644
+index f02f39e6ce..0000000000
+--- a/changelog/60004.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added "Instant Clone" feature in the existing VMware Cloud module
+diff --git a/changelog/60029.fixed b/changelog/60029.fixed
+deleted file mode 100644
+index c8f56c4d47..0000000000
+--- a/changelog/60029.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed highstate outputter not displaying with salt.function in orchestration when module returns a dictionary.
+\ No newline at end of file
+diff --git a/changelog/60070.fixed b/changelog/60070.fixed
+deleted file mode 100644
+index 767d77b0b7..0000000000
+--- a/changelog/60070.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Update docs where python-dateutil is required for schedule.
+diff --git a/changelog/60076.fixed b/changelog/60076.fixed
+deleted file mode 100644
+index 4af8829274..0000000000
+--- a/changelog/60076.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Send un-parsed username to LookupAccountName function
+diff --git a/changelog/60103.fixed b/changelog/60103.fixed
+deleted file mode 100644
+index 28d13d1302..0000000000
+--- a/changelog/60103.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix ability to set propagation on a folder to "this_folder_only"
+diff --git a/changelog/60106.fixed b/changelog/60106.fixed
+deleted file mode 100644
+index 70c45e7769..0000000000
+--- a/changelog/60106.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix name attribute access error in spm.
+diff --git a/changelog/60228.fixed b/changelog/60228.fixed
+deleted file mode 100644
+index 72fef94a1c..0000000000
+--- a/changelog/60228.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix zeromq stream.send exception message
+diff --git a/changelog/60242.fixed b/changelog/60242.fixed
+deleted file mode 100644
+index 3eb6f9ded7..0000000000
+--- a/changelog/60242.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Exit gracefully on ctrl+c.
+\ No newline at end of file
+diff --git a/changelog/60272.fixed b/changelog/60272.fixed
+deleted file mode 100644
+index 3d3dabec3f..0000000000
+--- a/changelog/60272.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Corrected import statement for redis_cache in cluster mode.
+diff --git a/changelog/60285.fixed b/changelog/60285.fixed
+deleted file mode 100644
+index 2f84ec9220..0000000000
+--- a/changelog/60285.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-loader: Fix loading grains with annotations
+diff --git a/changelog/60316.fixed b/changelog/60316.fixed
+deleted file mode 100644
+index d1bb23e925..0000000000
+--- a/changelog/60316.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-fix docker_network.present when com.docker.network.bridge.name is being used as the unixes can not have a bridge of the same name
+diff --git a/changelog/60325.added b/changelog/60325.added
+deleted file mode 100644
+index dd2681b564..0000000000
+--- a/changelog/60325.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added support for etcd API v3
+\ No newline at end of file
+diff --git a/changelog/60325.deprecated b/changelog/60325.deprecated
+deleted file mode 100644
+index e5a97157c8..0000000000
+--- a/changelog/60325.deprecated
++++ /dev/null
+@@ -1,4 +0,0 @@
+-In etcd_util, the recursive kwarg in the read and delete methods has been deprecated in favor of recurse for both client versions.
+-In etcd_util, the index kwarg in the watch method has been deprecated in favor of start_revision for both client versions.
+-In etcd_util, the waitIndex kwarg in the read method has been deprecated in favor of start_revision for both client versions.
+-The etcd API v2 implementation has been deprecated in favor of etcd API v3.
+\ No newline at end of file
+diff --git a/changelog/60356.fixed b/changelog/60356.fixed
+deleted file mode 100644
+index b8990dd98e..0000000000
+--- a/changelog/60356.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix exception in yumpkg.remove for not installed package on calling pkg.remove or pkg.removed
+diff --git a/changelog/60361.fixed b/changelog/60361.fixed
+deleted file mode 100644
+index fad476428a..0000000000
+--- a/changelog/60361.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Batch runs now return proper retcodes in a tuple of the form (result, retcode)
+diff --git a/changelog/60370.fixed b/changelog/60370.fixed
+deleted file mode 100644
+index e60aaab3cc..0000000000
+--- a/changelog/60370.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed issue with ansible roster __virtual__ when ansible is not installed.
+diff --git a/changelog/60402.changed b/changelog/60402.changed
+deleted file mode 100644
+index 6772c875dd..0000000000
+--- a/changelog/60402.changed
++++ /dev/null
+@@ -1 +0,0 @@
+-Enhance logging when there are errors at loading beacons
+diff --git a/changelog/60431.fixed b/changelog/60431.fixed
+deleted file mode 100644
+index 731e7e7fb4..0000000000
+--- a/changelog/60431.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed error being thrown when None was passed as src/defaults or dest to defaults.update and defaults.merge
+\ No newline at end of file
+diff --git a/changelog/60432.added b/changelog/60432.added
+deleted file mode 100644
+index 2bddce01de..0000000000
+--- a/changelog/60432.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added `pkg.held` and `pkg.unheld` state functions for Zypper, YUM/DNF and APT. Improved `zypperpkg.hold` and `zypperpkg.unhold` functions.
+\ No newline at end of file
+diff --git a/changelog/60583.fixed b/changelog/60583.fixed
+deleted file mode 100644
+index 8a6a5f94bf..0000000000
+--- a/changelog/60583.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow for additional options for xmit hash policy in mode 4 NIC bonding on Redhat
+diff --git a/changelog/60593.fixed b/changelog/60593.fixed
+deleted file mode 100644
+index a6e7950868..0000000000
+--- a/changelog/60593.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Properly detect VMware grains on Windows Server 2019+
+diff --git a/changelog/60702.added b/changelog/60702.added
+deleted file mode 100644
+index cb8a856f1b..0000000000
+--- a/changelog/60702.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added suse_ip module allowing to manage network interfaces on SUSE based Linux systems
+diff --git a/changelog/60724.fixed b/changelog/60724.fixed
+deleted file mode 100644
+index 30c1fefdec..0000000000
+--- a/changelog/60724.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow for minion failure to respond to job sent in batch mode
+diff --git a/changelog/60819.fixed b/changelog/60819.fixed
+deleted file mode 100644
+index 337b245299..0000000000
+--- a/changelog/60819.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-The mac assistive execution module no longer shells out to change the database.
+diff --git a/changelog/60829.fixed b/changelog/60829.fixed
+deleted file mode 100644
+index 743111082b..0000000000
+--- a/changelog/60829.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix regression in win_timezone.get_zone which failed to resolve specific timezones that begin or end with d/s/t/o/f/_ characters
+diff --git a/changelog/60831.fixed b/changelog/60831.fixed
+deleted file mode 100644
+index b9c6f2a73b..0000000000
+--- a/changelog/60831.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-The TCP transport resets it's unpacker on stream disconnects
+diff --git a/changelog/60838.fixed b/changelog/60838.fixed
+deleted file mode 100644
+index 83c0ffedce..0000000000
+--- a/changelog/60838.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Moving the call to the validate function earlier to ensure that beacons are in the right format before we attempt to do anything to the configuration.  Adding a generic validation to ensure the beacon configuration is in the wrong format when a validation function does not exist.
+diff --git a/changelog/60858.fixed b/changelog/60858.fixed
+deleted file mode 100644
+index 180e383141..0000000000
+--- a/changelog/60858.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Update the mac installer welcome and conclusion page, add docs for the salt-config tool
+diff --git a/changelog/60872.fixed b/changelog/60872.fixed
+deleted file mode 100644
+index 84d24b45f2..0000000000
+--- a/changelog/60872.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed external node classifier not callable due to wrong parameter
+diff --git a/changelog/60876.fixed b/changelog/60876.fixed
+deleted file mode 100644
+index 6fdee02521..0000000000
+--- a/changelog/60876.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Adjust Debian/Ubuntu package use of name 'ifenslave-2.6' to 'ifenslave'
+diff --git a/changelog/60897.fixed b/changelog/60897.fixed
+deleted file mode 100644
+index b8d5fba2ad..0000000000
+--- a/changelog/60897.fixed
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Clear and update the Pillar Cache when running saltutil.refresh_pillar. This only affects users
+-that have `pillar_cache` set to True. If you do not want to clear the cache you can pass the kwarg
+-`clean_cache=False` to `saltutil.refresh_pillar`.
+diff --git a/changelog/60905.added b/changelog/60905.added
+deleted file mode 100644
+index 3fe39286a8..0000000000
+--- a/changelog/60905.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Support querying for JSON data in SQL external pillar
+diff --git a/changelog/60907.fixed b/changelog/60907.fixed
+deleted file mode 100644
+index 0f314ba4e7..0000000000
+--- a/changelog/60907.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Handle the situation when apt repo lines have or do not have trailing slashes properly.
+diff --git a/changelog/60909.fixed b/changelog/60909.fixed
+deleted file mode 100644
+index c3e86b7856..0000000000
+--- a/changelog/60909.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed Python 2 syntax for Python 3, allow for view objects returned by dictionary keys() function
+diff --git a/changelog/60912.added b/changelog/60912.added
+deleted file mode 100644
+index 907790605c..0000000000
+--- a/changelog/60912.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added support for yum and dnf on AIX
+diff --git a/changelog/60955.fixed b/changelog/60955.fixed
+deleted file mode 100644
+index 86ca8295a4..0000000000
+--- a/changelog/60955.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix REST CherryPY append the default permissions every request 
+\ No newline at end of file
+diff --git a/changelog/60983.fixed b/changelog/60983.fixed
+deleted file mode 100644
+index c64fc5d7e1..0000000000
+--- a/changelog/60983.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Do not consider "skipped" targets as failed for "ansible.playbooks" states
+diff --git a/changelog/60990.added b/changelog/60990.added
+deleted file mode 100644
+index f70dbd54b2..0000000000
+--- a/changelog/60990.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added percent success/failure of state runs in highstate summary output via new state_output_pct option
+diff --git a/changelog/61017.fixed b/changelog/61017.fixed
+deleted file mode 100644
+index eaa2387cdd..0000000000
+--- a/changelog/61017.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix behavior for internal "_netlink_tool_remote_on" to filter results based on requested end
+diff --git a/changelog/61043.fixed b/changelog/61043.fixed
+deleted file mode 100644
+index 79cd46db67..0000000000
+--- a/changelog/61043.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-schedule.job_status module: Convert datetime objects into formatted strings
+diff --git a/changelog/61054.fixed b/changelog/61054.fixed
+deleted file mode 100644
+index 988d683dfc..0000000000
+--- a/changelog/61054.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-virt: don't crash if console doesn't have service or type attribute
+diff --git a/changelog/61062.fixed b/changelog/61062.fixed
+deleted file mode 100644
+index 2e55a51ea9..0000000000
+--- a/changelog/61062.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed conflict between importlib_metada from Salt and importlib.metadata from Python 3.10
+diff --git a/changelog/61081.changed b/changelog/61081.changed
+deleted file mode 100644
+index 493870220f..0000000000
+--- a/changelog/61081.changed
++++ /dev/null
+@@ -1 +0,0 @@
+-Updated mysql cache module to also store updated timestamp, making it consistent with default cache module. Users of mysql cache should ensure database size before updating, as ALTER TABLE will add the timestamp column.
+diff --git a/changelog/61084.fixed b/changelog/61084.fixed
+deleted file mode 100644
+index 0beb24581d..0000000000
+--- a/changelog/61084.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-sys.argspec now works with pillar.get, vault.read_secret, and vault.list_secrets
+diff --git a/changelog/61094.fixed b/changelog/61094.fixed
+deleted file mode 100644
+index a190b7c8e2..0000000000
+--- a/changelog/61094.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Set virtual grain on FreeBSD EC2 instances
+diff --git a/changelog/61113.fixed b/changelog/61113.fixed
+deleted file mode 100644
+index f2e8a6dc20..0000000000
+--- a/changelog/61113.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed v3004 windows minion failing to open log file at C:\ProgramData\Salt Project\Salt\var\log\salt\minion
+diff --git a/changelog/61117.fixed b/changelog/61117.fixed
+deleted file mode 100644
+index 2353c23799..0000000000
+--- a/changelog/61117.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Correct returned result to False when an error exception occurs for pip.installed
+diff --git a/changelog/61121.fixed b/changelog/61121.fixed
+deleted file mode 100644
+index 034bcd2ea2..0000000000
+--- a/changelog/61121.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-fixed extend being too strict and wanting the system_type to exist when it is only needed for requisites.
+diff --git a/changelog/61124.fixed b/changelog/61124.fixed
+deleted file mode 100644
+index a965ed977f..0000000000
+--- a/changelog/61124.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed bug where deserialization in script engine would throw an error after all output was read.
+\ No newline at end of file
+diff --git a/changelog/61130.removed b/changelog/61130.removed
+deleted file mode 100644
+index c385a43b91..0000000000
+--- a/changelog/61130.removed
++++ /dev/null
+@@ -1 +0,0 @@
+-Removed support for macos mojave
+diff --git a/changelog/61135.fixed b/changelog/61135.fixed
+deleted file mode 100644
+index 5ab99d0d4e..0000000000
+--- a/changelog/61135.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Adding missing import for salt.utils.beacons into beacons that were updated to use it.
+diff --git a/changelog/61146.added b/changelog/61146.added
+deleted file mode 100644
+index ef979b800f..0000000000
+--- a/changelog/61146.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add support for retrieve IP-address from qemu agent by Salt-cloud on Proxmox
+\ No newline at end of file
+diff --git a/changelog/61160.fixed b/changelog/61160.fixed
+deleted file mode 100644
+index 2454db8ae4..0000000000
+--- a/changelog/61160.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-added exception catch to salt.utils.vt.terminal.isalive().
+diff --git a/changelog/61161.fixed b/changelog/61161.fixed
+deleted file mode 100644
+index 742d06fef7..0000000000
+--- a/changelog/61161.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Re-factor transport to make them more plug-able
+diff --git a/changelog/61163.fixed b/changelog/61163.fixed
+deleted file mode 100644
+index 239e7f1cf1..0000000000
+--- a/changelog/61163.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Remove max zeromq pinned version due to issues on FreeBSD
+diff --git a/changelog/61170.added b/changelog/61170.added
+deleted file mode 100644
+index 6968b2ed0b..0000000000
+--- a/changelog/61170.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added new shortcut execution and state module to better handle UNC shortcuts and to test more thoroughly
+diff --git a/changelog/61172.fixed b/changelog/61172.fixed
+deleted file mode 100644
+index d1c25cc876..0000000000
+--- a/changelog/61172.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixing deltaproxy code to handle the situation where the control proxy is configured to control a proxy minion whose pillar data could not be loaded.
+diff --git a/changelog/61176.fixed b/changelog/61176.fixed
+deleted file mode 100644
+index 2916b94539..0000000000
+--- a/changelog/61176.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Prevent get_tops from performing a Set operation on a List
+diff --git a/changelog/61182.added b/changelog/61182.added
+deleted file mode 100644
+index 81b6750aeb..0000000000
+--- a/changelog/61182.added
++++ /dev/null
+@@ -1 +0,0 @@
+-added yamllint utils module and yaml execution modules
+diff --git a/changelog/61188.added b/changelog/61188.added
+deleted file mode 100644
+index 4b5c2ca5fb..0000000000
+--- a/changelog/61188.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add "--no-return-event" option to salt-call to prevent sending return event back to master.
+diff --git a/changelog/61188.fixed b/changelog/61188.fixed
+deleted file mode 100644
+index 61195795b6..0000000000
+--- a/changelog/61188.fixed
++++ /dev/null
+@@ -1,2 +0,0 @@
+-Make "state.highstate" to acts on concurrent flag.
+-Simplify "transactional_update" module to not use SSH wrapper and allow more flexible execution
+diff --git a/changelog/61191.fixed b/changelog/61191.fixed
+deleted file mode 100644
+index 1fcd5dd1a2..0000000000
+--- a/changelog/61191.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix a failure with salt.utils.vault.make_request when namespace is not defined in the connection.
+diff --git a/changelog/61192.fixed b/changelog/61192.fixed
+deleted file mode 100644
+index b9f0009d73..0000000000
+--- a/changelog/61192.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix race condition in `salt.utils.verify.verify_env` and ignore directories starting with dot
+diff --git a/changelog/61198.fixed b/changelog/61198.fixed
+deleted file mode 100644
+index de88aa9f34..0000000000
+--- a/changelog/61198.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-LGPO: Search for policies in a case-sensitive manner first, then fall back to non case-sensitive names
+diff --git a/changelog/61200.fixed b/changelog/61200.fixed
+deleted file mode 100644
+index fc7c3c5b8f..0000000000
+--- a/changelog/61200.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed state includes in dynamic environments
+diff --git a/changelog/61247.fixed b/changelog/61247.fixed
+deleted file mode 100644
+index c8737356ae..0000000000
+--- a/changelog/61247.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Minimize the number of network connections minions to the master
+diff --git a/changelog/61252.fixed b/changelog/61252.fixed
+deleted file mode 100644
+index 2692f9b7b7..0000000000
+--- a/changelog/61252.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix salt-call event.event with pillar or grains
+diff --git a/changelog/61261.fixed b/changelog/61261.fixed
+deleted file mode 100644
+index 27412136eb..0000000000
+--- a/changelog/61261.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed failing dcs.compile_config where a successful compile errored with `AttributeError: 'list' object has no attribute 'get'`.
+diff --git a/changelog/61270.added b/changelog/61270.added
+deleted file mode 100644
+index 883f991011..0000000000
+--- a/changelog/61270.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add Etag support for file.managed web sources
+diff --git a/changelog/61271.fixed b/changelog/61271.fixed
+deleted file mode 100644
+index 0fbad1c782..0000000000
+--- a/changelog/61271.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Make the salt.utils.win_dacl.get_name() function include the "NT Security" prefix for Virtual Accounts. Virtual Accounts can only be added with the fully qualified name.
+\ No newline at end of file
+diff --git a/changelog/61275.deprecated b/changelog/61275.deprecated
+deleted file mode 100644
+index 1f9c54ae03..0000000000
+--- a/changelog/61275.deprecated
++++ /dev/null
+@@ -1 +0,0 @@
+-Deprecated transport kwarg inside salt.utils.event.get_event
+diff --git a/changelog/61277.fixed b/changelog/61277.fixed
+deleted file mode 100644
+index 5de4971e20..0000000000
+--- a/changelog/61277.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed tracebacks and print helpful error message when proxy_return = True but no platform or primary_ip set in NetBox pillar.
+diff --git a/changelog/61297.fixed b/changelog/61297.fixed
+deleted file mode 100644
+index 1c64eb2660..0000000000
+--- a/changelog/61297.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Ensure opts is included in pack for minion_mods and config loads opts from the named_context.
+diff --git a/changelog/61316.fixed b/changelog/61316.fixed
+deleted file mode 100644
+index 1344bf87c4..0000000000
+--- a/changelog/61316.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Added prefix length info for IPv6 addresses in Windows
+diff --git a/changelog/61324.added b/changelog/61324.added
+deleted file mode 100644
+index d67051a8da..0000000000
+--- a/changelog/61324.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Adding the ability to add, delete, purge, and modify Salt scheduler jobs when the Salt minion is not running.
+diff --git a/changelog/61326.added b/changelog/61326.added
+deleted file mode 100644
+index be765c43ea..0000000000
+--- a/changelog/61326.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Added a force option to file.symlink to overwrite an existing symlink with the same name
+diff --git a/changelog/61331.fixed b/changelog/61331.fixed
+deleted file mode 100644
+index dee5231584..0000000000
+--- a/changelog/61331.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Handle MariaDB 10.5+ SLAVE MONITOR grant
+diff --git a/changelog/61370.fixed b/changelog/61370.fixed
+deleted file mode 100644
+index 4aee782298..0000000000
+--- a/changelog/61370.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix secondary ip addresses being added to ip4_interfaces and ip6_interfaces at the same time
+diff --git a/changelog/61377.fixed b/changelog/61377.fixed
+deleted file mode 100644
+index 6c10147038..0000000000
+--- a/changelog/61377.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Do not block the deltaproxy startup.  Wrap the call to the individual proxy initialization functions in a try...except, catching the exception, logging an error and moving onto the next proxy minion.
+diff --git a/changelog/61392.fixed b/changelog/61392.fixed
+deleted file mode 100644
+index a837322d35..0000000000
+--- a/changelog/61392.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-show_instance of hetzner cloud provider should enforce an action like the other ones
+\ No newline at end of file
+diff --git a/changelog/61399.fixed b/changelog/61399.fixed
+deleted file mode 100644
+index 3422a5b81a..0000000000
+--- a/changelog/61399.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix Hetzner Cloud config loading mechanism
+\ No newline at end of file
+diff --git a/changelog/61412.fixed b/changelog/61412.fixed
+deleted file mode 100644
+index 7acc99d3bf..0000000000
+--- a/changelog/61412.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Sets correctly the lvm grain even when lvm's command execution outputs a WARNING
+diff --git a/changelog/61413.fixed b/changelog/61413.fixed
+deleted file mode 100644
+index 08abe92c5d..0000000000
+--- a/changelog/61413.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Use net instead of sc in salt cloud when restarting the salt service
+diff --git a/changelog/61418.added b/changelog/61418.added
+deleted file mode 100644
+index 457dda7b7e..0000000000
+--- a/changelog/61418.added
++++ /dev/null
+@@ -1 +0,0 @@
+-`gpg_decrypt_must_succeed` config to prevent gpg renderer from failing silently
+diff --git a/changelog/61440.fixed b/changelog/61440.fixed
+deleted file mode 100644
+index 7babbc69dc..0000000000
+--- a/changelog/61440.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix use_etag support in fileclient by removing case sensitivity of expected header
+diff --git a/changelog/61445.fixed b/changelog/61445.fixed
+deleted file mode 100644
+index 5500608aef..0000000000
+--- a/changelog/61445.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Expand environment variables in the root_dir registry key
+diff --git a/changelog/61458.fixed b/changelog/61458.fixed
+deleted file mode 100644
+index 0125322fec..0000000000
+--- a/changelog/61458.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Use salt.utils.path.readlink everywhere instead of os.readlink
+diff --git a/changelog/61478.fixed b/changelog/61478.fixed
+deleted file mode 100644
+index 0002b2b076..0000000000
+--- a/changelog/61478.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix state_aggregate minion option not respected
+diff --git a/changelog/61479.fixed b/changelog/61479.fixed
+deleted file mode 100644
+index f037f9c4ae..0000000000
+--- a/changelog/61479.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed wua.installed and wua.uptodate to return all changes, failures, and supersedences
+diff --git a/changelog/61483.fixed b/changelog/61483.fixed
+deleted file mode 100644
+index 92dde73594..0000000000
+--- a/changelog/61483.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-When running with test=True and there are no changes, don't show that there are changes.
+diff --git a/changelog/61484.added b/changelog/61484.added
+deleted file mode 100644
+index c77a2ee144..0000000000
+--- a/changelog/61484.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Do not load a private copy of `__grains__` and `__salt__` for the sentry log handler if it is disabled.
+diff --git a/changelog/61494.fixed b/changelog/61494.fixed
+deleted file mode 100644
+index 2167a32d85..0000000000
+--- a/changelog/61494.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix issue with certutil when there's a space in the path to the certificate
+diff --git a/changelog/61502.added b/changelog/61502.added
+deleted file mode 100644
+index 56fffae945..0000000000
+--- a/changelog/61502.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add Jinja filters for itertools functions, flatten, and a state template workflow
+diff --git a/changelog/61507.fixed b/changelog/61507.fixed
+deleted file mode 100644
+index ec016af7f1..0000000000
+--- a/changelog/61507.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix cmdmod not respecting config for saltenv
+diff --git a/changelog/61509.fixed b/changelog/61509.fixed
+deleted file mode 100644
+index 084d8706b3..0000000000
+--- a/changelog/61509.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Convert Py 2'isms to Python 3, and add tests for set_filesystems on AIX
+diff --git a/changelog/61530.fixed b/changelog/61530.fixed
+deleted file mode 100644
+index 271ea40004..0000000000
+--- a/changelog/61530.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix tracebacks caused by missing block device type and wrong mode used for gzip.open while calling inspector.export
+diff --git a/changelog/61533.fixed b/changelog/61533.fixed
+deleted file mode 100644
+index 2afde4452e..0000000000
+--- a/changelog/61533.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-win_wua: Titles no longer limited to 40 characters
+diff --git a/changelog/61538.fixed b/changelog/61538.fixed
+deleted file mode 100644
+index 682f8d67e5..0000000000
+--- a/changelog/61538.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed error when using network module on RHEL 8 due to the name of the service changing from "network" to "NetworkManager".
+diff --git a/changelog/61544.fixed b/changelog/61544.fixed
+deleted file mode 100644
+index c3b6a1661a..0000000000
+--- a/changelog/61544.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow symlink to be created even if source is missing on Windows
+diff --git a/changelog/61549.added b/changelog/61549.added
+deleted file mode 100644
+index aa0a35bd84..0000000000
+--- a/changelog/61549.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add feature to allow roll-up of duplicate IDs with different names in highstate output
+diff --git a/changelog/61553.fixed b/changelog/61553.fixed
+deleted file mode 100644
+index 3b2141ab3b..0000000000
+--- a/changelog/61553.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Print jinja error context on `UndefinedError`.  Previously `jinja2.exceptions.UndefinedError` resulted in a `SaltRenderError` without source file context, unlike all of the other Jinja exceptions handled in `salt/utils/templates.py`.
+diff --git a/changelog/61557.fixed b/changelog/61557.fixed
+deleted file mode 100644
+index 5604a5c3e3..0000000000
+--- a/changelog/61557.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix uptime on AIX systems when less than 24 hours
+diff --git a/changelog/61562.added b/changelog/61562.added
+deleted file mode 100644
+index f4f4fea8dc..0000000000
+--- a/changelog/61562.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow cp functions to derive saltenv from config if not explicitly set
+diff --git a/changelog/61566.deprecated b/changelog/61566.deprecated
+deleted file mode 100644
+index 884d50d9c9..0000000000
+--- a/changelog/61566.deprecated
++++ /dev/null
+@@ -1 +0,0 @@
+-Deprecated netmiko_conn and pyeapi_conn in napalm_mod.py as these function should not be called from the CLI
+diff --git a/changelog/61573.removed b/changelog/61573.removed
+deleted file mode 100644
+index 68e5432b6b..0000000000
+--- a/changelog/61573.removed
++++ /dev/null
+@@ -1 +0,0 @@
+-Removed `salt.utils.MultiprocessingProcess` and `salt.utils.SignalHandlingMultiprocessingProcess`. Please use `salt.utils.Process` and `salt.utils.SignalHandlingProcess` instead.
+diff --git a/changelog/61614.fixed b/changelog/61614.fixed
+deleted file mode 100644
+index 744b05a6bc..0000000000
+--- a/changelog/61614.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix issue with state.show_state_usage when a saltenv is not referenced in any topfile
+diff --git a/changelog/61629.added b/changelog/61629.added
+deleted file mode 100644
+index 8fb44e7139..0000000000
+--- a/changelog/61629.added
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Multiprocessing logging no longer uses multiprocessing queues which penalized performance.
+-
+-Instead, each new process configures the terminal and file logging, and also any external logging handlers configured.
+diff --git a/changelog/61630.fixed b/changelog/61630.fixed
+deleted file mode 100644
+index c7472bd8f7..0000000000
+--- a/changelog/61630.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Making the retry state system feature available when parallel is set to True.
+diff --git a/changelog/61632.fixed b/changelog/61632.fixed
+deleted file mode 100644
+index 7155b808cc..0000000000
+--- a/changelog/61632.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-modules/aptpkg.SourceEntry: fix parsing lines with arbitrary comments in case HAS_APT=False
+diff --git a/changelog/61662.fixed b/changelog/61662.fixed
+deleted file mode 100644
+index 450560171f..0000000000
+--- a/changelog/61662.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix file.comment incorrectly reports changes in test mode
+diff --git a/changelog/61682.added b/changelog/61682.added
+deleted file mode 100644
+index 6f5b75a288..0000000000
+--- a/changelog/61682.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add a function to the freezer module for comparison of packages and repos in two frozen states
+diff --git a/changelog/61691.removed b/changelog/61691.removed
+deleted file mode 100644
+index 39df03d700..0000000000
+--- a/changelog/61691.removed
++++ /dev/null
+@@ -1 +0,0 @@
+-Remove the grains.get_or_set_hash function. Please reference pillar and SDB documentation for secure ways to manage sensitive information. Grains are an insecure way to store secrets.
+diff --git a/changelog/61693.removed b/changelog/61693.removed
+deleted file mode 100644
+index 3dc04689b9..0000000000
+--- a/changelog/61693.removed
++++ /dev/null
+@@ -1 +0,0 @@
+-Removed the `telnet_port`, `serial_type` and `console` parameters in salt/modules/virt.py. Use the `serials` and `consoles` parameters instead. Use the `serials` parameter with a value like ``{{{{'type': 'tcp', 'protocol': 'telnet', 'port': {}}}}}`` instead and a similar `consoles` parameter.
+diff --git a/changelog/61694.removed b/changelog/61694.removed
+deleted file mode 100644
+index 42dc18264c..0000000000
+--- a/changelog/61694.removed
++++ /dev/null
+@@ -1,2 +0,0 @@
+-Remove remove_lock in zypperpkg.py in favor of unhold.
+-Remove add_lock in zypperpkg.py in favor of hold.
+diff --git a/changelog/61696.removed b/changelog/61696.removed
+deleted file mode 100644
+index 11b2d0dafc..0000000000
+--- a/changelog/61696.removed
++++ /dev/null
+@@ -1,2 +0,0 @@
+-Removed support for old-style Windows Group Policy names
+-Recommended policy names will be displayed in comments
+diff --git a/changelog/61697.removed b/changelog/61697.removed
+deleted file mode 100644
+index bf17d72fb2..0000000000
+--- a/changelog/61697.removed
++++ /dev/null
+@@ -1,5 +0,0 @@
+-Remove the feature flag feature.enable_slsvars_fixes and enable the fixes for `sls_path`, `tpl_file`, and `tpldir` by default.
+-Enabling this behavior by default will fix the following:
+-  - tpldir: If your directory name and your SLS file name are the same tpldir used to return a ., now it returns the correct directory name.
+-  - slspath,slsdotpath,slscolonpath,sls_path: If an init.sls file is accessed by its explicit name path.to.init instead of path.to, init shows up as a directory for in various sls context parameters, now it will only show as a file.
+-  - tplfile: When using tplfile in a SLS file in the root directory of file roots it returns empty. Now it returns the filename.
+diff --git a/changelog/61698.removed b/changelog/61698.removed
+deleted file mode 100644
+index f528ae9ce3..0000000000
+--- a/changelog/61698.removed
++++ /dev/null
+@@ -1,2 +0,0 @@
+-Remove SaltMessageServer.shutdown in favor of close.
+-Remove LoadBalancerWorker.stop in favor of close.
+diff --git a/changelog/61708.added b/changelog/61708.added
+deleted file mode 100644
+index 1653ca1211..0000000000
+--- a/changelog/61708.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add grains_refresh_pre_exec option to allow grains to be refreshed before any operation
+diff --git a/changelog/61715.added b/changelog/61715.added
+deleted file mode 100644
+index 771779ebca..0000000000
+--- a/changelog/61715.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add possibility to pass extra parameters to salt-ssh pre flight script with `ssh_pre_flight_args`
+diff --git a/changelog/61738.fixed b/changelog/61738.fixed
+deleted file mode 100644
+index a37de9ea3a..0000000000
+--- a/changelog/61738.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix improper master caching of file listing in multiple dynamic environments
+diff --git a/changelog/61741.fixed b/changelog/61741.fixed
+deleted file mode 100644
+index 1f6ab69ee7..0000000000
+--- a/changelog/61741.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-When configured beacons are empty write an empty beacon configuration file.
+diff --git a/changelog/61743.fixed b/changelog/61743.fixed
+deleted file mode 100644
+index 0a80deb97a..0000000000
+--- a/changelog/61743.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix file.replace updating mtime with no changes
+diff --git a/changelog/61756.fixed b/changelog/61756.fixed
+deleted file mode 100644
+index 2af18fd7f9..0000000000
+--- a/changelog/61756.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed etcd_return being out of sync with the underlying etcd_util.
+\ No newline at end of file
+diff --git a/changelog/61763.added b/changelog/61763.added
+deleted file mode 100644
+index 720a948d01..0000000000
+--- a/changelog/61763.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add Etag support for archive.extracted web sources
+diff --git a/changelog/61812.fixed b/changelog/61812.fixed
+deleted file mode 100644
+index ba48d55fd6..0000000000
+--- a/changelog/61812.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixing items, values, and keys functions in the data module.
+diff --git a/changelog/61823.added b/changelog/61823.added
+deleted file mode 100644
+index cddef9029c..0000000000
+--- a/changelog/61823.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add regex exclusions, full path matching, symlink following, and mtime/ctime comparison to file.tidied
+diff --git a/changelog/61829.fixed b/changelog/61829.fixed
+deleted file mode 100644
+index b41ba41e64..0000000000
+--- a/changelog/61829.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Ensure that `salt://` URIs never contain backslashes, converting them to forward slashes instead.  A specific situation to handle is caching files on Windows minions, where Jinja relative imports introduce a backslash into the path.
+diff --git a/changelog/61831.added b/changelog/61831.added
+deleted file mode 100644
+index c4b806ab3d..0000000000
+--- a/changelog/61831.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add better handling for unit abbreviations and large values to salt.utils.stringutils.human_to_bytes
+diff --git a/changelog/61836.fixed b/changelog/61836.fixed
+deleted file mode 100644
+index d7f49204bb..0000000000
+--- a/changelog/61836.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Do not raise a UnicodeDecodeError when pillar cache cannot decode binary data.
+diff --git a/changelog/61839.fixed b/changelog/61839.fixed
+deleted file mode 100644
+index bd85c72f18..0000000000
+--- a/changelog/61839.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Don't rely on ``importlib.metadata``, even on Py3.10, use ``importlib_metadata`` instead.
+diff --git a/changelog/61846.fixed b/changelog/61846.fixed
+deleted file mode 100644
+index c4024efe9f..0000000000
+--- a/changelog/61846.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix the reporting of errors for file.directory in test mode
+diff --git a/changelog/61848.fixed b/changelog/61848.fixed
+deleted file mode 100644
+index e8e6fd3426..0000000000
+--- a/changelog/61848.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Update Markup and contextfunction imports for jinja versions >=3.1.
+diff --git a/changelog/61864.added b/changelog/61864.added
+deleted file mode 100644
+index 9dde301786..0000000000
+--- a/changelog/61864.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Provide PyInstaller hooks that provide some runtime adjustments when Salt is running from a Tiamat(PyInstaller) bundled package.
+diff --git a/changelog/61891.fixed b/changelog/61891.fixed
+deleted file mode 100644
+index afb86a0afe..0000000000
+--- a/changelog/61891.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Update states.chef for version 16.x and 17.x Chef Infra Client output.
+diff --git a/changelog/61932.changed b/changelog/61932.changed
+deleted file mode 100644
+index 950791a86f..0000000000
+--- a/changelog/61932.changed
++++ /dev/null
+@@ -1 +0,0 @@
+-Changed linux_shadow to test success of commands using cmd.retcode instead of cmd.run   
+\ No newline at end of file
+diff --git a/changelog/61936.fixed b/changelog/61936.fixed
+deleted file mode 100644
+index 98006aece5..0000000000
+--- a/changelog/61936.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed some whitespace and ``pathlib.Path`` issues when not using the sytem ``aptsources`` package.
+diff --git a/changelog/61937.added b/changelog/61937.added
+deleted file mode 100644
+index 1579a8bade..0000000000
+--- a/changelog/61937.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add configurable tiamat pip pypath location
+diff --git a/changelog/61944.fixed b/changelog/61944.fixed
+deleted file mode 100644
+index d25536519f..0000000000
+--- a/changelog/61944.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-fixed error when using backslash literal in file.replace
+diff --git a/changelog/61945.fixed b/changelog/61945.fixed
+deleted file mode 100644
+index 12d9a2952d..0000000000
+--- a/changelog/61945.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix an issue where under spawning platforms, one could exhaust the available multiprocessing semaphores.
+diff --git a/changelog/61946.fixed b/changelog/61946.fixed
+deleted file mode 100644
+index 2ff01bcf48..0000000000
+--- a/changelog/61946.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix salt-cloud sync_after_install functionality
+diff --git a/changelog/61968.fixed b/changelog/61968.fixed
+deleted file mode 100644
+index 0dcfdab967..0000000000
+--- a/changelog/61968.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Ensure that `common_prefix` matching only occurs if a directory name is identified (in the `archive.list` execution module function, which affects the `archive.extracted` state).
+diff --git a/changelog/61991.added b/changelog/61991.added
+deleted file mode 100644
+index e93da84b6a..0000000000
+--- a/changelog/61991.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add CNAME record support to the dig exec module
+diff --git a/changelog/61999.fixed b/changelog/61999.fixed
+deleted file mode 100644
+index 0ff060e29b..0000000000
+--- a/changelog/61999.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-When states are running in parallel, ensure that the total run time produced by the highstate outputter takes that into account.
+diff --git a/changelog/62005.fixed b/changelog/62005.fixed
+deleted file mode 100644
+index 49f0d8bd14..0000000000
+--- a/changelog/62005.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Temporary logging is now shutdown when logging has been configured.
+diff --git a/changelog/62006.fixed b/changelog/62006.fixed
+deleted file mode 100644
+index 55d10215ff..0000000000
+--- a/changelog/62006.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-modules/lxd.FilesManager: fix memory leak through pylxd.modules.container.Container.FilesManager
+diff --git a/changelog/62007.fixed b/changelog/62007.fixed
+deleted file mode 100644
+index 8c2398e287..0000000000
+--- a/changelog/62007.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-utils/jinja.SaltCacheLoader: fix leaking SaltCacheLoader through atexit.register
+diff --git a/changelog/62012.added b/changelog/62012.added
+deleted file mode 100644
+index 96a4e662cd..0000000000
+--- a/changelog/62012.added
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Added support for changed user object in Zabbix 5.4+
+-Added compatibility with Zabbix 4.0+ for `zabbix.user_getmedia` method
+-Added support for setting medias in `zabbix.user_update` for Zabbix 3.4+
+diff --git a/changelog/62012.changed b/changelog/62012.changed
+deleted file mode 100644
+index cc97a9269f..0000000000
+--- a/changelog/62012.changed
++++ /dev/null
+@@ -1,3 +0,0 @@
+-`zabbix.user_get` returns full user info with groups and medias
+-`zabbix.user_addmedia` returns error for Zabbix 4.0+ due to `user.addmedia` method removal
+-`zabbix.user_deletemedia` returns error for Zabbix 4.0+ due to `user.deletemedia` method removal
+diff --git a/changelog/62012.fixed b/changelog/62012.fixed
+deleted file mode 100644
+index bf130de9e3..0000000000
+--- a/changelog/62012.fixed
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Fixed errors on calling `zabbix_user.admin_password_present` state, due to changed error message in Zabbix 6.0
+-Fixed `zabbix.host_update` not mapping group ids list to list of dicts in format `[{"groupid": groupid}, ...]`
+-Fixed `zabbix.user_update` not mapping usergroup id list to list of dicts in format `[{"usrgrpid": usrgrpid}, ...]`
+diff --git a/changelog/62021.fixed b/changelog/62021.fixed
+deleted file mode 100644
+index 85b73b2faf..0000000000
+--- a/changelog/62021.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-utils/yamlloader and yamlloader_old: fix leaking DuplicateKeyWarning through a warnings module
+diff --git a/changelog/62042.fixed b/changelog/62042.fixed
+deleted file mode 100644
+index 6107828cbe..0000000000
+--- a/changelog/62042.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix cache checking for Jinja templates
+diff --git a/changelog/62044.added b/changelog/62044.added
+deleted file mode 100644
+index 9a96045d8a..0000000000
+--- a/changelog/62044.added
++++ /dev/null
+@@ -1 +0,0 @@
+-Add ignore_missing parameter to file.comment state
+diff --git a/changelog/62066.fixed b/changelog/62066.fixed
+deleted file mode 100644
+index 68216a03c1..0000000000
+--- a/changelog/62066.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed salt.states.file.managed() for follow_symlinks=True and test=True
+diff --git a/changelog/62071.fixed b/changelog/62071.fixed
+deleted file mode 100644
+index 3131569cb0..0000000000
+--- a/changelog/62071.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Stop trigering the `GLIBC race condition <https://sourceware.org/bugzilla/show_bug.cgi?id=19329>`_ when parallelizing the resolution of the fqnds.
+diff --git a/changelog/62087.fixed b/changelog/62087.fixed
+deleted file mode 100644
+index 7022b9bd37..0000000000
+--- a/changelog/62087.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix useradd functions hard-coded relative command name
+diff --git a/changelog/62092.fixed b/changelog/62092.fixed
+deleted file mode 100644
+index 3b11bb095d..0000000000
+--- a/changelog/62092.fixed
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Fix #62092: Catch zmq.error.ZMQError to set HWM for zmq >= 3.
+-
+-Run ``git show 0be0941`` for more info.
+diff --git a/changelog/62095.fixed b/changelog/62095.fixed
+deleted file mode 100644
+index 94775d20a1..0000000000
+--- a/changelog/62095.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Allow emitatstartup to work when delay option is setup.
+diff --git a/changelog/62100.changed b/changelog/62100.changed
+deleted file mode 100644
+index dd9b705987..0000000000
+--- a/changelog/62100.changed
++++ /dev/null
+@@ -1 +0,0 @@
+-"Sign before ending the testrun in x509.create_certificate" 
+diff --git a/changelog/62117.fixed b/changelog/62117.fixed
+deleted file mode 100644
+index c42cf42f22..0000000000
+--- a/changelog/62117.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix broken relative jinja includes in local mode bug introduced in #62043
+diff --git a/changelog/62121.fixed b/changelog/62121.fixed
+deleted file mode 100644
+index 927dca2373..0000000000
+--- a/changelog/62121.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix broken file.comment functionality introduced in #62045
+diff --git a/changelog/62154.fixed b/changelog/62154.fixed
+deleted file mode 100644
+index 2cc5d2ee49..0000000000
+--- a/changelog/62154.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fixed an incompatibility preventing salt-cloud from deploying VMs on Proxmox VE 7
+diff --git a/changelog/62164.fixed b/changelog/62164.fixed
+deleted file mode 100644
+index 286d1a8000..0000000000
+--- a/changelog/62164.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix sysctl functions hard-coded relative command name
+diff --git a/changelog/62183.deprecated b/changelog/62183.deprecated
+deleted file mode 100644
+index 9cea47a347..0000000000
+--- a/changelog/62183.deprecated
++++ /dev/null
+@@ -1 +0,0 @@
+-Deprecate all Azure cloud modules
+diff --git a/changelog/62186.fixed b/changelog/62186.fixed
+deleted file mode 100644
+index d4df42ad08..0000000000
+--- a/changelog/62186.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-All of Salt's loaders now accept ``loaded_base_name`` as a keyword argument, allowing different namespacing the loaded modules.
+diff --git a/changelog/62190.fixed b/changelog/62190.fixed
+deleted file mode 100644
+index 8019f6d22f..0000000000
+--- a/changelog/62190.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Only functions defined on the modules being loaded will be added to the lazy loader, functions imported from other modules, unless they are properly namespaced, are not included.
+diff --git a/changelog/8882.fixed b/changelog/8882.fixed
+deleted file mode 100644
+index 50f9a37454..0000000000
+--- a/changelog/8882.fixed
++++ /dev/null
+@@ -1 +0,0 @@
+-Fix salt-ssh using sudo with a password
