@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "SALT" "7" "Jun 30, 2022" "3005" "Salt"
+.TH "SALT" "7" "Sep 26, 2022" "3005" "Salt"
 .SH NAME
 salt \- Salt Documentation
 .
@@ -23331,7 +23331,6 @@ _
 T{
 \fBcassandra_return\fP
 T}	T{
-Return data to a Cassandra ColumnFamily
 T}
 _
 T{
@@ -24027,6 +24026,14 @@ Save the load to the specified jid id
 Included for API consistency
 .UNINDENT
 .SS salt.returners.cassandra_return
+.sp
+\fBWARNING:\fP
+.INDENT 0.0
+.INDENT 3.5
+The \fIcassandra\fP returner is deprecated in favor of the \fIcassandra_cql\fP
+returner.
+.UNINDENT
+.UNINDENT
 .sp
 Return data to a Cassandra ColumnFamily
 .sp
@@ -37187,6 +37194,70 @@ Returns:
 .ft C
 43ec517d68b6edd3015b3edc9a11367b
 d94a45acd81f8e3107d237dbc0d5d195f6a52a0d188bc0284c0763ece1eac9f9496fb6a531a296074c87b3540398dace1222b42e150e67c9301383fde3d66ae5
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS \fBrandom_sample\fP
+.sp
+New in version 3005.
+
+.sp
+Returns a given sample size from a list. The \fBseed\fP parameter can be used to
+return a predictable outcome.
+.sp
+Example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+{% set my_list = ["one", "two", "three", "four"] %}
+{{ my_list | random_sample(2) }}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Returns:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+["four", "one"]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS \fBrandom_shuffle\fP
+.sp
+New in version 3005.
+
+.sp
+Returns a shuffled copy of an input list. The \fBseed\fP parameter can be used to
+return a predictable outcome.
+.sp
+Example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+{% set my_list = ["one", "two", "three", "four"] %}
+{{ my_list | random_shuffle }}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Returns:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+["four", "three", "one", "two"]
 .ft P
 .fi
 .UNINDENT
@@ -95251,11 +95322,6 @@ container\(aqs lease is active and matches this ID.
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.cloud.clouds.msazure.deprecation_message(function)
-Decorator wrapper to warn about msazure deprecation
-.UNINDENT
-.INDENT 0.0
-.TP
 .B salt.cloud.clouds.msazure.destroy(name, conn=None, call=None, kwargs=None)
 Destroy a VM
 .sp
@@ -110159,7 +110225,6 @@ _
 T{
 \fBcassandra_mod\fP
 T}	T{
-Cassandra NoSQL Database Module
 T}
 _
 T{
@@ -114046,6 +114111,86 @@ salt * ansible.call ping data=foobar
 .UNINDENT
 .INDENT 0.0
 .TP
+.B salt.modules.ansiblegate.discover_playbooks(path=None, locations=None, playbook_extension=None, hosts_filename=None, syntax_check=False)
+New in version 3005.
+
+.sp
+Discover Ansible playbooks stored under the given path or from multiple paths (locations)
+.sp
+This will search for files matching with the playbook file extension under the given
+root path and will also look for files inside the first level of directories in this path.
+.sp
+The return of this function would be a dict like this:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+{
+    "/home/foobar/": {
+        "my_ansible_playbook.yml": {
+            "fullpath": "/home/foobar/playbooks/my_ansible_playbook.yml",
+            "custom_inventory": "/home/foobar/playbooks/hosts"
+        },
+        "another_playbook.yml": {
+            "fullpath": "/home/foobar/playbooks/another_playbook.yml",
+            "custom_inventory": "/home/foobar/playbooks/hosts"
+        },
+        "lamp_simple/site.yml": {
+            "fullpath": "/home/foobar/playbooks/lamp_simple/site.yml",
+            "custom_inventory": "/home/foobar/playbooks/lamp_simple/hosts"
+        },
+        "lamp_proxy/site.yml": {
+            "fullpath": "/home/foobar/playbooks/lamp_proxy/site.yml",
+            "custom_inventory": "/home/foobar/playbooks/lamp_proxy/hosts"
+        }
+    },
+    "/srv/playbooks/": {
+        "example_playbook/example.yml": {
+            "fullpath": "/srv/playbooks/example_playbook/example.yml",
+            "custom_inventory": "/srv/playbooks/example_playbook/hosts"
+        }
+    }
+}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpath\fP \-\- Path to discover playbooks from.
+.IP \(bu 2
+\fBlocations\fP \-\- List of paths to discover playbooks from.
+.IP \(bu 2
+\fBplaybook_extension\fP \-\- File extension of playbooks file to search for. Default: "yml"
+.IP \(bu 2
+\fBhosts_filename\fP \-\- Filename of custom playbook inventory to search for. Default: "hosts"
+.IP \(bu 2
+\fBsyntax_check\fP \-\- Skip playbooks that do not pass "ansible\-playbook \-\-syntax\-check" validation. Default: False
+.UNINDENT
+.TP
+.B Returns
+The discovered playbooks under the given paths
+.UNINDENT
+.sp
+CLI Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+salt \(aqansiblehost\(aq ansible.discover_playbooks path=/srv/playbooks/
+salt \(aqansiblehost\(aq ansible.discover_playbooks locations=\(aq["/srv/playbooks/", "/srv/foobar"]\(aq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
 .B salt.modules.ansiblegate.help(module=None, *args)
 Display help on Ansible standard module.
 .INDENT 7.0
@@ -114150,6 +114295,39 @@ CLI Example:
 .nf
 .ft C
 salt \(aqansiblehost\(aq  ansible.playbooks playbook=/srv/playbooks/play.yml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B salt.modules.ansiblegate.targets(inventory=\(aq/etc/ansible/hosts\(aq, yaml=False, export=False)
+New in version 3005.
+
+.sp
+Return the inventory from an Ansible inventory_file
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBinventory\fP \-\- The inventory file to read the inventory from. Default: "/etc/ansible/hosts"
+.IP \(bu 2
+\fByaml\fP \-\- Return the inventory as yaml output. Default: False
+.IP \(bu 2
+\fBexport\fP \-\- Return inventory as export format. Default: False
+.UNINDENT
+.UNINDENT
+.sp
+CLI Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+salt \(aqansiblehost\(aq ansible.targets
+salt \(aqansiblehost\(aq ansible.targets inventory=my_custom_inventory
 .ft P
 .fi
 .UNINDENT
@@ -115359,6 +115537,10 @@ For repository management, the \fBpython\-apt\fP package must be installed.
 .TP
 .B repo_line()
 Return the repo line for the sources file
+.UNINDENT
+.INDENT 7.0
+.TP
+.B str()
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
@@ -145910,6 +146092,14 @@ salt \(aqminion1\(aq cassandra_cql.version contact_points=minion1
 .UNINDENT
 .UNINDENT
 .SS salt.modules.cassandra_mod
+.sp
+\fBWARNING:\fP
+.INDENT 0.0
+.INDENT 3.5
+The \fIcassandra\fP module is deprecated in favor of the \fIcassandra_cql\fP
+module.
+.UNINDENT
+.UNINDENT
 .sp
 Cassandra NoSQL Database Module
 .INDENT 0.0
@@ -192685,7 +192875,7 @@ Passes through all the parameters described in the
 \fI\%utils.http.query function\fP:
 .INDENT 7.0
 .TP
-.B salt.utils.http.query(url, method=\(aqGET\(aq, params=None, data=None, data_file=None, header_dict=None, header_list=None, header_file=None, username=None, password=None, auth=None, decode=False, decode_type=\(aqauto\(aq, status=False, headers=False, text=False, cookies=None, cookie_jar=None, cookie_format=\(aqlwp\(aq, persist_session=False, session_cookie_jar=None, data_render=False, data_renderer=None, header_render=False, header_renderer=None, template_dict=None, test=False, test_url=None, node=\(aqminion\(aq, port=80, opts=None, backend=None, ca_bundle=None, verify_ssl=None, cert=None, text_out=None, headers_out=None, decode_out=None, stream=False, streaming_callback=None, header_callback=None, handle=False, agent=\(aqSalt/3005+0na.53722c5\(aq, hide_fields=None, raise_error=True, formdata=False, formdata_fieldname=None, formdata_filename=None, decode_body=True, **kwargs)
+.B salt.utils.http.query(url, method=\(aqGET\(aq, params=None, data=None, data_file=None, header_dict=None, header_list=None, header_file=None, username=None, password=None, auth=None, decode=False, decode_type=\(aqauto\(aq, status=False, headers=False, text=False, cookies=None, cookie_jar=None, cookie_format=\(aqlwp\(aq, persist_session=False, session_cookie_jar=None, data_render=False, data_renderer=None, header_render=False, header_renderer=None, template_dict=None, test=False, test_url=None, node=\(aqminion\(aq, port=80, opts=None, backend=None, ca_bundle=None, verify_ssl=None, cert=None, text_out=None, headers_out=None, decode_out=None, stream=False, streaming_callback=None, header_callback=None, handle=False, agent=\(aqSalt/3005+0na.a99b1cf\(aq, hide_fields=None, raise_error=True, formdata=False, formdata_fieldname=None, formdata_filename=None, decode_body=True, **kwargs)
 Query a resource, and decode the return data
 .UNINDENT
 .INDENT 7.0
@@ -225428,6 +225618,38 @@ salt \(aq*\(aq random.rand_int 1 10
 .UNINDENT
 .INDENT 0.0
 .TP
+.B salt.modules.mod_random.sample(value, size, seed=None)
+Return a given sample size from a list. By default, the random number
+generator uses the current system time unless given a seed value.
+.sp
+New in version 3005.
+
+.INDENT 7.0
+.TP
+.B value
+A list to e used as input.
+.TP
+.B size
+The sample size to return.
+.TP
+.B seed
+Any value which will be hashed as a seed for random.
+.UNINDENT
+.sp
+CLI Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+salt \(aq*\(aq random.sample \(aq["one", "two"]\(aq 1 seed="something"
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
 .B salt.modules.mod_random.seed(range=10, hash=None)
 Returns a random number within a range. Optional hash argument can
 be any hashable object. If hash is omitted or None, the id of the minion is used.
@@ -225483,6 +225705,35 @@ CLI Example:
 .nf
 .ft C
 salt \(aq*\(aq random.shadow_hash \(aqMy5alT\(aq \(aqMyP@asswd\(aq md5
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B salt.modules.mod_random.shuffle(value, seed=None)
+Return a shuffled copy of an input list. By default, the random number
+generator uses the current system time unless given a seed value.
+.sp
+New in version 3005.
+
+.INDENT 7.0
+.TP
+.B value
+A list to be used as input.
+.TP
+.B seed
+Any value which will be hashed as a seed for random.
+.UNINDENT
+.sp
+CLI Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+salt \(aq*\(aq random.shuffle \(aq["one", "two"]\(aq seed="something"
 .ft P
 .fi
 .UNINDENT
@@ -249018,7 +249269,8 @@ Execute one or more show (non\-configuration) commands.
 .INDENT 7.0
 .TP
 .B commands
-The commands to be executed.
+The commands to be executed.  Multiple commands should
+be specified as a list.
 .TP
 .B raw_text: \fBTrue\fP
 Whether to return raw text or structured data.
@@ -249057,7 +249309,7 @@ CLI Example:
 .nf
 .ft C
 salt\-call \-\-local nxos_api.show \(aqshow version\(aq
-salt \(aq*\(aq nxos_api.show \(aqshow bgp sessions\(aq \(aqshow processes\(aq raw_text=False
+salt \(aq*\(aq nxos_api.show "[\(aqshow bgp sessions\(aq,\(aqshow processes\(aq]" raw_text=False
 salt \(aqregular\-minion\(aq nxos_api.show \(aqshow interfaces\(aq host=sw01.example.com username=test password=test
 .ft P
 .fi
@@ -258748,7 +259000,7 @@ salt \(aq*\(aq pillar.ext "{\(aqgit\(aq: [{\(aqmybranch https://github.com/myuse
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.pillar.fetch(key, default=None, merge=False, merge_nested_lists=None, delimiter=\(aq:\(aq, pillarenv=None, saltenv=None)
+.B salt.modules.pillar.fetch(key, default=<Constant.NOT_SET>, merge=False, merge_nested_lists=None, delimiter=\(aq:\(aq, pillarenv=None, saltenv=None)
 New in version 0.14.
 
 .sp
@@ -258988,7 +259240,7 @@ salt \(aq*\(aq pillar.filter_by \(aq{web: Serve it up, db: I query, default: x_x
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.pillar.get(key, default=None, merge=False, merge_nested_lists=None, delimiter=\(aq:\(aq, pillarenv=None, saltenv=None)
+.B salt.modules.pillar.get(key, default=<Constant.NOT_SET>, merge=False, merge_nested_lists=None, delimiter=\(aq:\(aq, pillarenv=None, saltenv=None)
 New in version 0.14.
 
 .sp
@@ -302916,7 +303168,7 @@ salt \(aq*\(aq vault.destroy_secret "secret/my/secret" 1 2
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.vault.list_secrets(path, default=None)
+.B salt.modules.vault.list_secrets(path, default=<Constant.NOT_SET>)
 Changed in version 3001: The \fBdefault\fP argument has been added. When the path or path/key
 combination is not found, an exception will be raised, unless a default
 is provided.
@@ -302939,7 +303191,7 @@ salt \(aq*\(aq vault.list_secrets "secret/my/"
 .UNINDENT
 .INDENT 0.0
 .TP
-.B salt.modules.vault.read_secret(path, key=None, metadata=False, default=None)
+.B salt.modules.vault.read_secret(path, key=None, metadata=False, default=<Constant.NOT_SET>)
 Changed in version 3001: The \fBdefault\fP argument has been added. When the path or path/key
 combination is not found, an exception will be raised, unless a default
 is provided.
@@ -317381,10 +317633,6 @@ win32con
 .IP \(bu 2
 salt.utils.win_dacl
 .UNINDENT
-.UNINDENT
-.INDENT 0.0
-.TP
-.B exception salt.modules.win_file.WindowsError
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -335550,7 +335798,7 @@ New in version 3005.
 .INDENT 0.0
 .TP
 .B depends
-yamllint
+yamllint >= 1.20.0
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -335577,7 +335825,7 @@ CLI Example:
 .sp
 .nf
 .ft C
-salt \(aq*\(aq yamllint.lint salt://example/bad_yaml.sls
+salt \(aq*\(aq yaml.lint salt://example/bad_yaml.sls
 .ft P
 .fi
 .UNINDENT
@@ -428520,6 +428768,25 @@ minion\(aqs version of pip, a \fINo such option error\fP will be thrown.
 .UNINDENT
 .UNINDENT
 .UNINDENT
+.sp
+If you are using onedir packages and you need to install python packages into
+the system python environment, you must provide the pip_bin or
+bin_env to the pip state module.
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+lib\-foo:
+  pip.installed:
+    \- pip_bin: /usr/bin/pip3
+lib\-bar:
+  pip.installed:
+    \- bin_env: /usr/bin/python3
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -452563,6 +452830,17 @@ These entry points are often referred to as \fB*Client()\fP APIs. Each client
 accesses different parts of Salt, either from the master or from a minion. Each
 client is detailed below.
 .sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+For Tiamat\-bundled Salt distribution, you need to use the bundled Python runtime
+as the system Python won\(aqt be able to access Salt internals.
+.sp
+To execute scripts via bundled Python runtime, either run the script with
+\fB/path/to/salt python script.py\fP or use \fB#!/path/to/salt python\fP \fI\%shebang\fP
+.UNINDENT
+.UNINDENT
+.sp
 \fBSEE ALSO:\fP
 .INDENT 0.0
 .INDENT 3.5
@@ -452678,12 +452956,15 @@ configuration.
 .IP \(bu 2
 \fBinitial_load\fP (\fI\%bool\fP) \-\- Deprecated flag! Unused.
 .IP \(bu 2
-\fBloaded_base_name\fP (\fI\%str\fP) \-\- A string marker for the loaded base name.
+\fBloaded_base_name\fP (\fI\%str\fP) \-\- The imported modules namespace when imported
+by the salt loader.
 .IP \(bu 2
 \fBnotify\fP (\fI\%bool\fP) \-\- Flag indicating that an event should be fired upon
 completion of module loading.
 .UNINDENT
 .UNINDENT
+.sp
+Example:
 .INDENT 7.0
 .INDENT 3.5
 .sp
@@ -452707,6 +452988,25 @@ __salt__[\(aqtest.ping\(aq]()
 .TP
 .B salt.loader.raw_mod(opts, name, functions, mod=\(aqmodules\(aq, loaded_base_name=None)
 Returns a single module loaded raw and bypassing the __virtual__ function
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBopts\fP (\fI\%dict\fP) \-\- The Salt options dictionary
+.IP \(bu 2
+\fBname\fP (\fI\%str\fP) \-\- The name of the module to load
+.IP \(bu 2
+\fBfunctions\fP (\fILazyLoader\fP) \-\- A LazyLoader instance returned from \fBminion_mods\fP\&.
+.IP \(bu 2
+\fBmod\fP (\fI\%str\fP) \-\- The extension type.
+.IP \(bu 2
+\fBloaded_base_name\fP (\fI\%str\fP) \-\- The imported modules namespace when imported
+by the salt loader.
+.UNINDENT
+.UNINDENT
+.sp
+Example:
 .INDENT 7.0
 .INDENT 3.5
 .sp
@@ -452734,8 +453034,23 @@ Returns the state modules
 .IP \(bu 2
 \fBopts\fP (\fI\%dict\fP) \-\- The Salt options dictionary
 .IP \(bu 2
-\fBfunctions\fP (\fI\%dict\fP) \-\- A dictionary of minion modules, with module names as
-keys and funcs as values.
+\fBfunctions\fP (\fILazyLoader\fP) \-\- A LazyLoader instance returned from \fBminion_mods\fP\&.
+.IP \(bu 2
+\fBrunners\fP (\fILazyLoader\fP) \-\- A LazyLoader instance returned from \fBrunner\fP\&.
+.IP \(bu 2
+\fButils\fP (\fILazyLoader\fP) \-\- A LazyLoader instance returned from \fButils\fP\&.
+.IP \(bu 2
+\fBserializers\fP (\fILazyLoader\fP) \-\- An optional LazyLoader instance returned from \fBserializers\fP\&.
+.IP \(bu 2
+\fBproxy\fP (\fILazyLoader\fP) \-\- An optional LazyLoader instance returned from \fBproxy\fP\&.
+.IP \(bu 2
+\fBwhitelist\fP (\fI\%list\fP) \-\- A list of modules which should be whitelisted.
+.IP \(bu 2
+\fBcontext\fP (\fI\%dict\fP) \-\- A Salt context that should be made present inside
+generated modules in __context__
+.IP \(bu 2
+\fBloaded_base_name\fP (\fI\%str\fP) \-\- The imported modules namespace when imported
+by the salt loader.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -452758,6 +453073,24 @@ statemods = salt.loader.states(__opts__, None, None)
 .B salt.loader.grains(opts, force_refresh=False, proxy=None, context=None, loaded_base_name=None)
 Return the functions for the dynamic grains and the values for the static
 grains.
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBopts\fP (\fI\%dict\fP) \-\- The Salt options dictionary
+.IP \(bu 2
+\fBforce_refresh\fP (\fI\%bool\fP) \-\- Force the refresh of grains
+.IP \(bu 2
+\fBcontext\fP (\fI\%dict\fP) \-\- A Salt context that should be made present inside
+generated modules in __context__
+.IP \(bu 2
+\fBproxy\fP (\fILazyLoader\fP) \-\- An optional LazyLoader instance returned from \fBproxy\fP\&.
+.IP \(bu 2
+\fBloaded_base_name\fP (\fI\%str\fP) \-\- The imported modules namespace when imported
+by the salt loader.
+.UNINDENT
+.UNINDENT
 .sp
 Since grains are computed early in the startup process, grains functions
 do not have __salt__ or __proxy__ available.  At proxy\-minion startup,
@@ -452784,8 +453117,23 @@ print __grains__[\(aqid\(aq]
 .B salt.loader.grain_funcs(opts, proxy=None, context=None, loaded_base_name=None)
 Returns the grain functions
 .INDENT 7.0
-.INDENT 3.5
-.INDENT 0.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBopts\fP (\fI\%dict\fP) \-\- The Salt options dictionary
+.IP \(bu 2
+\fBcontext\fP (\fI\%dict\fP) \-\- A Salt context that should be made present inside
+generated modules in __context__
+.IP \(bu 2
+\fBproxy\fP (\fILazyLoader\fP) \-\- An optional LazyLoader instance returned from \fBproxy\fP\&.
+.IP \(bu 2
+\fBloaded_base_name\fP (\fI\%str\fP) \-\- .INDENT 2.0
+.TP
+.B The imported modules namespace when imported
+by the salt loader.
+.UNINDENT
+.INDENT 2.0
 .INDENT 3.5
 .sp
 .nf
@@ -452799,6 +453147,7 @@ grainfuncs = salt.loader.grain_funcs(__opts__)
 .fi
 .UNINDENT
 .UNINDENT
+
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -466827,6 +467176,868 @@ information about the version numbering scheme.
 .sp
 Release Candidate
 .SS Previous Releases
+.SS Salt 3005 release notes \- Codename Phosphorus
+.SS Python 3.5 and 3.6 deprecation
+.sp
+This will be the last release we will support Python versions 3.5 and 3.6.
+In Salt release 3006, we will only support Python versions 3.7 and higher.
+Going forward, our policy will be to align with Python\(aqs supported versions.
+.SS OS support end of life
+.sp
+Debian and Raspbian 9 are now EOL, therefore we will no longer be building
+packages for these platforms.
+.SS Raspberry Pi
+.sp
+We will no longer build the Raspberry Pi packages after the 3005 release but will
+provide open sources project links in an updated announcement later. Please see the
+announcement for more details:
+\fI\%https://saltproject.io/salt\-project\-announces\-the\-open\-sourcing\-of\-several\-saltstack\-native\-minions/\fP
+.SS New packages available
+.sp
+With the release of Salt 3005, we are pleased to announce the new onedir
+packages using pyinstaller are now out of beta and ready for production. These
+new packages make the installation process easier. Onedir packages install Salt
+with one directory that includes all the executables Salt needs to run
+effectively, including the version of Python and the required dependencies that
+Salt needs. These packages make it easier to use Salt out of the box without
+installing Python first.
+.sp
+Going forward, any new OS platforms supported by the Salt Project from version
+3005 can only be installed using onedir packages. For this release, this
+includes Redhat 9, Ubuntu 22.04, and Photon OS 3. The Salt Project will phase
+out the old ("classic") Salt package builds for currently supported operating
+systems by 3006. See
+\fI\%Upgrade to onedir\fP
+for more information.
+.sp
+On the day of the Phosphorus release, the onedir packages will be available on
+\fI\%https://repo.saltproject.io\fP for each platform. The instructions for installing
+onedir packages and the classic packages will be available on the new
+\fI\%Salt Install Guide\fP\&.
+.sp
+If you want to test out the packages today, you can install them from
+\fI\%https://repo.saltproject.io/salt\-dev/py3/\fP using the correct directory
+for your platform. If you find any issues with the packages, please open an
+issue on this repo: \fI\%https://gitlab.com/saltstack/open/salt\-pkg\fP
+.SS Classic, non\-onedir packaging support
+.sp
+The classic, non\-onedir packaging system previously used for Salt will also be
+provided for platforms supported in previous Salt versions. The classic
+packaging will only be available for the 3005 release. The 3006 release and
+all releases going forward will only provide the onedir packages.
+.SS Platform package support
+.TS
+center;
+|l|l|l|.
+_
+T{
+OS
+T}	T{
+New onedir packages
+T}	T{
+Classic, non\-onedir packages
+T}
+_
+T{
+RHEL 7
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+RHEL 8
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+RHEL 9
+T}	T{
+yes
+T}	T{
+no
+T}
+_
+T{
+Ubuntu 18.04
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Ubuntu 20.04
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Ubuntu 22.04
+T}	T{
+yes
+T}	T{
+no
+T}
+_
+T{
+Debian 10
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Debian 11
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Raspbian 10
+T}	T{
+no
+T}	T{
+yes
+T}
+_
+T{
+Raspbian 11
+T}	T{
+no
+T}	T{
+yes
+T}
+_
+T{
+Fedora 35
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Fedora 36
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+MacOS
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+T{
+Windows
+T}	T{
+yes
+T}	T{
+yes
+T}
+_
+.TE
+.SS Repo paths
+.TS
+center;
+|l|l|l|.
+_
+T{
+OS
+T}	T{
+Onedir path
+T}	T{
+Classic, Non\-onedir path
+T}
+_
+T{
+RHEL
+T}	T{
+\fI\%https://repo.saltproject.io/salt/py3/redhat/\fP
+T}	T{
+\fI\%https://repo.saltproject.io/py3/redhat/\fP
+T}
+_
+T{
+Ubuntu
+T}	T{
+\fI\%https://repo.saltproject.io/salt/py3/ubuntu/\fP
+T}	T{
+\fI\%https://repo.saltproject.io/py3/ubuntu/\fP
+T}
+_
+T{
+Debian
+T}	T{
+\fI\%https://repo.saltproject.io/salt/py3/debian/\fP
+T}	T{
+\fI\%https://repo.saltproject.io/py3/debian/\fP
+T}
+_
+T{
+Raspbian
+T}	T{
+Not available
+T}	T{
+\fI\%https://repo.saltproject.io/py3/debian/\fP
+T}
+_
+T{
+Fedora
+T}	T{
+Hosted on Fedora Repos
+T}	T{
+Hosted on Fedora Repos
+T}
+_
+T{
+MacOS
+T}	T{
+\fI\%https://repo.saltproject.io/salt/py3/osx/\fP
+T}	T{
+\fI\%https://repo.saltproject.io/osx/\fP
+T}
+_
+T{
+Windows
+T}	T{
+\fI\%https://repo.saltproject.io/salt/py3/windows/\fP
+T}	T{
+\fI\%https://repo.saltproject.io/windows/\fP
+T}
+_
+.TE
+.sp
+Note that the onedir paths above will not be available until the day of the
+Phosphorus release.
+.SS How do I migrate to the onedir packages?
+.sp
+The migration path from the classic, non\-onedir packages to the onedir packages
+will include:
+.INDENT 0.0
+.IP \(bu 2
+Repo File: You need to update your repo file to point to the new repo paths
+for your platform. After the repo file is updated, upgrade your Salt packages.
+.IP \(bu 2
+Pip packages: You need to ensure any 3rd party pip packages are installed in
+the correct onedir path. This can be accomplished in two ways:
+.INDENT 2.0
+.IP \(bu 2
+\fBsalt\-pip install <package name>\fP
+.IP \(bu 2
+Using the \fBpip.installed\fP Salt state.
+.UNINDENT
+.UNINDENT
+.sp
+To install python packages into the system python environment, users must now
+provide the \fBpip_bin\fP or \fBbin_env\fP to the pip state module.
+.sp
+For example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+lib\-foo:
+  pip.installed:
+    \- pip_bin: /usr/bin/pip3
+lib\-bar:
+  pip.installed:
+    \- bin_env: /usr/bin/python3
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Known issues
+.INDENT 0.0
+.IP \(bu 2
+To make use of Salt 3005 or later on a Salt master connected to SaltStack
+Config, you must use SaltStack Config version 8.9.0 or later.
+.sp
+The root cause of the issue is a breaking change to
+\fBAsyncClient._proc_function()\(ga\fP in Salt, which is the function that the
+raas\-master uses to run \fBsalt\-run\fP commands. As this is a private API, there\(aqs
+no expectation that the API should remain backward\-compatible.
+.sp
+It is recommended to upgrade SaltStack Config before upgrading your Salt
+masters. However, if a Salt master is upgraded to version 3005 before
+upgrading SaltStack Config, the upgrade can still be completed.
+.sp
+After upgrading SaltStack Config, including the SSC plugin on each Salt master,
+restart the Salt masters.
+.IP \(bu 2
+Salt does not currently support napalm 4. Users will need to install napalm 3.x to
+ensure they do not run into issue #62468
+.UNINDENT
+.SS Removed
+.INDENT 0.0
+.IP \(bu 2
+Deprecating and removing salt\-unity. (#56055)
+.IP \(bu 2
+Removed support for macos mojave (#61130)
+.IP \(bu 2
+Removed \fIsalt.utils.MultiprocessingProcess\fP and \fIsalt.utils.SignalHandlingMultiprocessingProcess\fP\&. Please use \fIsalt.utils.Process\fP and \fIsalt.utils.SignalHandlingProcess\fP instead. (#61573)
+.IP \(bu 2
+Remove the grains.get_or_set_hash function. Please reference pillar and SDB documentation for secure ways to manage sensitive information. Grains are an insecure way to store secrets. (#61691)
+.IP \(bu 2
+Removed the \fItelnet_port\fP, \fIserial_type\fP and \fIconsole\fP parameters in salt/modules/virt.py. Use the \fIserials\fP and \fIconsoles\fP parameters instead. Use the \fIserials\fP parameter with a value like \fB{{{{\(aqtype\(aq: \(aqtcp\(aq, \(aqprotocol\(aq: \(aqtelnet\(aq, \(aqport\(aq: {}}}}}\fP instead and a similar \fIconsoles\fP parameter. (#61693)
+.IP \(bu 2
+Remove remove_lock in zypperpkg.py in favor of unhold.
+Remove add_lock in zypperpkg.py in favor of hold. (#61694)
+.IP \(bu 2
+Removed support for old\-style Windows Group Policy names
+Recommended policy names will be displayed in comments (#61696)
+.IP \(bu 2
+Remove the feature flag feature.enable_slsvars_fixes and enable the fixes for \fIsls_path\fP, \fItpl_file\fP, and \fItpldir\fP by default.
+Enabling this behavior by default will fix the following:
+\- tpldir: If your directory name and your SLS file name are the same tpldir used to return a ., now it returns the correct directory name.
+\- slspath,slsdotpath,slscolonpath,sls_path: If an init.sls file is accessed by its explicit name path.to.init instead of path.to, init shows up as a directory for in various sls context parameters, now it will only show as a file.
+\- tplfile: When using tplfile in a SLS file in the root directory of file roots it returns empty. Now it returns the filename. (#61697)
+.IP \(bu 2
+Remove SaltMessageServer.shutdown in favor of close.
+Remove LoadBalancerWorker.stop in favor of close. (#61698)
+.IP \(bu 2
+Removed the PyObjC dependency.
+.sp
+This addresses problems with building a one dir build for macOS.
+It became problematic because depending on the macOS version, it pulls different dependencies, and we would either have to build a macos onedir for each macOS supported release, or ship a crippled onedir(because it would be tied to the macOS version where the onedir was built).
+Since it\(aqs currently not being used, it\(aqs removed. (#62432)
+.UNINDENT
+.SS Deprecated
+.INDENT 0.0
+.IP \(bu 2
+In etcd_util, the recursive kwarg in the read and delete methods has been deprecated in favor of recurse for both client versions.
+In etcd_util, the index kwarg in the watch method has been deprecated in favor of start_revision for both client versions.
+In etcd_util, the waitIndex kwarg in the read method has been deprecated in favor of start_revision for both client versions.
+The etcd API v2 implementation has been deprecated in favor of etcd API v3. (#60325)
+.IP \(bu 2
+Deprecated transport kwarg inside salt.utils.event.get_event (#61275)
+.IP \(bu 2
+Deprecated netmiko_conn and pyeapi_conn in napalm_mod.py as these function should not be called from the CLI (#61566)
+.IP \(bu 2
+Deprecate all Azure cloud modules (#62183)
+.IP \(bu 2
+Deprecated \fBdefaults\fP and \fBpreserve_context\fP for \fBsalt.utils.functools.namespaced_function\fP\&.
+Additionally, the behavior when \fBpreserve_namespace=True\fP was passed is now the default in order not to require duplicating imports on the modules that are namespacing functions. (#62272)
+.IP \(bu 2
+Added a pyinstaller hook that traverses the python used on the tiamat package to add all possible modules as hidden imports. (#62362)
+.IP \(bu 2
+Fix use of random shuffle and sample functions as Jinja filters (#62372)
+.IP \(bu 2
+All of the requirements provided in the requirements files are now included. The job of evaluating platform markers is not Salt\(aqs it\(aqs pip\(aqs. (#62392)
+.IP \(bu 2
+Update all platforms to use pycparser 2.21 or greater for Py 3.9 or higher, fixes fips fault with openssl v3.x (#62400)
+.IP \(bu 2
+Due to changes in the Netmiko library for the exception paths, need to check the version of Netmiko python library and then import the exceptions from different locations depending on the result. (#62405)
+.IP \(bu 2
+Deprecated the cassandra module in favor of the cassandra_cql module/returner. (#62327)
+.UNINDENT
+.SS Changed
+.INDENT 0.0
+.IP \(bu 2
+alternatives: Do not access /var/lib/dpkg/alternatives directly (#58745)
+.IP \(bu 2
+Enhance logging when there are errors at loading beacons (#60402)
+.IP \(bu 2
+Updated mysql cache module to also store updated timestamp, making it consistent with default cache module. Users of mysql cache should ensure database size before updating, as ALTER TABLE will add the timestamp column. (#61081)
+.IP \(bu 2
+Changed linux_shadow to test success of commands using cmd.retcode instead of cmd.run (#61932)
+.IP \(bu 2
+\fIzabbix.user_get\fP returns full user info with groups and medias
+\fIzabbix.user_addmedia\fP returns error for Zabbix 4.0+ due to \fIuser.addmedia\fP method removal
+\fIzabbix.user_deletemedia\fP returns error for Zabbix 4.0+ due to \fIuser.deletemedia\fP method removal (#62012)
+.IP \(bu 2
+"Sign before ending the testrun in x509.create_certificate" (#62100)
+.UNINDENT
+.SS Fixed
+.INDENT 0.0
+.IP \(bu 2
+Fix salt\-ssh using sudo with a password (#8882)
+.IP \(bu 2
+Fix SSH password regex to not search for content after password:. (#25721)
+.IP \(bu 2
+Addressing a few issues when having keep_symlinks set to True with file.recurse.  Also allow symlinks that are outside the salt fileserver root to be discoverable as symlinks when fileserver_followsymlinks is set to False. (#29562)
+.IP \(bu 2
+serialize to JSON only non string objects. (#35215)
+.IP \(bu 2
+Fix archive.extracted doesn\(aqt set user/group ownership correctly (#38605)
+.IP \(bu 2
+Make sys.argspec work on functions with annotations (#48735)
+.IP \(bu 2
+Fixed pdbedit.list_users with Samba 4.8 (#49648)
+.IP \(bu 2
+Fixes a scenario where ipv6 is enabled but the master is configured as an ipv4 IP address. (#49835)
+.IP \(bu 2
+Ensure that NOTIFY_SOCKET is not passed to child processes created with cmdmod unless it\(aqs set explicitly for such call. (#50851)
+.IP \(bu 2
+remove escaping of dbname in mysql.alter_db function. (#51559)
+.IP \(bu 2
+Fix runit module failing to find service if it is not symlinked. (#52759)
+.IP \(bu 2
+Changed manage.versions to report minions offline if minion call fails. (#53513)
+.IP \(bu 2
+Fixed events stream from /events endpoint not halting when auth token has expired. (#53742)
+.IP \(bu 2
+Fixed user.present which was breaking when updating workphone,homephone, fullname and "other" fields in case int was passed instead of string (#53961)
+.IP \(bu 2
+Fix error in webutil state module when attempting to grep a file that does not exist. (#53977)
+.IP \(bu 2
+Fixed ability to modify the "Audit: Force audit policy subcategory settings..." policy (#54301)
+.IP \(bu 2
+Fix timeout handling in netapi/saltnado. (#55394)
+.IP \(bu 2
+Fixing REST auth so that we actually support using ACLs from the REST server like we said in the documentation. (#55654)
+.IP \(bu 2
+Salt now correctly handles macOS after Py3.8 where python defaults to spawn instead of fork. (#55847)
+.IP \(bu 2
+Factor out sum and sorting of permissions into separate functions.
+Additionally, the same logic was applied to the rest_cherrypy netapi (#56495)
+.IP \(bu 2
+Display packages that are marked NoRemove in pkg.list_pkgs for Windows platforms (#56864)
+.IP \(bu 2
+Attempt to fix 56957 by detecting the broken recusion and stopping it. (#56957)
+.IP \(bu 2
+Fixed bytes vs. text issue when using sqlite for sdb backend. (#57133)
+.IP \(bu 2
+Ensure test is added to opts when using the state module with salt\-ssh. (#57144)
+.IP \(bu 2
+Fixed RuntimeError OrderedDict mutated in network.managed for Debian systems. (#57721)
+.IP \(bu 2
+Improved the multiprocessing classes to better handle spawning platforms (#57742)
+.IP \(bu 2
+Config options are enforced according to config type (#57873)
+.IP \(bu 2
+fixed 57992 fix multi item kv v2 items read. (#57992)
+.IP \(bu 2
+Fixed thread leak during FQDN lookup when DNS entries had malformed PTR records, or other similar issues. (#58141)
+.IP \(bu 2
+Remove unnecessary dot in template that cause the bridge interface to fail on debian. Fixes #58195 (#58195)
+.IP \(bu 2
+update salt.module.schedule to check the job_args and job_kwargs for valid formatting. (#58329)
+.IP \(bu 2
+Allowe use of \fIroster\fP in salt.function state when using the SSH client. (#58662)
+.IP \(bu 2
+Detect new and legacy styles of calling module.run and support them both. (#58763)
+.IP \(bu 2
+Clean repo uri before checking if it\(aqs present, avoiding ghost change. (#58807)
+.IP \(bu 2
+Fix error "\(aq__opts__\(aq is not defined" when using the boto v2 modules (#58934)
+.IP \(bu 2
+hgfs: fix bytes vs str issues within hgfs. (#58963)
+.IP \(bu 2
+Fixes salt\-ssh error when targetting IPs or hostnames directly. (#59033)
+.IP \(bu 2
+Allow for multiple configuration entries with keyword strict_config=False on yum\-based systems (#59090)
+.IP \(bu 2
+Fixed error when running legacy code in winrepo.update_git_repos (#59101)
+.IP \(bu 2
+Clarify the persist argument in the scheduler module. Adding code in the list function to indicate if the schedule job is saved or not. (#59102)
+.IP \(bu 2
+Swap ret["retcode"] for ret.get("retcode") in the event that there is no retcode, eg. when a function is not passed with a module. (#59331)
+.IP \(bu 2
+Fix race condition when caching vault tokens (#59361)
+.IP \(bu 2
+The ssh module now accepts all ssh public key types as of openssh server version 8.7. (#59429)
+.IP \(bu 2
+Set default transport and port settings for Napalm NXOS, if not set. (#59448)
+.IP \(bu 2
+Use __salt_system_encoding__ when retrieving keystore certificate SHA1 str (#59503)
+.IP \(bu 2
+Fix error being thrown on empty flags list given to file.replace (#59554)
+.IP \(bu 2
+Update url for ez_setup.py script in virtualenv_mod.py (#59604)
+.IP \(bu 2
+Changed yumpkg module to normalize versions to strings when they were ambiguously floats (example version=3005.0). (#59705)
+.IP \(bu 2
+Fix pillar_roots.write on subdirectories broken after CVE\-2021\-25282 patch. (#59935)
+.IP \(bu 2
+Improved performance of zfs.filesystem_present and zfs.volume_present.  When
+applying these states, only query specified ZFS properties rather than all
+properties. (#59970)
+.IP \(bu 2
+Fixed highstate outputter not displaying with salt.function in orchestration when module returns a dictionary. (#60029)
+.IP \(bu 2
+Update docs where python\-dateutil is required for schedule. (#60070)
+.IP \(bu 2
+Send un\-parsed username to LookupAccountName function (#60076)
+.IP \(bu 2
+Fix ability to set propagation on a folder to "this_folder_only" (#60103)
+.IP \(bu 2
+Fix name attribute access error in spm. (#60106)
+.IP \(bu 2
+Fix zeromq stream.send exception message (#60228)
+.IP \(bu 2
+Exit gracefully on ctrl+c. (#60242)
+.IP \(bu 2
+Corrected import statement for redis_cache in cluster mode. (#60272)
+.IP \(bu 2
+loader: Fix loading grains with annotations (#60285)
+.IP \(bu 2
+fix docker_network.present when com.docker.network.bridge.name is being used as the unixes can not have a bridge of the same name (#60316)
+.IP \(bu 2
+Fix exception in yumpkg.remove for not installed package on calling pkg.remove or pkg.removed (#60356)
+.IP \(bu 2
+Batch runs now return proper retcodes in a tuple of the form (result, retcode) (#60361)
+.IP \(bu 2
+Fixed issue with ansible roster __virtual__ when ansible is not installed. (#60370)
+.IP \(bu 2
+Fixed error being thrown when None was passed as src/defaults or dest to defaults.update and defaults.merge (#60431)
+.IP \(bu 2
+Allow for additional options for xmit hash policy in mode 4 NIC bonding on Redhat (#60583)
+.IP \(bu 2
+Properly detect VMware grains on Windows Server 2019+ (#60593)
+.IP \(bu 2
+Allow for minion failure to respond to job sent in batch mode (#60724)
+.IP \(bu 2
+The mac assistive execution module no longer shells out to change the database. (#60819)
+.IP \(bu 2
+Fix regression in win_timezone.get_zone which failed to resolve specific timezones that begin or end with d/s/t/o/f/_ characters (#60829)
+.IP \(bu 2
+The TCP transport resets it\(aqs unpacker on stream disconnects (#60831)
+.IP \(bu 2
+Moving the call to the validate function earlier to ensure that beacons are in the right format before we attempt to do anything to the configuration.  Adding a generic validation to ensure the beacon configuration is in the wrong format when a validation function does not exist. (#60838)
+.IP \(bu 2
+Update the mac installer welcome and conclusion page, add docs for the salt\-config tool (#60858)
+.IP \(bu 2
+Fixed external node classifier not callable due to wrong parameter (#60872)
+.IP \(bu 2
+Adjust Debian/Ubuntu package use of name \(aqifenslave\-2.6\(aq to \(aqifenslave\(aq (#60876)
+.IP \(bu 2
+Clear and update the Pillar Cache when running saltutil.refresh_pillar. This only affects users
+that have \fIpillar_cache\fP set to True. If you do not want to clear the cache you can pass the kwarg
+\fIclean_cache=False\fP to \fIsaltutil.refresh_pillar\fP\&. (#60897)
+.IP \(bu 2
+Handle the situation when apt repo lines have or do not have trailing slashes properly. (#60907)
+.IP \(bu 2
+Fixed Python 2 syntax for Python 3, allow for view objects returned by dictionary keys() function (#60909)
+.IP \(bu 2
+Fix REST CherryPY append the default permissions every request (#60955)
+.IP \(bu 2
+Do not consider "skipped" targets as failed for "ansible.playbooks" states (#60983)
+.IP \(bu 2
+Fix behavior for internal "_netlink_tool_remote_on" to filter results based on requested end (#61017)
+.IP \(bu 2
+schedule.job_status module: Convert datetime objects into formatted strings (#61043)
+.IP \(bu 2
+virt: don\(aqt crash if console doesn\(aqt have service or type attribute (#61054)
+.IP \(bu 2
+Fixed conflict between importlib_metada from Salt and importlib.metadata from Python 3.10 (#61062)
+.IP \(bu 2
+sys.argspec now works with pillar.get, vault.read_secret, and vault.list_secrets (#61084)
+.IP \(bu 2
+Set virtual grain on FreeBSD EC2 instances (#61094)
+.IP \(bu 2
+Fixed v3004 windows minion failing to open log file at C:ProgramDataSalt ProjectSaltvarlogsaltminion (#61113)
+.IP \(bu 2
+Correct returned result to False when an error exception occurs for pip.installed (#61117)
+.IP \(bu 2
+fixed extend being too strict and wanting the system_type to exist when it is only needed for requisites. (#61121)
+.IP \(bu 2
+Fixed bug where deserialization in script engine would throw an error after all output was read. (#61124)
+.IP \(bu 2
+Adding missing import for salt.utils.beacons into beacons that were updated to use it. (#61135)
+.IP \(bu 2
+added exception catch to salt.utils.vt.terminal.isalive(). (#61160)
+.IP \(bu 2
+Re\-factor transport to make them more plug\-able (#61161)
+.IP \(bu 2
+Remove max zeromq pinned version due to issues on FreeBSD (#61163)
+.IP \(bu 2
+Fixing deltaproxy code to handle the situation where the control proxy is configured to control a proxy minion whose pillar data could not be loaded. (#61172)
+.IP \(bu 2
+Prevent get_tops from performing a Set operation on a List (#61176)
+.IP \(bu 2
+Make "state.highstate" to acts on concurrent flag.
+Simplify "transactional_update" module to not use SSH wrapper and allow more flexible execution (#61188)
+.IP \(bu 2
+Fix a failure with salt.utils.vault.make_request when namespace is not defined in the connection. (#61191)
+.IP \(bu 2
+Fix race condition in \fIsalt.utils.verify.verify_env\fP and ignore directories starting with dot (#61192)
+.IP \(bu 2
+LGPO: Search for policies in a case\-sensitive manner first, then fall back to non case\-sensitive names (#61198)
+.IP \(bu 2
+Fixed state includes in dynamic environments (#61200)
+.IP \(bu 2
+Minimize the number of network connections minions to the master (#61247)
+.IP \(bu 2
+Fix salt\-call event.event with pillar or grains (#61252)
+.IP \(bu 2
+Fixed failing dcs.compile_config where a successful compile errored with \fIAttributeError: \(aqlist\(aq object has no attribute \(aqget\(aq\fP\&. (#61261)
+.IP \(bu 2
+Make the salt.utils.win_dacl.get_name() function include the "NT Security" prefix for Virtual Accounts. Virtual Accounts can only be added with the fully qualified name. (#61271)
+.IP \(bu 2
+Fixed tracebacks and print helpful error message when proxy_return = True but no platform or primary_ip set in NetBox pillar. (#61277)
+.IP \(bu 2
+Ensure opts is included in pack for minion_mods and config loads opts from the named_context. (#61297)
+.IP \(bu 2
+Added prefix length info for IPv6 addresses in Windows (#61316)
+.IP \(bu 2
+Handle MariaDB 10.5+ SLAVE MONITOR grant (#61331)
+.IP \(bu 2
+Fix secondary ip addresses being added to ip4_interfaces and ip6_interfaces at the same time (#61370)
+.IP \(bu 2
+Do not block the deltaproxy startup.  Wrap the call to the individual proxy initialization functions in a try...except, catching the exception, logging an error and moving onto the next proxy minion. (#61377)
+.IP \(bu 2
+show_instance of hetzner cloud provider should enforce an action like the other ones (#61392)
+.IP \(bu 2
+Fix Hetzner Cloud config loading mechanism (#61399)
+.IP \(bu 2
+Sets correctly the lvm grain even when lvm\(aqs command execution outputs a WARNING (#61412)
+.IP \(bu 2
+Use net instead of sc in salt cloud when restarting the salt service (#61413)
+.IP \(bu 2
+Fix use_etag support in fileclient by removing case sensitivity of expected header (#61440)
+.IP \(bu 2
+Expand environment variables in the root_dir registry key (#61445)
+.IP \(bu 2
+Use salt.utils.path.readlink everywhere instead of os.readlink (#61458)
+.IP \(bu 2
+Fix state_aggregate minion option not respected (#61478)
+.IP \(bu 2
+Fixed wua.installed and wua.uptodate to return all changes, failures, and supersedences (#61479)
+.IP \(bu 2
+When running with test=True and there are no changes, don\(aqt show that there are changes. (#61483)
+.IP \(bu 2
+Fix issue with certutil when there\(aqs a space in the path to the certificate (#61494)
+.IP \(bu 2
+Fix cmdmod not respecting config for saltenv (#61507)
+.IP \(bu 2
+Convert Py 2\(aqisms to Python 3, and add tests for set_filesystems on AIX (#61509)
+.IP \(bu 2
+Fix tracebacks caused by missing block device type and wrong mode used for gzip.open while calling inspector.export (#61530)
+.IP \(bu 2
+win_wua: Titles no longer limited to 40 characters (#61533)
+.IP \(bu 2
+Fixed error when using network module on RHEL 8 due to the name of the service changing from "network" to "NetworkManager". (#61538)
+.IP \(bu 2
+Allow symlink to be created even if source is missing on Windows (#61544)
+.IP \(bu 2
+Print jinja error context on \fIUndefinedError\fP\&.  Previously \fIjinja2.exceptions.UndefinedError\fP resulted in a \fISaltRenderError\fP without source file context, unlike all of the other Jinja exceptions handled in \fIsalt/utils/templates.py\fP\&. (#61553)
+.IP \(bu 2
+Fix uptime on AIX systems when less than 24 hours (#61557)
+.IP \(bu 2
+Fix issue with state.show_state_usage when a saltenv is not referenced in any topfile (#61614)
+.IP \(bu 2
+Making the retry state system feature available when parallel is set to True. (#61630)
+.IP \(bu 2
+modules/aptpkg.SourceEntry: fix parsing lines with arbitrary comments in case HAS_APT=False (#61632)
+.IP \(bu 2
+Fix file.comment incorrectly reports changes in test mode (#61662)
+.IP \(bu 2
+Fix improper master caching of file listing in multiple dynamic environments (#61738)
+.IP \(bu 2
+When configured beacons are empty write an empty beacon configuration file. (#61741)
+.IP \(bu 2
+Fix file.replace updating mtime with no changes (#61743)
+.IP \(bu 2
+Fixed etcd_return being out of sync with the underlying etcd_util. (#61756)
+.IP \(bu 2
+Fixing items, values, and keys functions in the data module. (#61812)
+.IP \(bu 2
+Ensure that \fIsalt://\fP URIs never contain backslashes, converting them to forward slashes instead.  A specific situation to handle is caching files on Windows minions, where Jinja relative imports introduce a backslash into the path. (#61829)
+.IP \(bu 2
+Do not raise a UnicodeDecodeError when pillar cache cannot decode binary data. (#61836)
+.IP \(bu 2
+Don\(aqt rely on \fBimportlib.metadata\fP, even on Py3.10, use \fBimportlib_metadata\fP instead. (#61839)
+.IP \(bu 2
+Fix the reporting of errors for file.directory in test mode (#61846)
+.IP \(bu 2
+Update Markup and contextfunction imports for jinja versions >=3.1. (#61848)
+.IP \(bu 2
+Update states.chef for version 16.x and 17.x Chef Infra Client output. (#61891)
+.IP \(bu 2
+Fixed some whitespace and \fBpathlib.Path\fP issues when not using the sytem \fBaptsources\fP package. (#61936)
+.IP \(bu 2
+fixed error when using backslash literal in file.replace (#61944)
+.IP \(bu 2
+Fix an issue where under spawning platforms, one could exhaust the available multiprocessing semaphores. (#61945)
+.IP \(bu 2
+Fix salt\-cloud sync_after_install functionality (#61946)
+.IP \(bu 2
+Ensure that \fIcommon_prefix\fP matching only occurs if a directory name is identified (in the \fIarchive.list\fP execution module function, which affects the \fIarchive.extracted\fP state). (#61968)
+.IP \(bu 2
+When states are running in parallel, ensure that the total run time produced by the highstate outputter takes that into account. (#61999)
+.IP \(bu 2
+Temporary logging is now shutdown when logging has been configured. (#62005)
+.IP \(bu 2
+modules/lxd.FilesManager: fix memory leak through pylxd.modules.container.Container.FilesManager (#62006)
+.IP \(bu 2
+utils/jinja.SaltCacheLoader: fix leaking SaltCacheLoader through atexit.register (#62007)
+.IP \(bu 2
+Fixed errors on calling \fIzabbix_user.admin_password_present\fP state, due to changed error message in Zabbix 6.0
+Fixed \fIzabbix.host_update\fP not mapping group ids list to list of dicts in format \fI[{"groupid": groupid}, ...]\fP
+Fixed \fIzabbix.user_update\fP not mapping usergroup id list to list of dicts in format \fI[{"usrgrpid": usrgrpid}, ...]\fP (#62012)
+.IP \(bu 2
+utils/yamlloader and yamlloader_old: fix leaking DuplicateKeyWarning through a warnings module (#62021)
+.IP \(bu 2
+Fix cache checking for Jinja templates (#62042)
+.IP \(bu 2
+Fixed salt.states.file.managed() for follow_symlinks=True and test=True (#62066)
+.IP \(bu 2
+Stop trigering the \fI\%GLIBC race condition\fP when parallelizing the resolution of the fqnds. (#62071)
+.IP \(bu 2
+Fix useradd functions hard\-coded relative command name (#62087)
+.IP \(bu 2
+Fix #62092: Catch zmq.error.ZMQError to set HWM for zmq >= 3.
+.sp
+Run \fBgit show 0be0941\fP for more info. (#62092)
+.IP \(bu 2
+Allow emitatstartup to work when delay option is setup. (#62095)
+.IP \(bu 2
+Fix broken relative jinja includes in local mode bug introduced in #62043 (#62117)
+.IP \(bu 2
+Fix broken file.comment functionality introduced in #62045 (#62121)
+.IP \(bu 2
+Fixed an incompatibility preventing salt\-cloud from deploying VMs on Proxmox VE 7 (#62154)
+.IP \(bu 2
+Fix sysctl functions hard\-coded relative command name (#62164)
+.IP \(bu 2
+All of Salt\(aqs loaders now accept \fBloaded_base_name\fP as a keyword argument, allowing different namespacing the loaded modules. (#62186)
+.IP \(bu 2
+Only functions defined on the modules being loaded will be added to the lazy loader, functions imported from other modules, unless they are properly namespaced, are not included. (#62190)
+.IP \(bu 2
+Fixes issue in postgresql privileges detection: privileges on views were never retrieved and always recreated. (#57690)
+.IP \(bu 2
+Fix service.enabled error for unavailable service in test mode (#62258)
+.IP \(bu 2
+Fix variable reuse causing requisite_in problems (#62264)
+.IP \(bu 2
+Adding \-G option to pkgdd cmd_prefix list when current_zone_only is True. (#62206)
+.IP \(bu 2
+Don\(aqt expect \fBlsof\fP to be installed when trying check which minions are connected. (#62303)
+.IP \(bu 2
+Fixed urlparse typo in rpmbuild_pkgbuild.py (#62442)
+.IP \(bu 2
+Fixing changes dict in pkg state to be consistent when installing and test=True. (#60995)
+.IP \(bu 2
+Use fire_event_async when expecting a coroutine (#62453)
+.IP \(bu 2
+Fixes import error under windows. (#62459)
+.IP \(bu 2
+account for revision number in formulas to account for difference between bottle and formula (#62466)
+.IP \(bu 2
+Fixed stacktrace on Windows when running pkg.list_pkgs (#62479)
+.IP \(bu 2
+Update sanitizing masking for Salt SSH to include additional password like strings. (#62483)
+.IP \(bu 2
+Fixes an issue where the minion could not connect to a master after 2 failed attempts (#62489)
+.UNINDENT
+.SS Added
+.INDENT 0.0
+.IP \(bu 2
+Added ability to request VPC peering connections in different AWS regions (boto_vpc). (#50394)
+.IP \(bu 2
+Added event return capability to Splunk returner (#50815)
+.IP \(bu 2
+Added allow downgrades support to apt upgrade (#52977)
+.IP \(bu 2
+added new grain for metadata to handle googles metadata differences (#53223)
+.IP \(bu 2
+Added win_shortcut execution and state module that does not prepend the current working directory to paths. Use shortcut.create and shortcut.present instead of file.shortcut. (#53706)
+.IP \(bu 2
+Add __env__ substitution inside file and pillar root paths (#55747)
+.IP \(bu 2
+Added support cpu hot add/remove, memory hot add, and nested virtualization to VMware salt\-cloud driver. (#56144)
+.IP \(bu 2
+Add a consul state module with acl_present and acl_absent functions. (#58101)
+.IP \(bu 2
+Added restconf module/states/proxy code for network device automation (#59006)
+.IP \(bu 2
+Adds the ability to get version information from a file on Windows systems (#59702)
+.IP \(bu 2
+Add aptkey=False kwarg option to the aptpkg.py module and pkgrepo state. Apt\-key is on the path to be deprecated. This will allow users to not use apt\-key to manage the repo keys. It will set aptkey=False automatically if it does not detect apt\-key exists on the machine. (#59785)
+.IP \(bu 2
+Added "Instant Clone" feature in the existing VMware Cloud module (#60004)
+.IP \(bu 2
+Added support for etcd API v3 (#60325)
+.IP \(bu 2
+Added \fIpkg.held\fP and \fIpkg.unheld\fP state functions for Zypper, YUM/DNF and APT. Improved \fIzypperpkg.hold\fP and \fIzypperpkg.unhold\fP functions. (#60432)
+.IP \(bu 2
+Added suse_ip module allowing to manage network interfaces on SUSE based Linux systems (#60702)
+.IP \(bu 2
+Support querying for JSON data in SQL external pillar (#60905)
+.IP \(bu 2
+Added support for yum and dnf on AIX (#60912)
+.IP \(bu 2
+Added percent success/failure of state runs in highstate summary output via new state_output_pct option (#60990)
+.IP \(bu 2
+Add support for retrieve IP\-address from qemu agent by Salt\-cloud on Proxmox (#61146)
+.IP \(bu 2
+Added new shortcut execution and state module to better handle UNC shortcuts and to test more thoroughly (#61170)
+.IP \(bu 2
+added yamllint utils module and yaml execution modules (#61182)
+.IP \(bu 2
+Add "\-\-no\-return\-event" option to salt\-call to prevent sending return event back to master. (#61188)
+.IP \(bu 2
+Add Etag support for file.managed web sources (#61270)
+.IP \(bu 2
+Adding the ability to add, delete, purge, and modify Salt scheduler jobs when the Salt minion is not running. (#61324)
+.IP \(bu 2
+Added a force option to file.symlink to overwrite an existing symlink with the same name (#61326)
+.IP \(bu 2
+\fIgpg_decrypt_must_succeed\fP config to prevent gpg renderer from failing silently (#61418)
+.IP \(bu 2
+Do not load a private copy of \fI__grains__\fP and \fI__salt__\fP for the sentry log handler if it is disabled. (#61484)
+.IP \(bu 2
+Add Jinja filters for itertools functions, flatten, and a state template workflow (#61502)
+.IP \(bu 2
+Add feature to allow roll\-up of duplicate IDs with different names in highstate output (#61549)
+.IP \(bu 2
+Allow cp functions to derive saltenv from config if not explicitly set (#61562)
+.IP \(bu 2
+Multiprocessing logging no longer uses multiprocessing queues which penalized performance.
+.sp
+Instead, each new process configures the terminal and file logging, and also any external logging handlers configured. (#61629)
+.IP \(bu 2
+Add a function to the freezer module for comparison of packages and repos in two frozen states (#61682)
+.IP \(bu 2
+Add grains_refresh_pre_exec option to allow grains to be refreshed before any operation (#61708)
+.IP \(bu 2
+Add possibility to pass extra parameters to salt\-ssh pre flight script with \fIssh_pre_flight_args\fP (#61715)
+.IP \(bu 2
+Add Etag support for archive.extracted web sources (#61763)
+.IP \(bu 2
+Add regex exclusions, full path matching, symlink following, and mtime/ctime comparison to file.tidied (#61823)
+.IP \(bu 2
+Add better handling for unit abbreviations and large values to salt.utils.stringutils.human_to_bytes (#61831)
+.IP \(bu 2
+Provide PyInstaller hooks that provide some runtime adjustments when Salt is running from a onedir (PyInstaller) bundled package. (#61864)
+.IP \(bu 2
+Add configurable onedir pip pypath location (#61937)
+.IP \(bu 2
+Add CNAME record support to the dig exec module (#61991)
+.IP \(bu 2
+Added support for changed user object in Zabbix 5.4+
+Added compatibility with Zabbix 4.0+ for \fIzabbix.user_getmedia\fP method
+Added support for setting medias in \fIzabbix.user_update\fP for Zabbix 3.4+ (#62012)
+.IP \(bu 2
+Add ignore_missing parameter to file.comment state (#62044)
+.IP \(bu 2
+General improvements on the "ansiblegate" module:
+* Add "ansible.targets" method to gather Ansible inventory
+* Add "ansible.discover_playbooks" method to help collecting playbooks
+* Fix crash when running Ansible playbooks if ansible\-playbook CLI output is not the expected JSON.
+* Fix issues when processing inventory and there are groups with no members.
+* Allow new types of targets for Ansible roster (#60056)
+.IP \(bu 2
+Add sample and shuffle functions from random (#62225)
+.IP \(bu 2
+Add "<tiamat> python" subcommand to allow execution or arbitrary scripts via bundled Python runtime (#62381)
+.UNINDENT
 .SS Salt 3004 Release Notes \- Codename Silicon
 .SS New Features
 .SS Transactional System Support (MicroOS)
@@ -590383,532 +591594,46 @@ runners and commands like salt\-key.
 Tests have been added to test the aspects of the client APIs and ensure that
 the client calls work, and that they manage passed data, in a desirable way.
 .SS Upcoming Release
-.SS Salt 3005 release notes \- Codename Phosphorus
-.sp
-Salt 3005 is currently under development.
-.SS Python 3.5 and 3.6 Deprecation
-.sp
-This will be the last release we will support Python versions 3.5 and 3.6.
-In Salt release 3006, we will only support Python versions 3.7 and higher.
-Going forward, our policy will be to align with Python\(aqs supported versions.
-.SS OS Support End of Life
-.sp
-Debian and Raspbian 9 are now EOL, therefore we will no longer be building
-packages for these platforms.
-.SS New packages available
-.sp
-With the release of Salt 3005, we are pleased to announce the
-new packages using Tiamat and pyinstaller are now out of beta
-and ready for production. These new packages are self\-contained
-binaries of Salt, which includes the version of Python needed by Salt
-and the required dependencies of Salt. The Tiamat packages allow users
-to use Salt without Python being installed on the box.
-.sp
-Any new OS platforms we support going forward from version 3005 will only
-include Tiamat packages. For this release, this includes Redhat 9 and Ubuntu 22.04.
-.sp
-On the day of the Phosphorus release, the instructions on how to install the
-new Tiamat packages will be available on \fI\%https://repo.saltproject.io\fP for each
-platform. If you want to test out the packages today you can install them
-from \fI\%https://repo.saltproject.io/salt\-dev/py3/\fP using the correct directory
-for your platform. If you find any issues with the packages, please open an
-issue on this repo: \fI\%https://gitlab.com/saltstack/open/salt\-pkg\fP
-.SS Non\-Tiamat packaging support
-.sp
-The non\-Tiamat packaging system previously used for Salt will also be provided
-for platforms supported in previous Salt versions. The non\-Tiamat packaging will
-only be avilable for two more releases. Please see the release\-3006 notes for more
-details on the availablility of Non\-Tiamat packaging for the 3006 release.
-The 3007 release and those going forward will only provide the Tiamat packages.
-.SS Platform package support
-.TS
-center;
-|l|l|l|.
-_
-T{
-OS
-T}	T{
-New Tiamat Packages
-T}	T{
-Non\-Tiamat Packages
-T}
-_
-T{
-RHEL 7
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-RHEL 8
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-RHEL 9
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-Ubuntu 18.04
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Ubuntu 20.04
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Ubuntu 22.04
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-Debian 10
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Debian 11
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Raspbian 10
-T}	T{
-no
-T}	T{
-yes
-T}
-_
-T{
-Raspbian 11
-T}	T{
-no
-T}	T{
-yes
-T}
-_
-T{
-Fedora 35
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Fedora 36
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-MacOS
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Windows
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-.TE
-.SS Repo paths
-.TS
-center;
-|l|l|l|.
-_
-T{
-OS
-T}	T{
-Tiamat Path
-T}	T{
-Non\-Tiamat Path
-T}
-_
-T{
-RHEL
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/redhat/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/redhat/\fP
-T}
-_
-T{
-Ubuntu
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/ubuntu/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/ubuntu/\fP
-T}
-_
-T{
-Debian
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/debian/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/debian/\fP
-T}
-_
-T{
-Raspbian
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/debian/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/debian/\fP
-T}
-_
-T{
-Fedora
-T}	T{
-Hosted on Fedora Repos
-T}	T{
-Hosted on Fedora Repos
-T}
-_
-T{
-MacOS
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/osx/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/osx/\fP
-T}
-_
-T{
-Windows
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/windows/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/windows/\fP
-T}
-_
-.TE
-.sp
-Note that the Tiamat paths above will not be available until the day of the Phosphorus release.
-.SS How do I migrate to the Tiamat packages?
-.sp
-The migration path from the non\-Tiamat packages to the Tiamat packages will include:
-.INDENT 0.0
-.IP \(bu 2
-Repo File: You need to update your repo file to point to the new repo paths for your platform. After the repo
-file is updated, upgrade your Salt packages.
-.IP \(bu 2
-Pip packages: You need to ensure any 3rd party pip packages are installed in the correct Tiamat path.
-This can be accomplished in two ways:
-.INDENT 2.0
-.IP \(bu 2
-\fBsalt pip install <package name>\fP
-.IP \(bu 2
-Using the \fBpip.installed\fP Salt state.
-.UNINDENT
-.UNINDENT
-.sp
-To install python packages into the system python environment, user\(aqs must now provide the \fBpip_bin\fP or \fBbin_env\fP to the pip state module.
-.sp
-For example:
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-lib\-foo:
-  pip.installed:
-    \- pip_bin: /usr/bin/pip3
-lib\-bar:
-  pip.installed:
-    \- bin_env: /usr/bin/python3
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 .SS Salt 3006 release notes \- Codename Sulfur
 .sp
 Salt 3006 is currently under development.
-.SS Non\-Tiamat packaging support
+.SS Onedir packaging
 .sp
-The non\-Tiamat packaging system previously used for Salt will only be provided
-for platforms that support Python 3.7 and above. If a platform is using
-Python 3.5 or 3.6, only Tiamat packages will be available for that platform.
-This policy change will require users to update their repo files to point to
-the new repo path to use the new Tiamat packages. The full installation instructions
-can be found at \fI\%https://repo.saltproject.io\fP\&. This change impacts various OS platforms, including:
-.INDENT 0.0
-.IP \(bu 2
-Ubuntu 18.04
-.IP \(bu 2
-CentOS 7
-.IP \(bu 2
-CentOS 8
-.UNINDENT
-.sp
-These platforms will only have Tiamat packages avalable.
-.sp
-This is the last release we will provide non\-Tiamat packaging. The 3007 release and
-those going forward will only provide the Tiamat packages.
+Going forward from the 3006 release, the Salt Project will only provide onedir
+packages to install or upgrade Salt. The classic, non\-onedir packages will not
+be provided for supported operating systems. See
+\fI\%Upgrade to onedir\fP
+in the \fI\%Salt Install Guide\fP
+for information about upgrading from the classic packages to the onedir
+packages.
 .SS Dropping support for Python 3.5 and 3.6
 .sp
 Python 3.5 and 3.6 will no longer be supported by Salt since they
 are end of life. Going forward our policy will be to align with Python\(aqs
-supported versions.
-.SS Platform package support
-.TS
-center;
-|l|l|l|.
-_
-T{
-OS
-T}	T{
-New Tiamat Packages
-T}	T{
-Non\-Tiamat Packages
-T}
-_
-T{
-RHEL 7
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-RHEL 8
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-RHEL 9
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-Ubuntu 18.04
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-Ubuntu 20.04
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Ubuntu 22.04
-T}	T{
-yes
-T}	T{
-no
-T}
-_
-T{
-Debian 10
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Debian 11
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Raspbian 10
-T}	T{
-no
-T}	T{
-no
-T}
-_
-T{
-Raspbian 11
-T}	T{
-no
-T}	T{
-yes
-T}
-_
-T{
-Fedora 35
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Fedora 36
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-MacOS
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-T{
-Windows
-T}	T{
-yes
-T}	T{
-yes
-T}
-_
-.TE
-.SS Repo paths
-.TS
-center;
-|l|l|l|.
-_
-T{
-OS
-T}	T{
-Tiamat Path
-T}	T{
-Non\-Tiamat Path
-T}
-_
-T{
-RHEL
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/redhat/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/redhat/\fP
-T}
-_
-T{
-Ubuntu
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/ubuntu/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/ubuntu/\fP
-T}
-_
-T{
-Debian
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/debian/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/debian/\fP
-T}
-_
-T{
-Raspbian
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/debian/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/py3/debian/\fP
-T}
-_
-T{
-Fedora
-T}	T{
-Hosted on Fedora Repos
-T}	T{
-Hosted on Fedora Repos
-T}
-_
-T{
-MacOS
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/osx/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/osx/\fP
-T}
-_
-T{
-Windows
-T}	T{
-\fI\%https://repo.saltproject.io/salt/py3/windows/\fP
-T}	T{
-\fI\%https://repo.saltproject.io/windows/\fP
-T}
-_
-.TE
+supported versions. See
+\fI\%Salt support for Python versions\fP
+for more information.
+.SS How do I migrate to the onedir packages?
 .sp
-Note that the Tiamat paths above will not be available until the day of the Phosphorus release.
-.SS My OS only provides Tiamat packages. What do I do?
-.sp
-If you are using a platform that no longer provides the non\-Tiamat packages as shown
-in the previous tables, you will need to update your repo files to point to the new Tiamat packages.
-The new repo paths are provided in the previous tables, but the full instructions will be included
-at \fI\%https://repo.saltproject.io\fP\&.
-.SS My OS uses an unsupported version of Python. What do I do?
-.sp
-If your OS is using an unsupported version of Python, you will need to use the Tiamat packages.
-.SS How do I migrate to the Tiamat packages?
-.sp
-The migration path from the non\-Tiamat packages to the Tiamat packages will include:
+The migration path from the classic, non\-onedir packages to the onedir packages
+will include:
 .INDENT 0.0
 .IP \(bu 2
-Repo File: You need to update your repo file to point to the new repo paths for your platform. After the repo
-file is updated, upgrade your Salt packages.
+Repo File: You need to update your repo file to point to the new repo paths
+for your platform. After the repo file is updated, upgrade your Salt packages.
 .IP \(bu 2
-Pip packages: You need to ensure any 3rd party pip packages are installed in the correct Tiamat path.
-This can be accomplished in two ways:
+Pip packages: You need to ensure any 3rd party pip packages are installed in
+the correct onedir path. This can be accomplished in two ways:
 .INDENT 2.0
 .IP \(bu 2
-\fBsalt pip install <package name>\fP
+\fBsalt\-pip install <package name>\fP
 .IP \(bu 2
 Using the \fBpip.installed\fP Salt state.
 .UNINDENT
 .UNINDENT
 .sp
-To install python packages into the system python environment, user\(aqs must now provide the \fBpip_bin\fP or \fBbin_env\fP to the pip state module.
+To install python packages into the system python environment, user\(aqs must now
+provide the \fBpip_bin\fP or \fBbin_env\fP to the pip state module.
 .sp
 For example:
 .INDENT 0.0
