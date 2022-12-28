@@ -234,7 +234,10 @@ def webserver_pillar_tests_prep(
             "url_extra_repo": url_extra_repo,
         }
         try:
-            log.debug("NGinx started and listening on port: %s", request.cls.nginx_port)
+            log.debug(
+                "NGinx started and listening on port: %s",
+                request.cls.nginx_port,
+            )
             yield
         finally:
             shutil.rmtree(repos)
@@ -338,7 +341,7 @@ class GitPillarTestBase(GitTestBase, LoaderModuleMockMixin):
             return
 
         # Create bare repo
-        self.run_function("git.init", [self.bare_repo], user=user, bare=True)
+        ret = self.run_function("git.init", [self.bare_repo], user=user, bare=True)
 
         # Clone bare repo
         self.run_function("git.clone", [self.admin_repo], url=self.bare_repo, user=user)
