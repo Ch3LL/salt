@@ -972,6 +972,28 @@ class VM:
         destination = f"{self.name}:{remote_path}"
         description = "Rsync local checkout to VM..."
         self.rsync(source, destination, description, rsync_flags)
+        self.add_git_directory_as_safe(remote_path)
+
+    def add_git_directory_as_safe(self, git_dir):
+        cmd = [
+            "git",
+            "config",
+            "--global",
+            "--add",
+            "safe.directory",
+            git_dir,
+        ]
+        if self.is_windows is False and self.config.ssh_username != "root":
+            sudo = True
+        else:
+            sudo = False
+        self.run(
+            cmd,
+            sudo=sudo,
+            check=False,
+            capture=False,
+            pseudo_terminal=True,
+        )
 
     def write_and_upload_dot_env(self, env: dict[str, str]):
         if not env:
