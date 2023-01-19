@@ -71,7 +71,11 @@ param(
     [Parameter(Mandatory=$false)]
     [Alias("c")]
     # Don't pretify the output of the Write-Result
-    [Switch] $CICD
+    [Switch] $CICD,
+
+    [Parameter(Mandatory=$false)]
+    # Don't install. It should already be installed
+    [Switch] $SkipInstall
 
 )
 
@@ -160,25 +164,28 @@ if ( ! $? ) {
     exit 1
 }
 
-#-------------------------------------------------------------------------------
-# Build Python
-#-------------------------------------------------------------------------------
 
-$KeywordArguments = @{
-    Version = $PythonVersion
-    Architecture = $Architecture
-}
-if ( $Build ) {
-    $KeywordArguments["Build"] = $true
-}
-if ( $CICD ) {
-    $KeywordArguments["CICD"] = $true
-}
+if ( ! $SkipInstall ) {
+  #-------------------------------------------------------------------------------
+  # Build Python
+  #-------------------------------------------------------------------------------
 
-& "$SCRIPT_DIR\build_python.ps1" @KeywordArguments
-if ( ! $? ) {
-    Write-Host "Failed to build Python"
-    exit 1
+  $KeywordArguments = @{
+      Version = $PythonVersion
+      Architecture = $Architecture
+  }
+  if ( $Build ) {
+      $KeywordArguments["Build"] = $true
+  }
+  if ( $CICD ) {
+      $KeywordArguments["CICD"] = $true
+  }
+
+  & "$SCRIPT_DIR\build_python.ps1" @KeywordArguments
+  if ( ! $? ) {
+      Write-Host "Failed to build Python"
+      exit 1
+  }
 }
 
 #-------------------------------------------------------------------------------
@@ -188,6 +195,9 @@ if ( ! $? ) {
 $KeywordArguments = @{}
 if ( $CICD ) {
     $KeywordArguments["CICD"] = $true
+}
+if ( $SkipInstall ) {
+    $KeywordArguments["SkipInstall"] = $true
 }
 & "$SCRIPT_DIR\install_salt.ps1" @KeywordArguments
 if ( ! $? ) {

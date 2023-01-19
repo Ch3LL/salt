@@ -22,7 +22,11 @@ param(
     [Parameter(Mandatory=$false)]
     [Alias("c")]
     # Don't pretify the output of the Write-Result
-    [Switch] $CICD
+    [Switch] $CICD,
+
+    [Parameter(Mandatory=$false)]
+    # Don't install. It should already be installed
+    [Switch] $SkipInstall
 )
 
 #-------------------------------------------------------------------------------
@@ -73,55 +77,57 @@ if ( $ARCH -eq "64bit" ) {
     $SALT_DEP_URL   = "https://repo.saltproject.io/windows/dependencies/32"
 }
 
-#-------------------------------------------------------------------------------
-# Start the Script
-#-------------------------------------------------------------------------------
-Write-Host $("=" * 80)
-Write-Host "Install Salt into Python Environment" -ForegroundColor Cyan
-Write-Host "- Architecture: $ARCH"
-Write-Host $("-" * 80)
+if ( ! $SkipInstall ) {
+  #-------------------------------------------------------------------------------
+  # Start the Script
+  #-------------------------------------------------------------------------------
+  Write-Host $("=" * 80)
+  Write-Host "Install Salt into Python Environment" -ForegroundColor Cyan
+  Write-Host "- Architecture: $ARCH"
+  Write-Host $("-" * 80)
 
-#-------------------------------------------------------------------------------
-# Installing Salt
-#-------------------------------------------------------------------------------
-# We don't want to use an existing salt installation because we don't know what
-# it is
-Write-Host "Checking for existing Salt installation: " -NoNewline
-if ( ! (Test-Path -Path "$SCRIPTS_DIR\salt-minion.exe") ) {
-    Write-Result "Success" -ForegroundColor Green
-} else {
-    Write-Result "Failed" -ForegroundColor Red
-    exit 1
-}
+  #-------------------------------------------------------------------------------
+  # Installing Salt
+  #-------------------------------------------------------------------------------
+  # We don't want to use an existing salt installation because we don't know what
+  # it is
+  Write-Host "Checking for existing Salt installation: " -NoNewline
+  if ( ! (Test-Path -Path "$SCRIPTS_DIR\salt-minion.exe") ) {
+      Write-Result "Success" -ForegroundColor Green
+  } else {
+      Write-Result "Failed" -ForegroundColor Red
+      exit 1
+  }
 
-# Cleaning previous builds
-$remove = "build", "dist"
-$remove | ForEach-Object {
-    if ( Test-Path -Path "$PROJECT_DIR\$_" ) {
-        Write-Host "Removing $_`:" -NoNewline
-        Remove-Item -Path "$PROJECT_DIR\$_" -Recurse -Force
-        if ( ! (Test-Path -Path "$PROJECT_DIR\$_") ) {
-            Write-Result "Success" -ForegroundColor Green
-        } else {
-            Write-Result "Failed" -ForegroundColor Red
-            exit 1
-        }
-    }
-}
+  # Cleaning previous builds
+  $remove = "build", "dist"
+  $remove | ForEach-Object {
+      if ( Test-Path -Path "$PROJECT_DIR\$_" ) {
+          Write-Host "Removing $_`:" -NoNewline
+          Remove-Item -Path "$PROJECT_DIR\$_" -Recurse -Force
+          if ( ! (Test-Path -Path "$PROJECT_DIR\$_") ) {
+              Write-Result "Success" -ForegroundColor Green
+          } else {
+              Write-Result "Failed" -ForegroundColor Red
+              exit 1
+          }
+      }
+  }
 
-#-------------------------------------------------------------------------------
-# Installing dependencies
-#-------------------------------------------------------------------------------
-Write-Host "Installing dependencies: " -NoNewline
-Start-Process -FilePath $SCRIPTS_DIR\pip3.exe `
-              -ArgumentList "install", "-r", "$SALT_DEPS" `
-              -WorkingDirectory "$PROJECT_DIR" `
-              -Wait -WindowStyle Hidden
-if ( Test-Path -Path "$SCRIPTS_DIR\distro.exe" ) {
-    Write-Result "Success" -ForegroundColor Green
-} else {
-    Write-Result "Failed" -ForegroundColor Red
-    exit 1
+  #-------------------------------------------------------------------------------
+  # Installing dependencies
+  #-------------------------------------------------------------------------------
+  Write-Host "Installing dependencies: " -NoNewline
+  Start-Process -FilePath $SCRIPTS_DIR\pip3.exe `
+                -ArgumentList "install", "-r", "$SALT_DEPS" `
+                -WorkingDirectory "$PROJECT_DIR" `
+                -Wait -WindowStyle Hidden
+  if ( Test-Path -Path "$SCRIPTS_DIR\distro.exe" ) {
+      Write-Result "Success" -ForegroundColor Green
+  } else {
+      Write-Result "Failed" -ForegroundColor Red
+      exit 1
+  }
 }
 
 #-------------------------------------------------------------------------------
@@ -198,25 +204,27 @@ if ( Test-Path -Path "$SITE_PKGS_DIR\win32com\gen_py" ) {
     exit 1
 }
 
-#-------------------------------------------------------------------------------
-# Installing Salt
-#-------------------------------------------------------------------------------
-Write-Host "Installing Salt: " -NoNewline
+if ( ! $SkipInstall ) {
+  #-------------------------------------------------------------------------------
+  # Installing Salt
+  #-------------------------------------------------------------------------------
+  Write-Host "Installing Salt: " -NoNewline
 # We're setting RELENV_PIP_DIR so the binaries will be placed in the root
-try {
-    $env:RELENV_PIP_DIR = "yes"
-    Start-Process -FilePath $SCRIPTS_DIR\pip3.exe `
-              -ArgumentList "install", "." `
-              -WorkingDirectory "$PROJECT_DIR" `
-              -Wait -WindowStyle Hidden
-} finally {
-    Remove-Item env:\RELENV_PIP_DIR
-}
-if ( Test-Path -Path "$BUILD_DIR\salt-minion.exe" ) {
-    Write-Result "Success" -ForegroundColor Green
-} else {
-    Write-Result "Failed" -ForegroundColor Red
-    exit 1
+  try {
+      $env:RELENV_PIP_DIR = "yes"
+      Start-Process -FilePath $SCRIPTS_DIR\pip3.exe `
+                -ArgumentList "install", "." `
+                -WorkingDirectory "$PROJECT_DIR" `
+                -Wait -WindowStyle Hidden
+  } finally {
+      Remove-Item env:\RELENV_PIP_DIR
+  }
+  if ( Test-Path -Path "$BUILD_DIR\salt-minion.exe" ) {
+      Write-Result "Success" -ForegroundColor Green
+  } else {
+      Write-Result "Failed" -ForegroundColor Red
+      exit 1
+  }
 }
 
 # Remove fluff
