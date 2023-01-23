@@ -517,7 +517,7 @@ class PipModuleTest(ModuleCase):
     @pytest.mark.slow_test
     def test_pip_install_multiple_editables(self):
         editables = [
-            "git+https://github.com/jek/blinker.git#egg=Blinker",
+            "git+https://github.com/saltstack/istr.git@v1.0.1#egg=iStr",
             "git+https://github.com/saltstack/salt-testing.git#egg=SaltTesting",
         ]
 
@@ -553,7 +553,7 @@ class PipModuleTest(ModuleCase):
     @pytest.mark.slow_test
     def test_pip_install_multiple_editables_and_pkgs(self):
         editables = [
-            "git+https://github.com/jek/blinker.git#egg=Blinker",
+            "git+https://github.com/saltstack/istr.git@v1.0.1#egg=iStr",
             "git+https://github.com/saltstack/salt-testing.git#egg=SaltTesting",
         ]
 
