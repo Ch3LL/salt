@@ -1332,6 +1332,15 @@ class SaltDistribution(distutils.dist.Distribution):
     # ----- Overridden Methods -------------------------------------------------------------------------------------->
     def parse_command_line(self):
         args = distutils.dist.Distribution.parse_command_line(self)
+        if not self.ssh_packaging:
+            print(
+                """
+                NOTICE: Salt-SSH PyPi Project Not Active
+                The Salt Project team will no longer publish releases to this Salt-SSH
+                pypi project. Please use the Salt pypi project to install and use Salt-SSH.
+                """
+            )
+            sys.exit(1)
 
         if not self.ssh_packaging and PACKAGED_FOR_SALT_SSH:
             self.ssh_packaging = 1
